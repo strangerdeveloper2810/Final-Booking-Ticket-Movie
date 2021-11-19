@@ -1,0 +1,29 @@
+.slick-prev::before, .slick-next::before{
+  color: gray !important;
+  font-size: 3rem !important;
+}
+
+
+.width-item{
+  width: 100% !important;   
+}
+
+@media only screen and (max-width: 480px) {
+  .width-item{
+      width: 100% !important;
+      margin: 50px;
+      display: block !important;
+  }
+  .slick-prev, .slick-next{
+      display: none !important;
+  }
+}
+
+.active_Film{
+  @apply bg-red-500 text-white
+}
+
+.none_active_Film{
+  @apply bg-white text-gray-800
+}
+
