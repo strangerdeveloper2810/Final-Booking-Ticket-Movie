@@ -50,7 +50,7 @@ export default function Footer(props) {
                 <div className="grid justify-center pt-6  text-white">
                     <div className="flex flex-col self-center text-sm text-center md:block lg:col-start-1 md:space-x-6">
                         <h6 className="text__title text-white">
-                            DỰ ÁN ĐẶT VÉ XEM PHIM - CYPERSOFT
+                            Dự Án Đặt Vé Xem Phim - CyberSoft
                         </h6>
                         <p className="text__content">
                             Địa chỉ: Tầng 2, toà nhà WinHome, 459 Sư Vạn hạnh, Quận 10, TPHCM
