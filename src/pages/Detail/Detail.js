@@ -55,9 +55,9 @@ function Detail(props) {
               <div
                 style={{ marginTop: '25%' }}
                 className="col-span-2 ml-5">
-                <p className="text-sm text-red-500 font-bold">Ngày Chiếu : {moment(filmDetail.ngayKhoiChieu).format('DD - MM - YYYY')}</p>
-                <p className="text-2xl leading-3 text-red-500 font-bold">{filmDetail.tenPhim}</p>
-                <p className="text-sm text-red-500 font-bold ">{filmDetail.moTa}</p>
+                <p className="text-xl text-red-500 font-bold">Ngày Chiếu : {moment(filmDetail.ngayKhoiChieu).format('DD - MM - YYYY')}</p>
+                <p className="text-2xl mt-5 text-blue-800 font-bold mb-8">{filmDetail.tenPhim}</p>
+                <p className="text-lg text-yellow-700 font-bold ">{filmDetail.moTa}</p>
               </div>
             </div>
           </div>
