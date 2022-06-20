@@ -1,5 +1,3 @@
-import axios from 'axios'
-import { DOMAIN } from '../../util/settings/config';
 import { SET_CAROUSEL } from './types/CarouselType';
 import {quanLyPhimService} from '../../services/QuanLyPhimService';
 

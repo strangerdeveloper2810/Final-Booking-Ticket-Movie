@@ -1,6 +1,5 @@
 import React, { Fragment } from "react";
 import { Tabs } from "antd";
-import { connect } from "react-redux";
 import { NavLink } from "react-router-dom";
 import moment from "moment";
 const { TabPane } = Tabs;

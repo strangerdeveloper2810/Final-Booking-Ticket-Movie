@@ -84,7 +84,7 @@ export default function Header(props) {
             <NavLink
               to="/home"
               className="flex items-center -mb-0.5 border-b-2 px-4 border-transparent text-violet-600 border-violet-600 text-white"
-              activeClassName="border-b-2 border-white"
+             
             >
               Home
             </NavLink>
@@ -93,7 +93,7 @@ export default function Header(props) {
             <a
               href="#hethongrap"
               className="flex items-center -mb-0.5 border-b-2 px-4 border-transparent text-white"
-              activeClassName="border-b-2 border-white"
+             
             >
               Cụm rạp
             </a>
@@ -102,7 +102,7 @@ export default function Header(props) {
             <a
               href="#phim"
               className="flex items-center -mb-0.5 border-b-2 px-4 border-transparent text-white"
-              activeClassName="border-b-2 border-white"
+             
             >
               Phim
             </a>
