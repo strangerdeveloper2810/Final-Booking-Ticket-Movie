@@ -1,5 +1,6 @@
 import axios from "axios";
-import { DOMAIN, TOKENCYBERSOFT } from "../../util/settings/config";
+// import { DOMAIN, TOKENCYBERSOFT } from "../../util/settings/config";
+import { DOMAIN,TOKEN } from "../../util/settings/config";
 import { SET_CHI_TIET_FILM, SET_HE_THONG_RAP_CHIEU, SET_LICH_CHIEU_FILM } from "./types/QuanLyPhimType";
 
 
@@ -14,7 +15,8 @@ export const layDanhSachHeThongRapAction = () => {
                     maNhom: "GP01",
                 },
                 headers: {
-                    TokenCybersoft: TOKENCYBERSOFT
+                    // TokenCybersoft: TOKENCYBERSOFT
+                    Authorization: "Bearer " + localStorage.getItem(TOKEN)
                 }
             });
             if (result.status === 200) {
@@ -35,13 +37,14 @@ export const layThongTinChiTietFilmAction = (id) => {
     return async dispatch => {
         try {
             const result = await axios({
-                url: 'https://movienew.cybersoft.edu.vn/api/QuanLyPhim/LayThongTinPhim',
+                url: 'http://movieapi.cyberlearn.vn/api/QuanLyPhim/LayThongTinPhim',
                 method: 'GET',
                 params: {
                     MaPhim: id,
                 },
                 headers: {
-                    TokenCybersoft: TOKENCYBERSOFT
+                    // TokenCybersoft: TOKENCYBERSOFT
+                    Authorization: "Bearer " + localStorage.getItem(TOKEN)
                 }
             })
             dispatch({
@@ -59,13 +62,14 @@ export const layThongTinLichChieuTheoFilmAction = (id) => {
     return async dispatch => {
         try {
             const result = await axios({
-                url: 'https://movienew.cybersoft.edu.vn/api/QuanLyRap/LayThongTinLichChieuPhim',
+                url: 'http://movieapi.cyberlearn.vn/api/QuanLyRap/LayThongTinLichChieuPhim',
                 method: 'GET',
                 params: {
                     MaPhim: id,
                 },
                 headers: {
-                    TokenCybersoft: TOKENCYBERSOFT
+                    // TokenCybersoft: TOKENCYBERSOFT
+                    Authorization: "Bearer " + localStorage.getItem(TOKEN)
                 }
             })
             dispatch({

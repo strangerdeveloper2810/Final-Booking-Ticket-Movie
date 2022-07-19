@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { Layout, Menu, Form, DatePicker, InputNumber, Select } from 'antd';
 import axios from 'axios';
-import { DOMAIN, TOKEN, TOKENCYBERSOFT } from '../../../util/settings/config';
+// import { DOMAIN, TOKEN, TOKENCYBERSOFT } from '../../../util/settings/config';
+import { DOMAIN, TOKEN } from '../../../util/settings/config';
 import { useFormik } from 'formik';
 import moment from 'moment';
 const { Header, Content, Footer, Sider } = Layout;
@@ -24,7 +25,6 @@ function Showtime(props) {
                     method: 'POST',
                     data: values,
                     headers: {
-                        TokenCybersoft: TOKENCYBERSOFT,
                         Authorization: "Bearer " + localStorage.getItem(TOKEN),
                     }
                 })
@@ -52,7 +52,7 @@ function Showtime(props) {
                     maNhom: 'GP01',
                 },
                 headers: {
-                    TokenCybersoft: TOKENCYBERSOFT
+                    Authorization: "Bearer " + localStorage.getItem(TOKEN)
                 }
             })
 
@@ -80,7 +80,7 @@ function Showtime(props) {
                 },
                 method: 'GET',
                 headers: {
-                    TokenCybersoft: TOKENCYBERSOFT
+                    Authorization: "Bearer " + localStorage.getItem(TOKEN)
                 }
             })
 

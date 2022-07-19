@@ -8,7 +8,9 @@ import {
 import { useFormik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { DOMAIN, GROUPID, TOKENCYBERSOFT } from '../../../../util/settings/config';
+// import { DOMAIN, GROUPID, TOKENCYBERSOFT } from '../../../../util/settings/config';
+
+import { DOMAIN, GROUPID,TOKEN } from '../../../../util/settings/config';
 import { capNhatNguoiDungAction, layFullInfoNguoiDungAction } from '../../../../redux/actions/QuanLyNguoiDungAction';
 import axios from 'axios';
 
@@ -27,7 +29,7 @@ const EditUser = (props) => {
                 url: `${DOMAIN}/api/QuanLyNguoiDung/LayDanhSachLoaiNguoiDung`,
                 method: 'GET',
                 headers: {
-                    TokenCybersoft: TOKENCYBERSOFT,
+                    Authorization: "Bearer " + localStorage.getItem(TOKEN)
                 }
             })
             setState({

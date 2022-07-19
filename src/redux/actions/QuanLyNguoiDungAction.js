@@ -4,7 +4,8 @@ import {
    NGUOI_DUNG_DANG_KY,NGUOI_DUNG_DANG_NHAP,SET_DANH_SACH_NGUOI_DUNG,SET_FULL_INFO_NGUOI_DUNG,SET_THONG_TIN_NGUOI_DUNG
 } from "./types/QuanLyNguoiDungType";
 import { history } from "../../App";
-import {DOMAIN,TOKENCYBERSOFT,TOKEN,GROUPID} from "../../util/settings/config"
+// import {DOMAIN,TOKENCYBERSOFT,TOKEN,GROUPID} from "../../util/settings/config";
+import {DOMAIN,TOKEN,GROUPID} from "../../util/settings/config";
 import swal from "sweetalert";
 
 export const dangNhapAction = (thongTinDangNhap) => {
@@ -92,7 +93,7 @@ export const layFullInfoNguoiDungAction = (taiKhoan) => {
                   taiKhoan: taiKhoan,
               },
               headers: {
-                  TokenCybersoft: TOKENCYBERSOFT,
+                  // TokenCybersoft: TOKENCYBERSOFT,
                   Authorization: "Bearer " + localStorage.getItem(TOKEN),
               }
           })
@@ -116,7 +117,7 @@ export const capNhatNguoiDungAction = (thongTinNguoiDung) => {
               method: 'POST',
               data: thongTinNguoiDung,
               headers: {
-                  TokenCybersoft: TOKENCYBERSOFT,
+                  // TokenCybersoft: TOKENCYBERSOFT,
                   Authorization: "Bearer " + localStorage.getItem(TOKEN),
               }
           })
@@ -139,7 +140,7 @@ export const layDanhSachListNguoiDungAction = (tuKhoa = '') => {
       if (tuKhoa.trim() !== '') {
           try {
               const result = await axios({
-                  url: `https://movienew.cybersoft.edu.vn/api/QuanLyNguoiDung/LayDanhSachNguoiDung`,
+                  url: `http://movieapi.cyberlearn.vn/api/QuanLyNguoiDung/LayDanhSachNguoiDung`,
                   method: 'GET',
                   params: {
                       MaNhom: GROUPID,
@@ -147,7 +148,7 @@ export const layDanhSachListNguoiDungAction = (tuKhoa = '') => {
                   },
 
                   headers: {
-                      TokenCybersoft: TOKENCYBERSOFT,
+                    Authorization: "Bearer " + localStorage.getItem(TOKEN)
                   }
               })
               console.log(result);
@@ -165,13 +166,15 @@ export const layDanhSachListNguoiDungAction = (tuKhoa = '') => {
       else {
           try {
               const result = await axios({
-                  url: `https://movienew.cybersoft.edu.vn/api/QuanLyNguoiDung/LayDanhSachNguoiDung`,
+                  url: `http://movieapi.cyberlearn.vn/api/QuanLyNguoiDung/LayDanhSachNguoiDung`,
                   method: 'GET',
                   params: {
                       MaNhom: GROUPID
                   },
                   headers: {
-                      TokenCybersoft: TOKENCYBERSOFT,
+                      // TokenCybersoft: TOKENCYBERSOFT,
+                      Authorization: "Bearer " + localStorage.getItem(TOKEN)
+
                   }
               })
 
@@ -200,7 +203,7 @@ export const xoaNguoiDungAction = (taiKhoan) => {
                   TaiKhoan: taiKhoan
               },
               headers: {
-                  TokenCybersoft: TOKENCYBERSOFT,
+                  // TokenCybersoft: TOKENCYBERSOFT,
                   Authorization: "Bearer " + localStorage.getItem(TOKEN),
               }
           })
