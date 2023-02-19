@@ -2,16 +2,15 @@ import React, { Fragment } from "react";
 import { NavLink } from "react-router-dom";
 import { history } from "../../../../App";
 import { Select } from "antd";
-import Flag from "react-flagpack";
+// import Flag from "react-flagpack";
 //Hook đa ngôn ngữ
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import _ from "lodash";
 import { TOKEN, USER_LOGIN } from "../../../../util/settings/config";
-import { Avatar } from 'antd';
+import { Avatar } from "antd";
 
 const { Option } = Select;
-
 
 export default function Header(props) {
   const { userLogin } = useSelector((state) => state.QuanLyNguoiDungReducer);
@@ -48,7 +47,7 @@ export default function Header(props) {
         {" "}
         <button
           onClick={() => {
-            history.push('/profile');
+            history.push("/profile");
           }}
           className="self-center px-8 py-3 rounded"
         >
@@ -63,7 +62,7 @@ export default function Header(props) {
           }}
           className="text-yellow-500 mr-5"
         >
-          Đăng xuất 
+          Đăng xuất
         </button>
       </Fragment>
     );
@@ -76,15 +75,16 @@ export default function Header(props) {
           aria-label="Back to homepage"
           className="flex items-center p-2"
         >
-          <img src="https://img.icons8.com/external-icongeek26-linear-colour-icongeek26/64/000000/external-movie-cinema-icongeek26-linear-colour-icongeek26.png"
-          alt="icon"/>
+          <img
+            src="https://img.icons8.com/external-icongeek26-linear-colour-icongeek26/64/000000/external-movie-cinema-icongeek26-linear-colour-icongeek26.png"
+            alt="icon"
+          />
         </NavLink>
         <ul className="items-stretch hidden space-x-3 lg:flex">
           <li className="flex">
             <NavLink
               to="/home"
               className="flex items-center -mb-0.5 border-b-2 px-4 border-transparent text-violet-600 border-violet-600 text-white"
-             
             >
               Home
             </NavLink>
@@ -93,7 +93,6 @@ export default function Header(props) {
             <a
               href="#hethongrap"
               className="flex items-center -mb-0.5 border-b-2 px-4 border-transparent text-white"
-             
             >
               Cụm rạp
             </a>
@@ -102,7 +101,6 @@ export default function Header(props) {
             <a
               href="#phim"
               className="flex items-center -mb-0.5 border-b-2 px-4 border-transparent text-white"
-             
             >
               Phim
             </a>
@@ -115,7 +113,7 @@ export default function Header(props) {
             style={{ width: 100 }}
             onChange={handleChange}
           >
-            <Option value="en">
+            {/* <Option value="en">
               <Flag code="USA" gradient="real-linear" size="m" hasDropShadow />
               <span className="text-center text-red-700"> US</span>
             </Option>
@@ -126,7 +124,7 @@ export default function Header(props) {
             <Option value="Chi">
               <Flag code="CN" gradient="real-linear" size="m" hasDropShadow />
               <span className="text-center text-red-700"> CN</span>
-            </Option>
+            </Option> */}
           </Select>
         </div>
         <button className="p-4 lg:hidden">

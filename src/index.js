@@ -10,7 +10,7 @@ import { store } from './redux/configStore';
 import * as signalR from '@aspnet/signalr'
 
 //antd
-import "antd/dist/antd.css";
+import "antd/dist/antd.min.css";
 
 //reactslick
 import "slick-carousel/slick/slick.css";
