@@ -5,7 +5,8 @@ export default function Header() {
     <React.Fragment>
       <header>
         <div className="header__left">
-          <img src="./img/logo1.png" alt="logo" />
+          <img src="./img/Movie.png" alt="logo" />
+          <span>Cinefix</span>
         </div>
 
         <div className="header__right">
