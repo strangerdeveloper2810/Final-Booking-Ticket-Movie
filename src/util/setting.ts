@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-export const DOMAIN: string = "movieapi.cyberlearn.vn";
+export const DOMAIN = "http://movieapi.cyberlearn.vn";
 
 export const ACCESS_TOKEN: string = "accessToken";
 export const USER_LOGIN: string = "userLogin";

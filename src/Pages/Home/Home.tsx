@@ -1,7 +1,8 @@
 import React from "react";
 import { Carousel } from "antd";
-import { useSelector } from "react-redux";
-import { RootState } from "Redux/store";
+import { useSelector, useDispatch } from "react-redux";
+import { AppDispatch, RootState } from "Redux/store";
+import { getAllBannerApi } from "Redux/reducer/BannerReducer";
 
 const contentStyle: React.CSSProperties = {
   height: "100vh",
@@ -13,6 +14,17 @@ const contentStyle: React.CSSProperties = {
 
 export const Home: React.FC = () => {
   const Banner = useSelector((state: RootState) => state.Banner.arrBanner);
+
+  const dispatch: AppDispatch = useDispatch();
+
+  const getAllBanner = () => {
+    const actionThunk = getAllBannerApi();
+    dispatch(actionThunk);
+  };
+  React.useEffect(() => {
+    getAllBanner();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const renderCarousel = () => {
     return Banner.map((banner, key) => {
