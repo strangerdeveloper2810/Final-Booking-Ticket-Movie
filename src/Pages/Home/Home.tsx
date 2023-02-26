@@ -7,7 +7,7 @@ import { getAllBannerApi } from "Redux/reducer/BannerReducer";
 const contentStyle: React.CSSProperties = {
   height: "100vh",
   color: "#fff",
-  lineHeight: "550px",
+  lineHeight: "100vh",
   textAlign: "center",
   background: "#364d79",
 };

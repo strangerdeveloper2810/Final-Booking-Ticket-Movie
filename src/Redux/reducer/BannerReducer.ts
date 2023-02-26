@@ -21,7 +21,6 @@ const BannerReducer = createSlice({
       getAllBannerApi.fulfilled,
       (state: BannerState, action: PayloadAction<Banner[]>) => {
         state.arrBanner = action.payload;
-        console.log(action.payload);
       }
     );
   },
