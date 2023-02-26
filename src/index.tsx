@@ -5,6 +5,8 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 // Reset CSS from Antdesign
 import "antd/dist/reset.css";
+// CSS for project
+import "assets/scss/style.scss";
 // React Router Dom
 import { BrowserRouter } from "react-router-dom";
 
