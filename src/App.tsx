@@ -7,10 +7,10 @@ import HomeTemplate from "Template/HomeTemplate";
 
 function App() {
   return (
-    <div className="App">
+    <div className="container">
       <Routes>
         <Route path="" element={<HomeTemplate />}>
-          <Route path="home" element={<Home />} />
+          <Route index element={<Home />} />
         </Route>
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />

@@ -14,7 +14,7 @@ export default function Header() {
             <nav className="header__right__item">
               <ul>
                 <li>
-                  <NavLink to={"home"}>Home</NavLink>
+                  <NavLink to={"/"}>Home</NavLink>
                 </li>
 
                 <li>
