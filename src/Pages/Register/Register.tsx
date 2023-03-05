@@ -1,7 +1,7 @@
-import React from 'react'
+import React from "react";
 
-export default function Register() {
-  return (
-    <div>Register</div>
-  )
-}
+const Register: React.FC = () => {
+  return <div>Register</div>;
+};
+
+export default React.memo(Register);

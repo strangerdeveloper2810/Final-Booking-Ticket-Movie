@@ -1,7 +1,7 @@
-import React from 'react'
+import React from "react";
 
-export default function ErrorTemplate() {
-  return (
-    <div>ErrorTemplate</div>
-  )
-}
+const ErrorTemplate: React.FC = () => {
+  return <div>ErrorTemplate</div>;
+};
+
+export default React.memo(ErrorTemplate);
