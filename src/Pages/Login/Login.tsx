@@ -1,7 +1,26 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { useFormik } from "formik";
+import validationSchema from "./validationSchema";
+import { UserLogin } from "Redux/types/UserLogin";
+import { AppDispatch } from "Redux/store";
+import { USER_LOGIN_API } from "Redux/constant/UserConstant";
 
 export const Login: React.FC = () => {
+  const dispatch: AppDispatch = useDispatch();
+  const formLogin = useFormik<UserLogin>({
+    initialValues: {
+      account: "",
+      password: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values: UserLogin) => {
+      dispatch({
+        type: USER_LOGIN_API,
+      });
+    },
+  });
   return (
     <div className="h-screen md:flex">
       <div className="relative overflow-hidden md:flex w-1/2 bg-gradient-to-tr from-blue-800 to-purple-700 i justify-around items-center hidden">
@@ -24,7 +43,7 @@ export const Login: React.FC = () => {
         <div className="absolute -top-20 -right-20 w-80 h-80 border-4 rounded-full border-opacity-30 border-t-8" />
       </div>
       <div className="flex md:w-1/2 justify-center py-10 items-center bg-white">
-        <form className="bg-white">
+        <form className="bg-white" onSubmit={formLogin.handleSubmit}>
           <h1 className="text-gray-800 font-bold text-2xl mb-1">
             Hello Again!
           </h1>
@@ -48,9 +67,15 @@ export const Login: React.FC = () => {
             <input
               className="pl-2 outline-none border-none"
               type="text"
-              placeholder="Email Address"
+              name="account"
+              placeholder="Your account"
+              onChange={formLogin.handleChange}
+              onBlur={formLogin.handleBlur}
             />
           </div>
+          <p className="font-bold text-red-900 mt-3">
+            {formLogin.errors.account}
+          </p>
 
           <div className="flex items-center border-2 py-2 px-3 rounded-2xl">
             <svg
@@ -67,10 +92,16 @@ export const Login: React.FC = () => {
             </svg>
             <input
               className="pl-2 outline-none border-none"
-              type="text"
+              type="password"
+              name="password"
               placeholder="Password"
+              onChange={formLogin.handleChange}
+              onBlur={formLogin.handleBlur}
             />
           </div>
+          <p className="font-bold text-red-900 mt-3">
+            {formLogin.errors.password}
+          </p>
 
           <button
             type="submit"

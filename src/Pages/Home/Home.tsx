@@ -18,11 +18,6 @@ export const Home: React.FC = () => {
 
   const dispatch: AppDispatch = useDispatch();
 
-  // const getAllBanner = () => {
-  //   const actionThunk = getAllBannerApi();
-  //   dispatch(actionThunk);
-  // };
-
   const getBannerSaga = () => {
     dispatch({
       type: GET_ALL_BANNER,
