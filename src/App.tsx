@@ -7,7 +7,7 @@ import HomeTemplate from "Template/HomeTemplate";
 
 const App: React.FC = () => {
   return (
-    <div className="container">
+    <div className="w-screen">
       <Routes>
         <Route path="" element={<HomeTemplate />}>
           <Route index element={<Home />} />
