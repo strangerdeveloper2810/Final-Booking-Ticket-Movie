@@ -46,9 +46,9 @@ export const Home: React.FC = () => {
     });
   };
   return (
-    <React.Fragment>
+    <div className="w-screen">
       <Carousel autoplay>{renderCarousel()}</Carousel>
-    </React.Fragment>
+    </div>
   );
 };
 
