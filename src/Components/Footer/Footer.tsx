@@ -1,7 +1,7 @@
-import React from 'react'
+import React from "react";
 
-export default function Footer() {
-  return (
-    <div></div>
-  )
-}
+const Footer: React.FC = () => {
+  return <div></div>;
+};
+
+export default React.memo(Footer);

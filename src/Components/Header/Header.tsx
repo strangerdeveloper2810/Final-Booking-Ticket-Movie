@@ -1,12 +1,12 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-export default function Header() {
+const Header: React.FC = () => {
   return (
     <React.Fragment>
       <header>
         <div className="header__left">
           <img src="./img/Movie.png" alt="logo" />
-          <NavLink to={"/home"}>Cinefix</NavLink>
+          <NavLink to={"/"}>Cinefix</NavLink>
         </div>
 
         <div className="header__right">
@@ -57,4 +57,5 @@ export default function Header() {
       </header>
     </React.Fragment>
   );
-}
+};
+export default React.memo(Header);

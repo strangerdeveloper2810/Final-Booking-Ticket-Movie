@@ -5,7 +5,7 @@ import Login from "Pages/Login";
 import Register from "Pages/Register";
 import HomeTemplate from "Template/HomeTemplate";
 
-function App() {
+const App: React.FC = () => {
   return (
     <div className="container">
       <Routes>
@@ -17,6 +17,6 @@ function App() {
       </Routes>
     </div>
   );
-}
+};
 
 export default App;

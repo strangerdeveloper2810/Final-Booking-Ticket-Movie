@@ -2,7 +2,8 @@ import React from "react";
 import { Carousel } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "Redux/store";
-import { getAllBannerApi } from "Redux/reducer/BannerReducer";
+// import { getAllBannerApi } from "Redux/reducer/BannerReducer";
+import { GET_ALL_BANNER } from "Redux/constant/BannerConstants";
 
 const contentStyle: React.CSSProperties = {
   height: "100vh",
@@ -13,16 +14,23 @@ const contentStyle: React.CSSProperties = {
 };
 
 export const Home: React.FC = () => {
-  const Banner = useSelector((state: RootState) => state.Banner.arrBanner);
+  const Banner = useSelector((state: RootState) => state.BannerSaga.arrBanner);
 
   const dispatch: AppDispatch = useDispatch();
 
-  const getAllBanner = () => {
-    const actionThunk = getAllBannerApi();
-    dispatch(actionThunk);
+  // const getAllBanner = () => {
+  //   const actionThunk = getAllBannerApi();
+  //   dispatch(actionThunk);
+  // };
+
+  const getBannerSaga = () => {
+    dispatch({
+      type: GET_ALL_BANNER,
+    });
   };
   React.useEffect(() => {
-    getAllBanner();
+    // getAllBanner();
+    getBannerSaga();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -38,10 +46,10 @@ export const Home: React.FC = () => {
     });
   };
   return (
-    <React.Fragment>
+    <div className="w-screen">
       <Carousel autoplay>{renderCarousel()}</Carousel>
-    </React.Fragment>
+    </div>
   );
 };
 
-export default Home;
+export default React.memo(Home);

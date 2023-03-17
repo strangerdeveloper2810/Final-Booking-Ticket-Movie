@@ -1,12 +1,14 @@
 import { configureStore } from "@reduxjs/toolkit";
 import createSagaMiddleware from "redux-saga";
-import BannerReducer from "./reducer/BannerReducer";
 import { rootSaga } from "./saga/rootSaga";
+import BannerReducer from "./reducer/BannerReducer";
+import BannerReducerSaga from "./reducer/BannerSagaReducer";
 
 const sagaMiddleware = createSagaMiddleware();
 export const store = configureStore({
   reducer: {
     Banner: BannerReducer,
+    BannerSaga: BannerReducerSaga,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(sagaMiddleware),
