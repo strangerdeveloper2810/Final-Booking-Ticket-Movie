@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "Redux/store";
 // import { getAllBannerApi } from "Redux/reducer/BannerReducer";
 import { GET_ALL_BANNER } from "Redux/constant/BannerConstants";
+import FilmList from "Pages/Film";
 
 const contentStyle: React.CSSProperties = {
   height: "100vh",
@@ -48,6 +49,7 @@ export const Home: React.FC = () => {
   return (
     <div className="w-screen">
       <Carousel autoplay>{renderCarousel()}</Carousel>
+      <FilmList />
     </div>
   );
 };
