@@ -9,14 +9,18 @@ const FilmList: React.FC = () => {
   );
   const renderFilmItem = () => {
     return filmList.map((film, index) => (
-      <Col span={8} key={film.maPhim}>
+      <Col
+        xs={{ span: 5, offset: 1 }}
+        lg={{ span: 4, offset: 1 }}
+        key={film.maPhim}
+      >
         <FilmItem filmItem={film} />
       </Col>
     ));
   };
   return (
     <React.Fragment>
-      <Row gutter={16}>{renderFilmItem()}</Row>
+      <Row gutter={[24, 24]}>{renderFilmItem()}</Row>
     </React.Fragment>
   );
 };
