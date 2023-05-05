@@ -1,22 +1,31 @@
 import React from "react";
 import { Film } from "Redux/types/FilmType";
+import { useNavigate } from "react-router-dom";
 interface FilmItemType {
   filmItem: Film;
 }
 
 const FilmItem: React.FC<FilmItemType> = ({ filmItem }: FilmItemType) => {
-  
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate(`/detail/${filmItem.maPhim}`);
+  };
+  let demo: string = "Thám Tử Lừng Danh Conan: Nàng Dâu Halloween";
+  console.log("lenght", demo.length);
+
   return (
     <div className="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
       <img
         className="rounded-t-lg"
         src={filmItem.hinhAnh}
         alt={filmItem.biDanh}
-        style={{ width: "550px", height: "550px", objectFit: "cover" }}
+        style={{ width: "500px", height: "500px", objectFit: "cover" }}
       />
 
       <div className="px-5 pb-5">
-        <h5 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white mt-2">
+        <h5
+          className="filmTitle text-sm font-semibold tracking-tight text-gray-900 dark:text-white mt-2"
+        >
           {filmItem.tenPhim}
         </h5>
 
@@ -77,7 +86,10 @@ const FilmItem: React.FC<FilmItemType> = ({ filmItem }: FilmItemType) => {
         </div>
 
         <div className="flex items-center justify-center">
-          <button className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+          <button
+            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            onClick={handleClick}
+          >
             Đặt vé
           </button>
         </div>
