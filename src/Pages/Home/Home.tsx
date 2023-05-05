@@ -47,10 +47,10 @@ export const Home: React.FC = () => {
     });
   };
   return (
-    <div className="w-screen">
+    <main className="w-screen">
       <Carousel autoplay>{renderCarousel()}</Carousel>
       <FilmList />
-    </div>
+    </main>
   );
 };
 
