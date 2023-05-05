@@ -1,11 +1,15 @@
 import React from "react";
 import { Film } from "Redux/types/FilmType";
+import { useNavigate } from "react-router-dom";
 interface FilmItemType {
   filmItem: Film;
 }
 
 const FilmItem: React.FC<FilmItemType> = ({ filmItem }: FilmItemType) => {
-  
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate(`/detail/${filmItem.maPhim}`);
+  };
   return (
     <div className="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
       <img
@@ -77,7 +81,10 @@ const FilmItem: React.FC<FilmItemType> = ({ filmItem }: FilmItemType) => {
         </div>
 
         <div className="flex items-center justify-center">
-          <button className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+          <button
+            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            onClick={handleClick}
+          >
             Đặt vé
           </button>
         </div>
