@@ -10,8 +10,6 @@ const FilmItem: React.FC<FilmItemType> = ({ filmItem }: FilmItemType) => {
   const handleClick = () => {
     navigate(`/detail/${filmItem.maPhim}`);
   };
-  let demo: string = "Thám Tử Lừng Danh Conan: Nàng Dâu Halloween";
-  console.log("lenght", demo.length);
 
   return (
     <div className="w-full max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
@@ -23,9 +21,7 @@ const FilmItem: React.FC<FilmItemType> = ({ filmItem }: FilmItemType) => {
       />
 
       <div className="px-5 pb-5">
-        <h5
-          className="filmTitle text-sm font-semibold tracking-tight text-gray-900 dark:text-white mt-2"
-        >
+        <h5 className="filmTitle text-sm font-semibold tracking-tight text-gray-900 dark:text-white mt-2">
           {filmItem.tenPhim}
         </h5>
 

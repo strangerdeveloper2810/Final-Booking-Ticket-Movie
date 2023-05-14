@@ -14,7 +14,6 @@ const FilmListSagaReducer = createSlice({
   initialState,
   reducers: {
     getAllFlim: (state: FilmState, action: PayloadAction<Film[]>) => {
-      console.log(action.payload);
       state.arrFilm = action.payload;
     },
   },

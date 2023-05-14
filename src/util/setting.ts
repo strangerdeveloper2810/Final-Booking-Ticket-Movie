@@ -5,7 +5,7 @@ export const DOMAIN = "http://movieapi.cyberlearn.vn";
 export const ACCESS_TOKEN: string = "accessToken";
 export const USER_LOGIN: string = "userLogin";
 
-export const GROUP_ID = "GP00"
+export const GROUP_ID = "GP01"
 
 //Cấu hình các hàm get set storage cũng như cookie
 

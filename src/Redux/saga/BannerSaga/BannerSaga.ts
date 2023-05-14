@@ -9,7 +9,9 @@ import { LoadingSagaAction } from "Redux/reducer/LoadingReducer";
 export function* getAllBannerApi(action: PayloadAction<Banner[]>) {
   try {
     yield put(LoadingSagaAction.setLoading(true));
+
     yield delay(2000);
+
     let { data } = yield call(() => {
       return http.get(`/api/QuanLyPhim/LayDanhSachBanner`);
     });
