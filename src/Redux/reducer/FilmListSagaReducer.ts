@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { Film } from "Redux/types/FilmType";
 import { initialFilmList } from "./../../constanst/FilmList";
 export type FilmState = {
@@ -6,13 +6,17 @@ export type FilmState = {
 };
 
 const initialState: FilmState = {
-  arrFilm: initialFilmList,
+  arrFilm: initialFilmList || [],
 };
 
 const FilmListSagaReducer = createSlice({
   name: "FilmListSagaReducer",
   initialState,
-  reducers: {},
+  reducers: {
+    getAllFlim: (state: FilmState, action: PayloadAction<Film[]>) => {
+      state.arrFilm = action.payload;
+    },
+  },
 });
 
 export const FilmListAction = FilmListSagaReducer.actions;

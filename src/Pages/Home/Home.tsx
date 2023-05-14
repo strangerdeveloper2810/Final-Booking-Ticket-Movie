@@ -6,23 +6,10 @@ import { AppDispatch, RootState } from "Redux/store";
 import { GET_ALL_BANNER } from "Redux/constant/BannerConstants";
 import FilmList from "Pages/Film";
 
-const contentStyle: React.CSSProperties = {
-  height: "100vh",
-  color: "#fff",
-  lineHeight: "100vh",
-  textAlign: "center",
-  background: "#364d79",
-};
-
 export const Home: React.FC = () => {
   const Banner = useSelector((state: RootState) => state.BannerSaga.arrBanner);
 
   const dispatch: AppDispatch = useDispatch();
-
-  // const getAllBanner = () => {
-  //   const actionThunk = getAllBannerApi();
-  //   dispatch(actionThunk);
-  // };
 
   const getBannerSaga = () => {
     dispatch({
@@ -30,27 +17,53 @@ export const Home: React.FC = () => {
     });
   };
   React.useEffect(() => {
-    // getAllBanner();
     getBannerSaga();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const renderCarousel = () => {
-    return Banner.map((banner, key) => {
+    return Banner.map((banner) => {
       return (
         <div className="banner" key={banner.maBanner}>
-          <h3 style={contentStyle}>
+          <h3 className="content-style">
             <img src={banner.hinhAnh} alt="banner" />
           </h3>
         </div>
       );
     });
   };
+
+  const responsiveSettings = [
+    {
+      breakpoint: 575,
+      settings: {
+        slidesToShow: 1,
+        dots: true, // Show pagination dots on small screens
+      },
+    },
+    {
+      breakpoint: 991,
+      settings: {
+        slidesToShow: 3,
+        dots: true, // Show pagination dots on medium screens
+      },
+    },
+    {
+      breakpoint: 1200,
+      settings: {
+        slidesToShow: 4,
+        dots: false, // Hide pagination dots on larger screens
+      },
+    },
+  ];
+
   return (
-    <div className="w-screen">
-      <Carousel autoplay>{renderCarousel()}</Carousel>
+    <main className="w-screen">
+      <Carousel autoplay responsive={responsiveSettings} dots={false}>
+        {renderCarousel()}
+      </Carousel>
       <FilmList />
-    </div>
+    </main>
   );
 };
 
