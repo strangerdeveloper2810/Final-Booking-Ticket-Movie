@@ -1,7 +1,19 @@
 .banner {
+  .content-style {
+    height: "100vh";
+    color: "#fff";
+    line-height: "100vh";
+    text-align: "center";
+    background: "#364d79";
+  }
+  .carousel-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
   img {
     width: 100%;
+    height: auto;
     object-fit: cover;
-    height: 100vh;
   }
 }
