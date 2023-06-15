@@ -1,5 +1,5 @@
 header {
-  width: 1396px;
+  min-width: 100vw;
   background: radial-gradient(
     circle,
     rgba(238, 174, 202, 1) 6%,
@@ -36,71 +36,5 @@ header {
       }
       color: #a75d12;
     }
-  }
-}
-
-@media screen and (max-width: 3100px) {
-  header {
-    width: 2434px;
-  }
-}
-
-@media screen and (max-width: 2600px) {
-  header {
-    width: 2436px;
-  }
-}
-
-@media screen and(max-width:1500px) {
-  header {
-    width: 1440px;
-  }
-}
-
-@media screen and(max-width: 1300px) {
-  header {
-    width: 1280px;
-  }
-}
-
-@media screen and(max-width: 1025px) {
-  header {
-    width: 1368px;
-  }
-}
-
-@media screen and (max-width: 650px) {
-  header {
-    width: 640px;
-  }
-}
-
-@media screen and (max-width: 450px) {
-  header {
-    width: 415px;
-  }
-}
-
-@media screen and (max-width: 400px) {
-  header {
-    width: 390px;
-  }
-}
-
-@media screen and (max-width: 376px) {
-  header {
-    width: 380px;
-  }
-}
-
-@media screen and (max-width: 370px) {
-  header {
-    width: 343px;
-  }
-}
-
-@media screen and (max-width: 300px) {
-  header {
-    width: 280px;
   }
 }
