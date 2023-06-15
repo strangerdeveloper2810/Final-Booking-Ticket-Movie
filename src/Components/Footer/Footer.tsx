@@ -1,7 +1,8 @@
 import React from "react";
 
 const Footer: React.FC = () => {
-  return <div></div>;
+  return <React.Fragment>
+  </React.Fragment>;
 };
 
 export default React.memo(Footer);

@@ -25,9 +25,9 @@ export const Home: React.FC = () => {
     return Banner.map((banner) => {
       return (
         <div className="banner" key={banner.maBanner}>
-          <h3 className="content-style">
+          <div className="content-style">
             <img src={banner.hinhAnh} alt="banner" />
-          </h3>
+          </div>
         </div>
       );
     });
@@ -44,7 +44,7 @@ export const Home: React.FC = () => {
     {
       breakpoint: 991,
       settings: {
-        slidesToShow: 3,
+        slidesToShow: 1,
         dots: true, // Show pagination dots on medium screens
       },
     },
@@ -59,9 +59,11 @@ export const Home: React.FC = () => {
 
   return (
     <main className="w-screen">
-      <Carousel autoplay responsive={responsiveSettings} dots={false}>
-        {renderCarousel()}
-      </Carousel>
+      <div className="carousel">
+        <Carousel autoplay responsive={responsiveSettings} dots={false}>
+          {renderCarousel()}
+        </Carousel>
+      </div>
       <FilmList />
     </main>
   );

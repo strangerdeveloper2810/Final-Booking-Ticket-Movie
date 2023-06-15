@@ -1,10 +1,23 @@
+.carousel {
+  height: 100vh;
+  @media screen and (max-width: 541px) {
+    height: 38.5vh;
+    margin-bottom: 3rem;
+    overflow: hidden;
+  }
+  @media screen and (max-width: 450px) {
+    height: 28.4vh;
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+}
 .banner {
   .content-style {
-    height: "100vh";
-    color: "#fff";
-    line-height: "100vh";
-    text-align: "center";
-    background: "#364d79";
+    height: 100vh;
+    color: #fff;
+    line-height: 100vh;
+    text-align: center;
+    background: #364d79;
   }
   .carousel-container {
     width: 100%;
@@ -12,8 +25,22 @@
     margin: 0 auto;
   }
   img {
-    width: 100%;
-    height: auto;
+    width: 100vw;
+    height: 100vh;
     object-fit: cover;
+    overflow: hidden;
+  }
+  @media screen and(max-width: 821px) {
+    .content-style {
+      height: 39vh;
+    }
+    img {
+      height: 39vh;
+    }
+  }
+  @media screen and(max-width: 450px) {
+    img {
+      height: 28vh;
+    }
   }
 }
