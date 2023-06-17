@@ -22,8 +22,10 @@ const FilmList: React.FC = () => {
   }, []);
 
   const renderFilmItem = React.useCallback(() => {
-    return filmList.map((film, index) => (
-      <FilmItem filmItem={film} key={film.maPhim} />
+    return filmList.map((film) => {
+      return <FilmItem filmItem={film} key={film.maPhim} />;
+    });
+  }, [filmList]);
 
   const SampleNextArrow = (props: any) => {
     const { className, style, onClick } = props;
