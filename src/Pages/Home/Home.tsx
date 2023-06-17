@@ -1,13 +1,15 @@
 import React from "react";
-import { Carousel } from "antd";
+import { Carousel, Tabs } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "Redux/store";
-// import { getAllBannerApi } from "Redux/reducer/BannerReducer";
 import { GET_ALL_BANNER } from "Redux/constant/BannerConstants";
 import FilmList from "Pages/Film";
+type TabPosition = "left";
 
 export const Home: React.FC = () => {
   const Banner = useSelector((state: RootState) => state.BannerSaga.arrBanner);
+
+  const [tabPosition] = React.useState<TabPosition>("left");
 
   const dispatch: AppDispatch = useDispatch();
 
@@ -67,6 +69,19 @@ export const Home: React.FC = () => {
         </Carousel>
       </div>
       <FilmList />
+      <>
+        <Tabs
+          tabPosition={tabPosition}
+          items={new Array(3).fill(null).map((_, i) => {
+            const id = String(i + 1);
+            return {
+              label: `Tab ${id}`,
+              key: id,
+              children: `Content of Tab ${id}`,
+            };
+          })}
+        />
+      </>
     </main>
   );
 };
