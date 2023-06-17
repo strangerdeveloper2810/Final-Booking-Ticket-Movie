@@ -9,7 +9,9 @@ import "antd/dist/reset.css";
 import "assets/scss/style.scss";
 // React Router Dom
 import { BrowserRouter } from "react-router-dom";
-
+// import slick carousel
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 // Set up Redux Toolkit
 import { Provider } from "react-redux";
 import { store } from "Redux/store";

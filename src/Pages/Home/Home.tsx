@@ -17,7 +17,9 @@ export const Home: React.FC = () => {
     });
   };
   React.useEffect(() => {
-    getBannerSaga();
+    if (Banner.length === 0) {
+      getBannerSaga();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

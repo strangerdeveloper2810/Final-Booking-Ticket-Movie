@@ -1,39 +1,73 @@
 import React from "react";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "Redux/store";
-import { Col, Row } from "antd";
-import { RootState } from "Redux/store";
+import { useSelector, useDispatch } from "react-redux";
+import Slider from "react-slick";
+import { RootState, AppDispatch } from "Redux/store";
 import { GET_ALL_FILM } from "Redux/constant/FilmConstants";
 import FilmItem from "./FilmItem";
 const FilmList: React.FC = () => {
   const filmList = useSelector(
     (state: RootState) => state.FlimListSaga.arrFilm
   );
-  // const dispatch = useDispatch<AppDispatch>();
-  // const getFilmSaga = () => {
-  //   dispatch({
-  //     type: GET_ALL_FILM,
-  //   });
-  // };
-  // React.useEffect(() => {
-  //   getFilmSaga();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
-  const renderFilmItem = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const getFilmSaga = () => {
+    dispatch({
+      type: GET_ALL_FILM,
+    });
+  };
+  React.useEffect(() => {
+    if (filmList.length === 0) {
+      getFilmSaga();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const renderFilmItem = React.useCallback(() => {
     return filmList.map((film, index) => (
-      <Col
-        xs={{ span: 5, offset: 1 }}
-        lg={{ span: 6, offset: 2 }}
-        key={film.maPhim}
-      >
-        <FilmItem filmItem={film} />
-      </Col>
-    ));
+      <FilmItem filmItem={film} key={film.maPhim} />
+
+  const SampleNextArrow = (props: any) => {
+    const { className, style, onClick } = props;
+    return (
+      <div
+        className={className}
+        style={{ ...style, display: "flex", right: "10px", top: "52%" }}
+        onClick={onClick}
+      ></div>
+    );
+  };
+
+  const SamplePrevArrow = (props: any) => {
+    const { className, style, onClick } = props;
+    return (
+      <div
+        className={className}
+        style={{
+          ...style,
+          display: "block",
+          left: "-16px",
+          top: "52%",
+          zIndex: 99,
+        }}
+        onClick={onClick}
+      ></div>
+    );
+  };
+
+  const settings = {
+    className: "grid grid-cols-4 gap-4 my-10 m-5",
+    infinite: true,
+    slidesToShow: 4,
+    autoPlay: true,
+    autoplaySpeed: 500,
+    cssEase: "linear",
+    slidesPerRow: 2,
+    speed: 500,
+    nextArrow: <SampleNextArrow />,
+    prevArrow: <SamplePrevArrow />,
   };
   return (
     <React.Fragment>
-      <Row gutter={[32, 32]}>{renderFilmItem()}</Row>
+      <Slider {...settings}>{renderFilmItem()}</Slider>
     </React.Fragment>
   );
 };
