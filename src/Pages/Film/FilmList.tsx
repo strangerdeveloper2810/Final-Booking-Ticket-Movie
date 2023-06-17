@@ -5,9 +5,15 @@ import { useMediaQuery } from "react-responsive";
 import { RootState, AppDispatch } from "Redux/store";
 import { GET_ALL_FILM } from "Redux/constant/FilmConstants";
 import FilmItem from "./FilmItem";
-
+interface ButtonSlick {
+  className?: string;
+  style?: React.CSSProperties;
+  onClick?: React.MouseEventHandler<HTMLDivElement>;
+}
 const FilmList: React.FC = () => {
-  const filmList = useSelector((state: RootState) => state.FlimListSaga.arrFilm);
+  const filmList = useSelector(
+    (state: RootState) => state.FlimListSaga.arrFilm
+  );
   const dispatch = useDispatch<AppDispatch>();
 
   const getFilmSaga = () => {
@@ -33,8 +39,7 @@ const FilmList: React.FC = () => {
   const slidesToShow = isMobile ? 1 : 4;
   const slidesPerRow = isMobile ? 1 : 2;
 
-  const SampleNextArrow = (props: any) => {
-    const { className, style, onClick } = props;
+  const NextArrow = ({ className, style, onClick }: ButtonSlick) => {
     return (
       <div
         className={className}
@@ -44,8 +49,7 @@ const FilmList: React.FC = () => {
     );
   };
 
-  const SamplePrevArrow = (props: any) => {
-    const { className, style, onClick } = props;
+  const PrevArrow = ({ className, style, onClick }: ButtonSlick) => {
     return (
       <div
         className={className}
@@ -70,8 +74,8 @@ const FilmList: React.FC = () => {
     cssEase: "linear",
     slidesPerRow: slidesPerRow,
     speed: 500,
-    nextArrow: <SampleNextArrow />,
-    prevArrow: <SamplePrevArrow />,
+    nextArrow: <NextArrow />,
+    prevArrow: <PrevArrow />,
     centerMode: isMobile,
     centerPadding: "15px",
   };
