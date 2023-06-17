@@ -1,19 +1,21 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Slider from "react-slick";
+import { useMediaQuery } from "react-responsive";
 import { RootState, AppDispatch } from "Redux/store";
 import { GET_ALL_FILM } from "Redux/constant/FilmConstants";
 import FilmItem from "./FilmItem";
+
 const FilmList: React.FC = () => {
-  const filmList = useSelector(
-    (state: RootState) => state.FlimListSaga.arrFilm
-  );
+  const filmList = useSelector((state: RootState) => state.FlimListSaga.arrFilm);
   const dispatch = useDispatch<AppDispatch>();
+
   const getFilmSaga = () => {
     dispatch({
       type: GET_ALL_FILM,
     });
   };
+
   React.useEffect(() => {
     if (filmList.length === 0) {
       getFilmSaga();
@@ -26,6 +28,10 @@ const FilmList: React.FC = () => {
       return <FilmItem filmItem={film} key={film.maPhim} />;
     });
   }, [filmList]);
+
+  const isMobile = useMediaQuery({ maxWidth: 640 });
+  const slidesToShow = isMobile ? 1 : 4;
+  const slidesPerRow = isMobile ? 1 : 2;
 
   const SampleNextArrow = (props: any) => {
     const { className, style, onClick } = props;
@@ -56,17 +62,20 @@ const FilmList: React.FC = () => {
   };
 
   const settings = {
-    className: "grid grid-cols-4 gap-4 my-10 m-5",
+    className: "grid gap-4 my-10 m-5",
     infinite: true,
-    slidesToShow: 4,
+    slidesToShow: slidesToShow,
     autoPlay: true,
     autoplaySpeed: 500,
     cssEase: "linear",
-    slidesPerRow: 2,
+    slidesPerRow: slidesPerRow,
     speed: 500,
     nextArrow: <SampleNextArrow />,
     prevArrow: <SamplePrevArrow />,
+    centerMode: isMobile,
+    centerPadding: "15px",
   };
+
   return (
     <React.Fragment>
       <Slider {...settings}>{renderFilmItem()}</Slider>
