@@ -1,12 +1,18 @@
 import React from "react";
-import { Carousel, Tabs } from "antd";
+import { Tabs } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "Redux/store";
 import { GET_ALL_BANNER } from "Redux/constant/BannerConstants";
-import FilmList from "Pages/Film";
+import LoadingNew from "Components/LoadingNew";
+
 type TabPosition = "left";
 
-export const Home: React.FC = () => {
+const LazyCarousel = React.lazy(() =>
+  import("antd").then((module) => ({ default: module.Carousel }))
+);
+const LazyFilmList = React.lazy(() => import("Pages/Film"));
+
+const Home: React.FC = () => {
   const Banner = useSelector((state: RootState) => state.BannerSaga.arrBanner);
 
   const [tabPosition] = React.useState<TabPosition>("left");
@@ -63,25 +69,27 @@ export const Home: React.FC = () => {
 
   return (
     <main className="w-screen">
-      <div className="carousel">
-        <Carousel autoplay responsive={responsiveSettings} dots={false}>
-          {renderCarousel()}
-        </Carousel>
-      </div>
-      <FilmList />
-      <>
-        <Tabs
-          tabPosition={tabPosition}
-          items={new Array(3).fill(null).map((_, i) => {
-            const id = String(i + 1);
-            return {
-              label: `Tab ${id}`,
-              key: id,
-              children: `Content of Tab ${id}`,
-            };
-          })}
-        />
-      </>
+      <React.Suspense fallback={<LoadingNew />}>
+        <div className="carousel">
+          <LazyCarousel autoplay responsive={responsiveSettings} dots={false}>
+            {renderCarousel()}
+          </LazyCarousel>
+        </div>
+        <LazyFilmList />
+        <>
+          <Tabs
+            tabPosition={tabPosition}
+            items={new Array(3).fill(null).map((_, i) => {
+              const id = String(i + 1);
+              return {
+                label: `Tab ${id}`,
+                key: id,
+                children: `Content of Tab ${id}`,
+              };
+            })}
+          />
+        </>
+      </React.Suspense>
     </main>
   );
 };
