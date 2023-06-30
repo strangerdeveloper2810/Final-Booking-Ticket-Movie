@@ -23,17 +23,17 @@ const Home: React.FC = () => {
 
   const dispatch: AppDispatch = useDispatch();
 
-  const getBannerSaga = () => {
+  const getBannerSaga = React.useCallback(() => {
     dispatch({
       type: GET_ALL_BANNER,
     });
-  };
+  }, [dispatch]);
 
-  const getListCinemaSaga = () => {
+  const getListCinemaSaga = React.useCallback(() => {
     dispatch({
       type: GET_ALL_CINEMA,
     });
-  };
+  }, [dispatch]);
 
   React.useEffect(() => {
     if (Banner.length === 0) {
@@ -46,7 +46,7 @@ const Home: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const renderCarousel = () => {
+  const renderCarousel = React.useCallback(() => {
     return Banner.map((banner) => {
       return (
         <div className="banner" key={banner.maBanner}>
@@ -56,9 +56,9 @@ const Home: React.FC = () => {
         </div>
       );
     });
-  };
+  }, [Banner]);
 
-  const renderCinema = () => {
+  const renderCinema = React.useCallback(() => {
     return ListCinema.map((cinemaSystem, index) => (
       <Tabs tabPosition={tabPosition}>
         <TabPane
@@ -74,7 +74,7 @@ const Home: React.FC = () => {
         ></TabPane>
       </Tabs>
     ));
-  };
+  }, [ListCinema, tabPosition]);
 
   const responsiveSettings = [
     {
