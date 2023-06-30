@@ -16,11 +16,11 @@ const FilmList: React.FC = () => {
   );
   const dispatch = useDispatch<AppDispatch>();
 
-  const getFilmSaga = () => {
+  const getFilmSaga = React.useCallback(() => {
     dispatch({
       type: GET_ALL_FILM,
     });
-  };
+  }, [dispatch]);
 
   React.useEffect(() => {
     if (filmList.length === 0) {

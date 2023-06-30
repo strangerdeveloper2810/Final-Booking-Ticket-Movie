@@ -7,9 +7,10 @@ interface FilmItemType {
 
 const FilmItem: React.FC<FilmItemType> = ({ filmItem }: FilmItemType) => {
   const navigate = useNavigate();
-  const handleClick = () => {
+
+  const handleClick = React.useCallback(() => {
     navigate(`/detail/${filmItem.maPhim}`);
-  };
+  }, [navigate, filmItem.maPhim]);
 
   return (
     <div className="w-10/12 ml-5 mt-10 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
