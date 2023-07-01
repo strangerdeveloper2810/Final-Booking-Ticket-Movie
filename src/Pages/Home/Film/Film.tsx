@@ -4,13 +4,13 @@ import Slider from "react-slick";
 import { useMediaQuery } from "react-responsive";
 import { RootState, AppDispatch } from "Redux/store";
 import { GET_ALL_FILM } from "Redux/constant/FilmConstants";
-import FilmItem from "./FilmItem";
+import FilmItem from "./FilmItem/FilmItem";
 interface ButtonSlick {
   className?: string;
   style?: React.CSSProperties;
   onClick?: React.MouseEventHandler<HTMLDivElement>;
 }
-const FilmList: React.FC = () => {
+const Film: React.FC = () => {
   const filmList = useSelector(
     (state: RootState) => state.FlimListSaga.arrFilm
   );
@@ -26,8 +26,7 @@ const FilmList: React.FC = () => {
     if (filmList.length === 0) {
       getFilmSaga();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [filmList.length, getFilmSaga]);
 
   const renderFilmItem = React.useCallback(() => {
     return filmList.map((film) => {
@@ -87,4 +86,4 @@ const FilmList: React.FC = () => {
   );
 };
 
-export default React.memo(FilmList);
+export default Film;

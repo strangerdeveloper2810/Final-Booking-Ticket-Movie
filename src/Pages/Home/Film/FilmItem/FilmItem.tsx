@@ -95,4 +95,4 @@ const FilmItem: React.FC<FilmItemType> = ({ filmItem }: FilmItemType) => {
   );
 };
 
-export default React.memo(FilmItem);
+export default FilmItem;
