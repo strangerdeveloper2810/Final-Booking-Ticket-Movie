@@ -7,7 +7,7 @@ import { LoadingSagaAction } from "Redux/reducer/LoadingReducer";
 export function* getAllFilmSaga(): SagaIterator {
   try {
     yield put(LoadingSagaAction.setLoading(true));
-    yield delay(2000);
+    yield delay(1500);
     let { data } = yield call(() => {
       return http.get(`/api/QuanLyPhim/LayDanhSachPhim?maNhom=${GROUP_ID}`);
     });
