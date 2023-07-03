@@ -10,7 +10,7 @@ export function* getAllBannerApi(action: PayloadAction<Banner[]>) {
   try {
     yield put(LoadingSagaAction.setLoading(true));
 
-    yield delay(1500);
+    yield delay(100);
 
     let { data } = yield call(() => {
       return http.get(`/api/QuanLyPhim/LayDanhSachBanner`);

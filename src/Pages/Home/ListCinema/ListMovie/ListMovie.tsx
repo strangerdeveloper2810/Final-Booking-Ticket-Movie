@@ -4,7 +4,7 @@ import {
   LstCumRap,
   LstLichChieuTheoPhim,
 } from "Redux/types/ListCinemaType";
-import { formatScheduleMovie } from "util/index";
+import { formatScheduleMovie } from "util/common";
 
 type ListMovieType = {
   cinema: LstCumRap;

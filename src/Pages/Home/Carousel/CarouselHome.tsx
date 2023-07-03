@@ -20,7 +20,7 @@ const CarouselHome: React.FC = () => {
     }
   }, [Banner.length, getBannerSaga]);
 
-  const renderCarousel = React.useCallback(() => {
+  const renderCarousel = React.useMemo(() => {
     return Banner.map((banner) => {
       return (
         <div className="banner" key={banner.maBanner}>
@@ -58,7 +58,7 @@ const CarouselHome: React.FC = () => {
   return (
     <div className="carousel">
       <Carousel autoplay responsive={responsiveSettings} dots={false}>
-        {renderCarousel()}
+        {renderCarousel}
       </Carousel>
     </div>
   );
