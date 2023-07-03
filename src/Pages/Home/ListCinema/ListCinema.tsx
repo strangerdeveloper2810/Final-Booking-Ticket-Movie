@@ -2,12 +2,12 @@ import React from "react";
 import { Tabs } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "Redux/store";
+import ListMovie from "./ListMovie";
 import { GET_ALL_CINEMA } from "Redux/constant/CinemaConstants";
 import {
   ListCinema as ListCinemaType,
   LstCumRap,
 } from "Redux/types/ListCinemaType";
-import ListMovie from "./ListMovie";
 
 type TabPosition = "left";
 
@@ -74,7 +74,7 @@ const ListCinema: React.FC = () => {
       };
       return tab;
     });
-  }, [listCinema, tabPosition]);
+  }, [listCinema, tabPosition, renderMovieByCinema]);
 
   return <Tabs tabPosition={tabPosition} items={renderCinemaTabs()} />;
 };
