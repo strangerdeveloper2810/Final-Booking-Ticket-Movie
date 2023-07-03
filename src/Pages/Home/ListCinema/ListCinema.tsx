@@ -7,6 +7,7 @@ import {
   ListCinema as ListCinemaType,
   LstCumRap,
 } from "Redux/types/ListCinemaType";
+import ListMovie from "./ListMovie";
 
 type TabPosition = "left";
 
@@ -29,6 +30,10 @@ const ListCinema: React.FC = () => {
     }
   }, [listCinema.length, getListCinemaSaga]);
 
+  const renderMovieByCinema = React.useCallback((cinema: LstCumRap) => {
+    return <ListMovie cinema={cinema} />;
+  }, []);
+
   const renderCinemaTabs = React.useCallback(() => {
     return listCinema.map((cinemaSystem: ListCinemaType) => {
       const tab = {
@@ -42,31 +47,34 @@ const ListCinema: React.FC = () => {
         ),
         key: cinemaSystem.maHeThongRap,
         children: (
-          <>
-            {/* {cinemaSystem.lstCumRap.map((clusterCinema:LstCumRap) => {
-              const clusterCinemaTab = {
-                label: (
-                  <>
-                    <img
-                      src={clusterCinema.hinhAnh}
-                      alt={cinemaSystem.tenHeThongRap}
-                      className="rounded-full"
-                      width={50}
-                    />
-                    <div>{clusterCinema.tenCumRap}</div>
-                  </>
-                ),
-                key: clusterCinema.maCumRap,
-              };
-              return clusterCinemaTab;
-            })} */}
-            Hello
-          </>
+          <Tabs
+            tabPosition={tabPosition}
+            items={cinemaSystem.lstCumRap.map(
+              (clusterCinema: LstCumRap, index: number) => {
+                const clusterCinemaTab = {
+                  label: (
+                    <>
+                      <img
+                        src={cinemaSystem.logo}
+                        alt={clusterCinema.tenCumRap}
+                        className="rounded-full"
+                        width={50}
+                      />
+                      <div>{clusterCinema.tenCumRap}</div>
+                    </>
+                  ),
+                  key: `${index + 1}`,
+                  children: renderMovieByCinema(clusterCinema),
+                };
+                return clusterCinemaTab;
+              }
+            )}
+          />
         ),
       };
       return tab;
     });
-  }, [listCinema]);
+  }, [listCinema, tabPosition]);
 
   return <Tabs tabPosition={tabPosition} items={renderCinemaTabs()} />;
 };
