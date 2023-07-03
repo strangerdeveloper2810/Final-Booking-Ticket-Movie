@@ -2,18 +2,18 @@ import React from "react";
 import { Tabs } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispatch, RootState } from "Redux/store";
+import ListMovie from "./ListMovie";
 import { GET_ALL_CINEMA } from "Redux/constant/CinemaConstants";
+import {
+  ListCinema as ListCinemaType,
+  LstCumRap,
+} from "Redux/types/ListCinemaType";
 
 type TabPosition = "left";
 
-interface Tab {
-  label: React.ReactNode;
-  key: string;
-}
-
 const ListCinema: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
-  const ListCinema = useSelector(
+  const listCinema = useSelector(
     (state: RootState) => state.ListCinema.arrListCinema
   );
   const [tabPosition] = React.useState<TabPosition>("left");
@@ -25,14 +25,18 @@ const ListCinema: React.FC = () => {
   }, [dispatch]);
 
   React.useEffect(() => {
-    if (ListCinema.length === 0) {
+    if (listCinema.length === 0) {
       getListCinemaSaga();
     }
-  }, [ListCinema.length, getListCinemaSaga]);
+  }, [listCinema.length, getListCinemaSaga]);
+
+  const renderMovieByCinema = React.useCallback((cinema: LstCumRap) => {
+    return <ListMovie cinema={cinema} />;
+  }, []);
 
   const renderCinemaTabs = React.useCallback(() => {
-    return ListCinema.map((cinemaSystem) => {
-      const tab: Tab = {
+    return listCinema.map((cinemaSystem: ListCinemaType) => {
+      const tab = {
         label: (
           <img
             src={cinemaSystem.logo}
@@ -42,10 +46,35 @@ const ListCinema: React.FC = () => {
           />
         ),
         key: cinemaSystem.maHeThongRap,
+        children: (
+          <Tabs
+            tabPosition={tabPosition}
+            items={cinemaSystem.lstCumRap.map(
+              (clusterCinema: LstCumRap, index: number) => {
+                const clusterCinemaTab = {
+                  label: (
+                    <>
+                      <img
+                        src={cinemaSystem.logo}
+                        alt={clusterCinema.tenCumRap}
+                        className="rounded-full"
+                        width={50}
+                      />
+                      <div>{clusterCinema.tenCumRap}</div>
+                    </>
+                  ),
+                  key: `${index + 1}`,
+                  children: renderMovieByCinema(clusterCinema),
+                };
+                return clusterCinemaTab;
+              }
+            )}
+          />
+        ),
       };
       return tab;
     });
-  }, [ListCinema]);
+  }, [listCinema, tabPosition, renderMovieByCinema]);
 
   return <Tabs tabPosition={tabPosition} items={renderCinemaTabs()} />;
 };

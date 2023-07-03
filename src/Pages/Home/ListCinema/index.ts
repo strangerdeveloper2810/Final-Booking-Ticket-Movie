@@ -1,3 +1,3 @@
-import ListCinema from "./ListCinema";
+import ListCinemaHome from "./ListCinema";
 
-export default ListCinema;
+export default ListCinemaHome;
