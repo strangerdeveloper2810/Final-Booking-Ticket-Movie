@@ -1,7 +1,3 @@
-export const USER_LOGIN_API = "USER_LOGIN_API";
-
-export const USER_REGISTER_API = "USER_REGISTER_API";
-
 export interface UserLogin {
   taiKhoan: string;
   matKhau: string;

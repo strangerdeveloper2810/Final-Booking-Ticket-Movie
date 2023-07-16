@@ -86,4 +86,4 @@ const Film: React.FC = () => {
   );
 };
 
-export default Film;
+export default React.memo(Film);

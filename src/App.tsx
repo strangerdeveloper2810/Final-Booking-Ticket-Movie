@@ -7,11 +7,11 @@ import Register from "Pages/Register";
 import HomeTemplate from "Template/HomeTemplate";
 import Detail from "Pages/Details";
 import ErrorTemplate from "Template/ErrorTemplate";
-
+import { ToastContainer } from "react-toastify";
 const App: React.FC = () => {
   return (
-    <div className="w-screen">
-      <React.Suspense fallback={<LoadingNew />}>
+    <React.Suspense fallback={<LoadingNew />}>
+      <div className="w-screen">
         <Routes>
           <Route path="" element={<HomeTemplate />}>
             <Route index element={<Home />} />
@@ -24,8 +24,9 @@ const App: React.FC = () => {
           <Route path="404" element={<ErrorTemplate />} />
           <Route path="*" element={<Navigate to={"/404"} replace />} />
         </Routes>
-      </React.Suspense>
-    </div>
+        <ToastContainer />
+      </div>
+    </React.Suspense>
   );
 };
 

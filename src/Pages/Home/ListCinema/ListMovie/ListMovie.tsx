@@ -34,4 +34,4 @@ const ListMovie: React.FC<ListMovieType> = ({ cinema }) => {
   );
 };
 
-export default ListMovie;
+export default React.memo(ListMovie);
