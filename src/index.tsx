@@ -8,22 +8,23 @@ import "antd/dist/reset.css";
 // CSS for project
 import "assets/scss/style.scss";
 // React Router Dom
-import { BrowserRouter } from "react-router-dom";
+import { unstable_HistoryRouter as HistoryBrowser } from "react-router-dom";
 // import slick carousel
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 // Set up Redux Toolkit
 import { Provider } from "react-redux";
 import { store } from "Redux/store";
+import { history } from "util/setting";
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <BrowserRouter>
+      <HistoryBrowser history={history}>
         <App />
-      </BrowserRouter>
+      </HistoryBrowser>
     </Provider>
   </React.StrictMode>
 );

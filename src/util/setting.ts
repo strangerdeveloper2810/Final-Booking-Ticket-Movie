@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { createBrowserHistory } from "history";
 // export const DOMAIN = "https://movieapi.cyberlearn.vn";
 export const DOMAIN: string = "https://movienew.cybersoft.edu.vn";
 export const TOKENCYBERSOFT: string =
@@ -7,6 +7,7 @@ export const TOKENCYBERSOFT: string =
 export const ACCESS_TOKEN: string = "accessToken";
 export const USER_LOGIN: string = "userLogin";
 export const GROUP_ID = "GP00";
+export const history = createBrowserHistory();
 
 //Cấu hình các hàm get set storage cũng như cookie
 
@@ -120,15 +121,14 @@ http.interceptors.response.use(
     return response;
   },
   (error) => {
-    let navigate = useNavigate();
     //Hàm cấu hình cho tất cả lỗi nhận về
     if (error.response?.status === 400 || error.response?.status === 404) {
       //Chuyển hướng trang về trang chủ
-      navigate("/");
+      history.push("/");
     }
 
     if (error.response?.status === 401 || error.response?.status === 403) {
-      navigate("/login");
+      history.push("/login");
     }
 
     return Promise.reject(error);

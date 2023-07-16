@@ -7,7 +7,7 @@ import Register from "Pages/Register";
 import HomeTemplate from "Template/HomeTemplate";
 import Detail from "Pages/Details";
 import ErrorTemplate from "Template/ErrorTemplate";
-
+import { ToastContainer } from "react-toastify";
 const App: React.FC = () => {
   return (
     <React.Suspense fallback={<LoadingNew />}>
@@ -24,6 +24,7 @@ const App: React.FC = () => {
           <Route path="404" element={<ErrorTemplate />} />
           <Route path="*" element={<Navigate to={"/404"} replace />} />
         </Routes>
+        <ToastContainer />
       </div>
     </React.Suspense>
   );

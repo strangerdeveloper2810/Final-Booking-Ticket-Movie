@@ -71,7 +71,7 @@ const Header: React.FC = () => {
 
                 <li>
                   <NavLink to={"/login"} className="block py-2 pl-3 pr-4 ">
-                    Sign Up
+                    Login
                   </NavLink>
                 </li>
 
@@ -80,7 +80,7 @@ const Header: React.FC = () => {
                     to={"/register"}
                     className="block py-2 pl-3 pr-4"
                   >
-                    Sign In
+                    Register
                   </NavLink>
                 </li>
               </ul>

@@ -2,93 +2,73 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 
 export const Login: React.FC = () => {
+  const idAccount = React.useId();
+  const idPassword = React.useId();
   return (
-    <div className="h-screen md:flex">
-      <div className="relative overflow-hidden md:flex w-1/2 bg-gradient-to-tr from-blue-800 to-purple-700 i justify-around items-center hidden">
-        <div>
-          <h1 className="text-white font-bold text-4xl font-sans">GoFinance</h1>
-          <p className="text-white mt-1">
-            The most popular peer to peer lending at SEA
-          </p>
-          <button
-            type="submit"
-            className="block w-28 bg-white text-indigo-800 mt-4 py-2 rounded-2xl font-bold mb-2"
-          >
-            Read More
-          </button>
-        </div>
-
-        <div className="absolute -bottom-32 -left-40 w-80 h-80 border-4 rounded-full border-opacity-30 border-t-8" />
-        <div className="absolute -bottom-40 -left-20 w-80 h-80 border-4 rounded-full border-opacity-30 border-t-8" />
-        <div className="absolute -top-40 -right-0 w-80 h-80 border-4 rounded-full border-opacity-30 border-t-8" />
-        <div className="absolute -top-20 -right-20 w-80 h-80 border-4 rounded-full border-opacity-30 border-t-8" />
+    <section className="flex flex-col md:flex-row h-screen items-center">
+      <div className="bg-indigo-600 hidden lg:block w-full md:w-1/2 xl:w-2/3 h-screen">
+        <img
+          src="https://source.unsplash.com/random"
+          alt="background"
+          className="w-full h-full object-cover"
+        />
       </div>
-      <div className="flex md:w-1/2 justify-center py-10 items-center bg-white">
-        <form className="bg-white">
-          <h1 className="text-gray-800 font-bold text-2xl mb-1">
-            Hello Again!
+      <div
+        className="bg-white w-full md:max-w-md lg:max-w-full md:mx-0 md:w-1/2 xl:w-1/3 h-screen px-6 lg:px-16 xl:px-12
+  flex items-center justify-center"
+      >
+        <div className="w-full h-100">
+          <h1 className="text-xl md:text-2xl font-bold leading-tight mt-12">
+            Log in to your account
           </h1>
-          <p className="text-sm font-normal text-gray-600 mb-7">Welcome Back</p>
-
-          <div className="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 text-gray-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
+          <form className="mt-6">
+            <div>
+              <label htmlFor={idAccount} className="block text-gray-700">
+                Your account
+              </label>
+              <input
+                type="text"
+                placeholder="Enter your account"
+                id={idAccount}
+                className="w-full px-4 py-3 rounded-lg bg-gray-200 mt-2 border focus:border-blue-500 focus:bg-white focus:outline-none"
+                required
               />
-            </svg>
-            <input
-              className="pl-2 outline-none border-none"
-              type="text"
-              placeholder="Email Address"
-            />
-          </div>
-
-          <div className="flex items-center border-2 py-2 px-3 rounded-2xl">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 text-gray-400"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                clipRule="evenodd"
+            </div>
+            <div className="mt-4">
+              <label htmlFor={idPassword} className="block text-gray-700">
+                Password
+              </label>
+              <input
+                type="password"
+                placeholder="Enter Password"
+                id={idPassword}
+                className="w-full px-4 py-3 rounded-lg bg-gray-200 mt-2 border focus:border-blue-500
+          focus:bg-white focus:outline-none"
+                required
               />
-            </svg>
-            <input
-              className="pl-2 outline-none border-none"
-              type="text"
-              placeholder="Password"
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="block w-full bg-indigo-600 mt-4 py-2 rounded-2xl text-white font-semibold mb-2"
-          >
-            Login
-          </button>
-          <button className="relative inline-flex items-center justify-center overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-green-400 to-blue-600 group-hover:from-green-400 group-hover:to-blue-600 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-green-200 dark:focus:ring-green-800">
-            <NavLink
-              to={"/register"}
-              className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0"
+            </div>
+            <button
+              type="submit"
+              className="w-full block text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 mt-6"
             >
-              Sign In
+              Log In
+            </button>
+          </form>
+          <hr className="my-6 border-gray-300 w-full" />
+
+          <p className="mt-8">
+            Need an account?{" "}
+            <NavLink to="/register">
+              <button className="relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-teal-300 to-lime-300 group-hover:from-teal-300 group-hover:to-lime-300 dark:text-white dark:hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-lime-200 dark:focus:ring-lime-800">
+                <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
+                  Create account
+                </span>
+              </button>
             </NavLink>
-          </button>
-        </form>
+          </p>
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 
