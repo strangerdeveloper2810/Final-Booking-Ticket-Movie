@@ -1,11 +1,58 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
+import { RootState } from "Redux/store";
+import { settings, ACCESS_TOKEN, USER_LOGIN } from "../../util/setting";
 const Header: React.FC = () => {
   const [isMenuOpen, setMenuOpen] = React.useState<boolean>(false);
 
   const toggleMenu = (): void => {
     setMenuOpen(!isMenuOpen);
   };
+
+  const { userLogin } = useSelector((state: RootState) => state.UserSaga);
+
+  const handleLogOut = React.useCallback(() => {
+    settings.eraseCookie(ACCESS_TOKEN);
+    settings.eraseCookie(USER_LOGIN);
+
+    settings.clearStorage(ACCESS_TOKEN);
+    settings.clearStorage(USER_LOGIN);
+
+    window.location.reload();
+  }, []);
+
+  const renderLoginUI = React.useMemo(() => {
+    return userLogin ? (
+      <>
+        <div>
+          <p className="py-6 pr-4 text-lg">Hello {userLogin.hoTen}</p>
+        </div>
+        <div className="relative top-5">
+          <button
+            className="text-gray-900 bg-gradient-to-r from-red-200 via-red-300 to-yellow-200 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-red-100 dark:focus:ring-red-400 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2"
+            onClick={handleLogOut}
+          >
+            Logout
+          </button>
+        </div>
+      </>
+    ) : (
+      <>
+        <li>
+          <NavLink to={"/login"} className="block py-2 pl-3 pr-4 ">
+            Login
+          </NavLink>
+        </li>
+
+        <li>
+          <NavLink to={"/register"} className="block py-2 pl-3 pr-4">
+            Register
+          </NavLink>
+        </li>
+      </>
+    );
+  }, [userLogin, handleLogOut]);
   return (
     <React.Fragment>
       <header>
@@ -68,21 +115,7 @@ const Header: React.FC = () => {
                     New
                   </NavLink>
                 </li>
-
-                <li>
-                  <NavLink to={"/login"} className="block py-2 pl-3 pr-4 ">
-                    Login
-                  </NavLink>
-                </li>
-
-                <li>
-                  <NavLink
-                    to={"/register"}
-                    className="block py-2 pl-3 pr-4"
-                  >
-                    Register
-                  </NavLink>
-                </li>
+                {renderLoginUI}
               </ul>
             </div>
           </div>

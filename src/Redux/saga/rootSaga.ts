@@ -6,8 +6,8 @@ import * as cinema from "./CinemaSaga/CinemaSaga";
 export function* rootSaga() {
   yield all([
     banner.actionGetAllBanner(),
-    user.actionSignupSaga(),
-    user.actionSigninSaga(),
+    user.actionRegisterSaga(),
+    user.actionLoginSaga(),
     film.actionGetAllFilm(),
     cinema.actionGetAllCinema(),
   ]);

@@ -1,9 +1,32 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
-
+import { useFormik } from "formik";
+import { AppDispatch } from "Redux/store";
+import { USER_LOGIN_API } from "Redux/constant/UserConstants";
+import { UserLogin } from "Redux/types/UserType";
+import { validationSchema } from "./Validation/ValidationSchema";
 export const Login: React.FC = () => {
-  const idAccount = React.useId();
-  const idPassword = React.useId();
+  const dispatch = useDispatch<AppDispatch>();
+
+  const handleSubmitLogin = React.useCallback(
+    (values: UserLogin) => {
+      dispatch({
+        type: USER_LOGIN_API,
+        payload: values,
+      });
+    },
+    [dispatch]
+  );
+
+  const formikBag = useFormik<UserLogin>({
+    initialValues: {
+      taiKhoan: "",
+      matKhau: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: handleSubmitLogin,
+  });
   return (
     <section className="flex flex-col md:flex-row h-screen items-center">
       <div className="bg-indigo-600 hidden lg:block w-full md:w-1/2 xl:w-2/3 h-screen">
@@ -21,31 +44,43 @@ export const Login: React.FC = () => {
           <h1 className="text-xl md:text-2xl font-bold leading-tight mt-12">
             Log in to your account
           </h1>
-          <form className="mt-6">
+          <form className="mt-6" onSubmit={formikBag.handleSubmit}>
             <div>
-              <label htmlFor={idAccount} className="block text-gray-700">
-                Your account
-              </label>
+              <label className="block text-gray-700">Your account</label>
               <input
                 type="text"
                 placeholder="Enter your account"
-                id={idAccount}
                 className="w-full px-4 py-3 rounded-lg bg-gray-200 mt-2 border focus:border-blue-500 focus:bg-white focus:outline-none"
                 required
+                name="taiKhoan"
+                value={formikBag.values.taiKhoan}
+                onBlur={formikBag.handleBlur}
+                onChange={formikBag.handleChange}
               />
+              {formikBag.errors.taiKhoan && (
+                <div className="text-red-700 font-semibold">
+                  {formikBag.errors.taiKhoan}
+                </div>
+              )}
             </div>
             <div className="mt-4">
-              <label htmlFor={idPassword} className="block text-gray-700">
-                Password
-              </label>
+              <label className="block text-gray-700">Password</label>
               <input
                 type="password"
                 placeholder="Enter Password"
-                id={idPassword}
                 className="w-full px-4 py-3 rounded-lg bg-gray-200 mt-2 border focus:border-blue-500
           focus:bg-white focus:outline-none"
                 required
+                name="matKhau"
+                value={formikBag.values.matKhau}
+                onBlur={formikBag.handleBlur}
+                onChange={formikBag.handleChange}
               />
+              {formikBag.errors.matKhau && (
+                <div className="text-red-700 font-semibold">
+                  {formikBag.errors.matKhau}
+                </div>
+              )}
             </div>
             <button
               type="submit"
