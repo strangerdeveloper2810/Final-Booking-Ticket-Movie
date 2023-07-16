@@ -5,6 +5,7 @@ import BannerReducerSaga from "./reducer/BannerSagaReducer";
 import FilmListSagaReducer from "./reducer/FilmListSagaReducer";
 import LoadingReducer from "./reducer/LoadingReducer";
 import ListCinemaSagaReducer from "./reducer/ListCinemaSagaReducer";
+import UserSagaReducer from "./reducer/UserSagaReducer";
 const sagaMiddleware = createSagaMiddleware();
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     FlimListSaga: FilmListSagaReducer,
     Loading: LoadingReducer,
     ListCinema: ListCinemaSagaReducer,
+    UserSaga: UserSagaReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(sagaMiddleware),
