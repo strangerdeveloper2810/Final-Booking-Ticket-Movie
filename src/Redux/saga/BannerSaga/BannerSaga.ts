@@ -1,17 +1,13 @@
-import { call, takeLatest, put, delay } from "redux-saga/effects";
-import { Banner } from "Redux/types/BannerType";
-import { PayloadAction } from "@reduxjs/toolkit";
+import { SagaIterator } from "redux-saga";
+import { call, takeLatest, put } from "redux-saga/effects";
 import { http } from "util/setting";
 import { GET_ALL_BANNER } from "../../constant/BannerConstants";
 import { BannerSagaAction } from "Redux/reducer/BannerSagaReducer";
 import { LoadingSagaAction } from "Redux/reducer/LoadingReducer";
 
-export function* getAllBannerApi(action: PayloadAction<Banner[]>) {
+export function* getAllBannerApi(): SagaIterator {
   try {
     yield put(LoadingSagaAction.setLoading(true));
-
-    yield delay(100);
-
     let { data } = yield call(() => {
       return http.get(`/api/QuanLyPhim/LayDanhSachBanner`);
     });

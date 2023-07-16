@@ -6,7 +6,7 @@ import { GET_ALL_BANNER } from "Redux/constant/BannerConstants";
 const CarouselHome: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
 
-  const Banner = useSelector((state: RootState) => state.BannerSaga.arrBanner);
+  const { arrBanner } = useSelector((state: RootState) => state.BannerSaga);
 
   const getBannerSaga = React.useCallback(() => {
     dispatch({
@@ -15,13 +15,13 @@ const CarouselHome: React.FC = () => {
   }, [dispatch]);
 
   React.useEffect(() => {
-    if (Banner.length === 0) {
+    if (arrBanner.length === 0) {
       getBannerSaga();
     }
-  }, [Banner.length, getBannerSaga]);
+  }, [arrBanner.length, getBannerSaga]);
 
   const renderCarousel = React.useMemo(() => {
-    return Banner.map((banner) => {
+    return arrBanner.map((banner) => {
       return (
         <div className="banner" key={banner.maBanner}>
           <div className="content-style">
@@ -30,7 +30,7 @@ const CarouselHome: React.FC = () => {
         </div>
       );
     });
-  }, [Banner]);
+  }, [arrBanner]);
 
   const responsiveSettings = [
     {
@@ -64,4 +64,4 @@ const CarouselHome: React.FC = () => {
   );
 };
 
-export default CarouselHome;
+export default React.memo(CarouselHome);

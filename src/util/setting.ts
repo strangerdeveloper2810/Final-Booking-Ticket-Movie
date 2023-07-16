@@ -1,10 +1,11 @@
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-export const DOMAIN = "https://movieapi.cyberlearn.vn";
-
+// export const DOMAIN = "https://movieapi.cyberlearn.vn";
+export const DOMAIN: string = "https://movienew.cybersoft.edu.vn";
+export const TOKENCYBERSOFT: string =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZW5Mb3AiOiJCb290Y2FtcCA0MiIsIkhldEhhblN0cmluZyI6IjEwLzEwLzIwMjMiLCJIZXRIYW5UaW1lIjoiMTY5Njg5NjAwMDAwMCIsIm5iZiI6MTY2NzA2MjgwMCwiZXhwIjoxNjk3MDQzNjAwfQ.g_aUM-jnWQ1i_eCbjNfvNxudUdUPpfC36068g5o9Ung";
 export const ACCESS_TOKEN: string = "accessToken";
 export const USER_LOGIN: string = "userLogin";
-
 export const GROUP_ID = "GP00";
 
 //Cấu hình các hàm get set storage cũng như cookie
@@ -101,6 +102,7 @@ http.interceptors.request.use(
     config.headers = {
       ...config.headers,
       Authorization: "Bearer " + settings.getStore(ACCESS_TOKEN),
+      TOKENCYBERSOFT,
     };
 
     return config;

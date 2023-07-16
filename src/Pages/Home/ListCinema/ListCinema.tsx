@@ -79,4 +79,4 @@ const ListCinema: React.FC = () => {
   return <Tabs tabPosition={tabPosition} items={renderCinemaTabs()} />;
 };
 
-export default ListCinema;
+export default React.memo(ListCinema);
