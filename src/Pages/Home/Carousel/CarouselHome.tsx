@@ -3,10 +3,12 @@ import { useSelector, useDispatch } from "react-redux";
 import { Carousel } from "antd";
 import { RootState, AppDispatch } from "Redux/store";
 import { GET_ALL_BANNER } from "Redux/constant/BannerConstants";
+import SkeletonCarousel from "Components/SkeletonCarousel";
 const CarouselHome: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
 
   const { arrBanner } = useSelector((state: RootState) => state.BannerSaga);
+  const { isLoading } = useSelector((state: RootState) => state.Loading);
 
   const getBannerSaga = React.useCallback(() => {
     dispatch({
@@ -21,6 +23,9 @@ const CarouselHome: React.FC = () => {
   }, [arrBanner.length, getBannerSaga]);
 
   const renderCarousel = React.useMemo(() => {
+    if (isLoading) {
+      return <SkeletonCarousel />;
+    }
     return arrBanner.map((banner) => {
       return (
         <div className="banner" key={banner.maBanner}>
@@ -30,7 +35,7 @@ const CarouselHome: React.FC = () => {
         </div>
       );
     });
-  }, [arrBanner]);
+  }, [isLoading, arrBanner]);
 
   const responsiveSettings = [
     {
