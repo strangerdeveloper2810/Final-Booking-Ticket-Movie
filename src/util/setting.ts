@@ -1,7 +1,7 @@
 import axios from "axios";
 import { createBrowserHistory } from "history";
-// export const DOMAIN = "https://movieapi.cyberlearn.vn";
-export const DOMAIN: string = "https://movienew.cybersoft.edu.vn";
+export const DOMAIN = "https://movieapi.cyberlearn.vn";
+// export const DOMAIN: string = "https://movienew.cybersoft.edu.vn";
 export const TOKENCYBERSOFT: string =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZW5Mb3AiOiJOb2RlSlMgMzQiLCJIZXRIYW5TdHJpbmciOiIxMS8wNC8yMDI0IiwiSGV0SGFuVGltZSI6IjE3MTI3OTM2MDAwMDAiLCJuYmYiOjE2OTMwNjkyMDAsImV4cCI6MTcxMjk0MTIwMH0.dcAxAOtlLVw2muO5YfsiVtNNxI5pFOC3YUAx-VQvbPQ";
 export const ACCESS_TOKEN: string = "accessToken";
@@ -124,7 +124,7 @@ http.interceptors.response.use(
     //Hàm cấu hình cho tất cả lỗi nhận về
     if (error.response?.status === 400 || error.response?.status === 404) {
       //Chuyển hướng trang về trang chủ
-      history.push("/");
+      return;
     }
 
     if (error.response?.status === 401 || error.response?.status === 403) {

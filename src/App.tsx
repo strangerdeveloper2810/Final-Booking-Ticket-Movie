@@ -11,6 +11,7 @@ import { ToastContainer } from "react-toastify";
 const App: React.FC = () => {
   return (
     <React.Suspense fallback={<LoadingNew />}>
+      <ToastContainer />
       <div className="w-screen">
         <Routes>
           <Route path="" element={<HomeTemplate />}>
