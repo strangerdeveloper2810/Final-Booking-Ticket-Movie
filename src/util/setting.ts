@@ -6,7 +6,7 @@ export const TOKENCYBERSOFT: string =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZW5Mb3AiOiJOb2RlSlMgMzQiLCJIZXRIYW5TdHJpbmciOiIxMS8wNC8yMDI0IiwiSGV0SGFuVGltZSI6IjE3MTI3OTM2MDAwMDAiLCJuYmYiOjE2OTMwNjkyMDAsImV4cCI6MTcxMjk0MTIwMH0.dcAxAOtlLVw2muO5YfsiVtNNxI5pFOC3YUAx-VQvbPQ";
 export const ACCESS_TOKEN: string = "accessToken";
 export const USER_LOGIN: string = "userLogin";
-export const GROUP_ID = "GP00";
+export const GROUP_ID = "GP01";
 export const history = createBrowserHistory();
 
 //Cấu hình các hàm get set storage cũng như cookie
