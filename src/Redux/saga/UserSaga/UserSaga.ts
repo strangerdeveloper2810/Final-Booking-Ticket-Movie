@@ -25,12 +25,12 @@ export function* registerSaga(
 
     if (response.status === 200) {
       toast.success("Register Success");
-      history.push("/");
+      history.push("/login");
     } else {
       // Xử lý thông báo lỗi chi tiết hoặc các trường hợp lỗi khác
       console.log("Registration failed:", response.data);
     }
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
   } finally {
     yield put(LoadingSagaAction.setLoading(false));
@@ -60,6 +60,7 @@ export function* loginSaga(action: PayloadAction<UserLogin>): SagaIterator {
       console.log("Registration failed:", data.content);
     }
   } catch (error) {
+    toast.error("Tài khoản hoặc mật khẩu không đúng!");
     console.log(error);
   } finally {
     yield put(LoadingSagaAction.setLoading(false));

@@ -5,6 +5,7 @@ import { useMediaQuery } from "react-responsive";
 import { RootState, AppDispatch } from "Redux/store";
 import { GET_ALL_FILM } from "Redux/constant/FilmConstants";
 import FilmItem from "./FilmItem/FilmItem";
+import SkeletonCard from "Components/SkeletonCard";
 interface ButtonSlick {
   className?: string;
   style?: React.CSSProperties;
@@ -14,6 +15,8 @@ const Film: React.FC = () => {
   const filmList = useSelector(
     (state: RootState) => state.FlimListSaga.arrFilm
   );
+
+  const { isLoading } = useSelector((state: RootState) => state.Loading);
   const dispatch = useDispatch<AppDispatch>();
 
   const getFilmSaga = React.useCallback(() => {
@@ -29,10 +32,13 @@ const Film: React.FC = () => {
   }, [filmList.length, getFilmSaga]);
 
   const renderFilmItem = React.useCallback(() => {
+    if (isLoading) {
+      return <SkeletonCard />;
+    }
     return filmList.map((film) => {
       return <FilmItem filmItem={film} key={film.maPhim} />;
     });
-  }, [filmList]);
+  }, [isLoading, filmList]);
 
   const isMobile = useMediaQuery({ maxWidth: 640 });
   const slidesToShow = isMobile ? 1 : 4;
