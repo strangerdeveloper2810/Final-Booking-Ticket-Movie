@@ -7,7 +7,7 @@ export const TokenCybersoft: string =
 export const ACCESS_TOKEN: string = "accessToken";
 export const USER_LOGIN: string = "userLogin";
 export const GROUP_ID = "GP01";
-export const history = createBrowserHistory();
+export const history: any = createBrowserHistory();
 
 //Cấu hình các hàm get set storage cũng như cookie
 
