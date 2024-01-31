@@ -8,3 +8,7 @@ export const formatScheduleMovie = (dateString: string) => {
   return "";
 };
 
+export const sumTwoNumber = (numberOne: number, numberTwo: number): number => {
+  let result = numberOne + numberTwo;
+  return result;
+};
