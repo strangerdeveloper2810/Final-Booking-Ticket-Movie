@@ -1,9 +1,10 @@
 import React from "react";
-import { Tabs } from "antd";
 import { useSelector, useDispatch } from "react-redux";
+import _ from "lodash"
 import { AppDispatch, RootState } from "Redux/store";
-import ListMovie from "./ListMovie";
+import { Tabs } from "antd";
 import { GET_ALL_CINEMA } from "Redux/constant/CinemaConstants";
+import ListMovie from "./ListMovie";
 import {
   ListCinema as ListCinemaType,
   LstCumRap,
@@ -25,17 +26,17 @@ const ListCinema: React.FC = () => {
   }, [dispatch]);
 
   React.useEffect(() => {
-    if (listCinema.length === 0) {
+    if (_.isEmpty(listCinema)) {
       getListCinemaSaga();
     }
-  }, [listCinema.length, getListCinemaSaga]);
+  }, [_.isEmpty(listCinema), getListCinemaSaga]);
 
   const renderMovieByCinema = React.useCallback((cinema: LstCumRap) => {
     return <ListMovie cinema={cinema} />;
   }, []);
 
   const renderCinemaTabs = React.useCallback(() => {
-    return listCinema.map((cinemaSystem: ListCinemaType) => {
+    return _.map(listCinema, (cinemaSystem: ListCinemaType) => {
       const tab = {
         label: (
           <img

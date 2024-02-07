@@ -1,5 +1,6 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
+import _ from "lodash"
 import { Carousel } from "antd";
 import { RootState, AppDispatch } from "Redux/store";
 import { GET_ALL_BANNER } from "Redux/constant/BannerConstants";
@@ -17,24 +18,22 @@ const CarouselHome: React.FC = () => {
   }, [dispatch]);
 
   React.useEffect(() => {
-    if (arrBanner.length === 0) {
+    if (_.isEmpty(arrBanner)) {
       getBannerSaga();
     }
-  }, [arrBanner.length, getBannerSaga]);
+  }, [_.isEmpty(arrBanner), getBannerSaga]);
 
   const renderCarousel = React.useMemo(() => {
     if (isLoading) {
       return <SkeletonCarousel />;
     }
-    return arrBanner.map((banner) => {
-      return (
-        <div className="banner" key={banner.maBanner}>
+    return _.map(arrBanner, (banner)=> (
+      <div className="banner" key={banner.maBanner}>
           <div className="content-style">
             <img src={banner.hinhAnh} alt="banner" />
           </div>
         </div>
-      );
-    });
+    ));
   }, [isLoading, arrBanner]);
 
   const responsiveSettings = [

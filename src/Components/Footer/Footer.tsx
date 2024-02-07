@@ -2,11 +2,9 @@ import React from "react";
 
 const Footer: React.FC = () => {
   return (
-    <React.Fragment>
-      <footer className="flex justify-center text-2xl subpixel-antialiased">
-        Design By Stranger Developer ©.
-      </footer>
-    </React.Fragment>
+    <footer className="flex justify-center items-center content-center text-2xl subpixel-antialiased mt-auto">
+      Design By Stranger Developer ©.
+    </footer>
   );
 };
 
