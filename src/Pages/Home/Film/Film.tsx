@@ -1,5 +1,6 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
+import _ from "lodash"
 import Slider from "react-slick";
 import { useMediaQuery } from "react-responsive";
 import { RootState, AppDispatch } from "Redux/store";
@@ -26,7 +27,7 @@ const Film: React.FC = () => {
   }, [dispatch]);
 
   React.useEffect(() => {
-    if (filmList.length === 0) {
+    if (_.isEmpty(filmList)) {
       getFilmSaga();
     }
   }, [filmList.length, getFilmSaga]);

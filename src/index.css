@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+.container {
+  @apply flex flex-col h-screen;
+}
+
+.footer {
+  @apply mt-auto;
+}
