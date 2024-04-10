@@ -21,3 +21,4 @@ export function* getAllFilmSaga(): SagaIterator {
 export function* actionGetAllFilm() {
   yield takeLatest(GET_ALL_FILM, getAllFilmSaga);
 }
+

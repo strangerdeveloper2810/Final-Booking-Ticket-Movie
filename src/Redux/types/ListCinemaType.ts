@@ -31,3 +31,12 @@ export interface LstLichChieuTheoPhim {
   ngayChieuGioChieu: string;
   giaVe: number;
 }
+export interface FilmDetail{
+  dangChieu: boolean,
+  hinhAnh:string,
+  hot: boolean,
+  lstLichChieuTheoPhim: object[],
+  maPhim: number,
+  sapChieu: boolean,
+  tenPhim: string
+}

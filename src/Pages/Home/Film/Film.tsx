@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import _ from "lodash"
+import _ from "lodash";
 import Slider from "react-slick";
 import { useMediaQuery } from "react-responsive";
 import { RootState, AppDispatch } from "Redux/store";
@@ -16,7 +16,6 @@ const Film: React.FC = () => {
   const filmList = useSelector(
     (state: RootState) => state.FlimListSaga.arrFilm
   );
-
   const { isLoading } = useSelector((state: RootState) => state.Loading);
   const dispatch = useDispatch<AppDispatch>();
 
