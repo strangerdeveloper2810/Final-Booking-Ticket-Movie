@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@ant-design/icons": "^5.3.6",
     "@reduxjs/toolkit": "^1.9.2",
     "@testing-library/user-event": "^13.5.0",
     "@types/history": "^5.0.0",

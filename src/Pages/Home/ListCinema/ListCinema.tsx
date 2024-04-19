@@ -19,17 +19,13 @@ const ListCinema: React.FC = () => {
   );
   const [tabPosition] = React.useState<TabPosition>("left");
 
-  const getListCinemaSaga = React.useCallback(() => {
-    dispatch({
-      type: GET_ALL_CINEMA,
-    });
-  }, [dispatch]);
-
   React.useEffect(() => {
     if (_.isEmpty(listCinema)) {
-      getListCinemaSaga();
+      dispatch({
+        type: GET_ALL_CINEMA,
+      });
     }
-  }, [_.isEmpty(listCinema), getListCinemaSaga]);
+  }, [_.isEmpty(listCinema), dispatch]);
 
   const renderMovieByCinema = React.useCallback((cinema: LstCumRap) => {
     return <ListMovie cinema={cinema} />;
