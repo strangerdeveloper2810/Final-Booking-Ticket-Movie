@@ -1,13 +1,14 @@
 import _ from "lodash"
 import React from "react";
 import { useParams } from "react-router-dom";
-import { PlayCircleOutlined } from '@ant-design/icons';
-import { Card, Tabs } from 'antd';
+import { PlayCircleOutlined, StarFilled } from '@ant-design/icons';
+import { Card, Tabs, Tag } from 'antd';
+import { toast } from "react-toastify";
 import { FilmDetail } from "Redux/types/FilmDetail";
-import { ListCinema, LstCumRap } from "Redux/types/ListCinemaType"
+import { CalendarMovieTheaterFilm, HeThongRapChieu } from "Redux/types/CalendarFilmType";
 import filmDetailServiceInstance from "services/FlimDetailService";
 import managementServiceInstance from "services/ManagementMovieService";
-
+import { formatScheduleMovie } from "util/common";
 const { Meta } = Card;
 type TabPosition = "left";
 
@@ -16,32 +17,38 @@ const Detail: React.FC = () => {
 
   const [detailFilm, setDetailFilm] = React.useState<FilmDetail>();
 
-  const [calendarMovieTheaterFilm, setCalendarMovieTheaterFilm] = React.useState<ListCinema[]>([]);
+  const [calendarMovieTheaterFilm, setCalendarMovieTheaterFilm] = React.useState<CalendarMovieTheaterFilm>();
 
   const [tabPosition] = React.useState<TabPosition>("left");
 
   React.useEffect(() => {
-    if (id) {
-      fetchDetailFilm();
-      fetchCalendarFilm();
+    fetchData();
+  }, [id]);
+
+  const fetchData = async () => {
+    try {
+      if (id) {
+        const detailRes = await fetchDetailFilm();
+        if (_.get(detailRes, "status", 400)) {
+          setDetailFilm(_.get(detailRes, "data.content", {}));
+        }
+
+        const calendarRes = await fetchCalendarFilm();
+        if (_.get(calendarRes, "status", 400 || 500)) {
+          setCalendarMovieTheaterFilm(_.get(calendarRes, "data.content", []));
+        }
+      }
+    } catch (error) {
+      console.error(error);
     }
-  }, []);
+  };
 
   const fetchDetailFilm = async () => {
     const param = {
       maPhim: id
     }
 
-    const res = await filmDetailServiceInstance.getFilmDetail(param);
-
-    try {
-      if (_.get(res, "status", 400)) {
-        setDetailFilm(_.get(res, "data.content", {}))
-      }
-    }
-    catch (error) {
-      console.log("request failed", error);
-    }
+    return await filmDetailServiceInstance.getFilmDetail(param);
   }
 
   const fetchCalendarFilm = async () => {
@@ -49,124 +56,87 @@ const Detail: React.FC = () => {
       maPhim: id
     }
 
-    const res = await managementServiceInstance.getInfoCanlendarFilm(param);
-    try {
-      if (_.get(res, "status", 400 || 500)) {
-        setCalendarMovieTheaterFilm([
-          _.get(res, "data.content", [])
-        ])
-      }
-    }
-    catch (error) {
-      console.log("error", error);
-    }
+    return await managementServiceInstance.getInfoCanlendarFilm(param);
   }
 
-  // const renderCinemaTabs = React.useCallback(() => {
-  //   return _.map(calendarMovieTheaterFilm, (cinemaSystem: ListCinema) => {
-  //     const tab = {
-  //       label: (
-  //         <img
-  //           src={cinemaSystem.logo}
-  //           alt={cinemaSystem.tenHeThongRap}
-  //           className="rounded-full"
-  //           width={50}
-  //         />
-  //       ),
-  //       key: cinemaSystem.maHeThongRap,
-  //       children: (
-  //         <Tabs
-  //           tabPosition={tabPosition}
-  //           items={_.map(cinemaSystem.lstCumRap, (clusterCinema: LstCumRap, index: number) => {
-  //             const clusterCinemaTab = {
-  //               label: (
-  //                 <>
-  //                   <img
-  //                     src={cinemaSystem.logo}
-  //                     alt={clusterCinema.tenCumRap}
-  //                     className="rounded-full"
-  //                     width={50}
-  //                   />
-  //                   <div>{clusterCinema.tenCumRap}</div>
-  //                 </>
-  //               ),
-  //               key: `${index + 1}`,
-  //               // children: renderMovieByCinema(clusterCinema),
-  //             };
-  //             return clusterCinemaTab;
-  //           })}
-  //         />
-  //       ),
-  //     };
-  //     return tab;
-  //   });
-  // }, [calendarMovieTheaterFilm, tabPosition]);
-
-
-  const renderCinemaTabs = React.useCallback(() => {
-    return _.map(calendarMovieTheaterFilm, (cinemaSystem: ListCinema) => {
+  const renderFilmCalendar = () => {
+    const calendarSystem = _.get(calendarMovieTheaterFilm, "heThongRapChieu", [])
+    return _.map(calendarSystem, (calendar: HeThongRapChieu) => {
       const tab = {
         label: (
           <img
-            src={cinemaSystem.logo}
-            alt={cinemaSystem.tenHeThongRap}
+            src={_.get(calendar, "logo", "")}
+            alt={_.get(calendar, "maHeThongRap", "")}
             className="rounded-full"
             width={50}
           />
         ),
-        key: cinemaSystem.maHeThongRap,
+        key: calendar.maHeThongRap,
         children: (
           <Tabs
             tabPosition={tabPosition}
-            items={_.map(cinemaSystem.lstCumRap, (clusterCinema: LstCumRap, index: number) => {
+            items={_.map(_.get(calendar, "cumRapChieu", []), (theaterComplex, index) => {
               const clusterCinemaTab = {
                 label: (
                   <>
-                    <img
-                      src={cinemaSystem.logo}
-                      alt={clusterCinema.tenCumRap}
+                    <img src={_.get(theaterComplex, "hinhAnh", "")} alt={_.get(theaterComplex, "tenCumRap", "")}
                       className="rounded-full"
                       width={50}
                     />
-                    <div>{clusterCinema.tenCumRap}</div>
+                    <Tag color="green" className="mt-5">{_.get(theaterComplex, "tenCumRap", "")}</Tag>
                   </>
                 ),
                 key: `${index + 1}`,
-                // children: renderMovieByCinema(clusterCinema),
-              };
+                children: (
+                  <>
+                    {
+                      _.map(_.get(theaterComplex, "lichChieuPhim", []), (theater) => (
+                        <>
+                          <Tag color="magenta" >{_.get(theater, "tenRap", "")}</Tag>
+                          <Tag color="cyan">{formatScheduleMovie(_.get(theater, "ngayChieuGioChieu", ""))}</Tag>
+                        </>
+                      ))
+                    }
+                  </>
+                )
+              }
               return clusterCinemaTab;
             })}
           />
-        ),
+        )
       };
       return tab;
-    });
-  }, [calendarMovieTheaterFilm, tabPosition]);
-
-
-  console.log(calendarMovieTheaterFilm);
+    })
+  }
 
   return (
-    <div className="">
-      <Card
-        style={{ width: 300 }}
-        cover={
-          <img
-            alt={detailFilm?.tenPhim}
-            src={detailFilm?.hinhAnh}
-          />
-        }
-        actions={[
-          <PlayCircleOutlined key="play trailer" onClick={() => window.open(`${detailFilm?.trailer}`)} />
-        ]}
-      >
-        <Meta
-          title={detailFilm?.tenPhim}
-          description={detailFilm?.moTa}
-        />
-      </Card>
+    <div>
+      <div className="flex justify-center mt-6">
+        <Card
+          className="w-96 mb-10"
+          cover={
+            <img
+              alt={detailFilm?.tenPhim}
+              src={detailFilm?.hinhAnh}
+              className="h-fit"
+            />
+          }
+          actions={[
+            <PlayCircleOutlined key="play trailer" onClick={() => {
+              if (detailFilm?.trailer.includes("https://www.youtube.com/watch?")) {
+                window.open(`${detailFilm?.trailer}`)
+              }
+              return toast.error("Not Trailer")
+            }} />
+          ]}>
+          <Tag color="geekblue">Tên Phim: {_.get(detailFilm, "tenPhim", "")}</Tag>
 
-      <Tabs tabPosition={tabPosition} items={renderCinemaTabs()} />;
+        </Card>
+        <div>
+
+        </div>
+      </div>
+      <Tabs tabPosition={tabPosition} items={renderFilmCalendar()} />
     </div>
 
   );

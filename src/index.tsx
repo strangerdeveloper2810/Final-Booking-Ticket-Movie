@@ -8,7 +8,7 @@ import "antd/dist/reset.css";
 // CSS for project
 import "assets/scss/style.scss";
 // React Router Dom
-import { unstable_HistoryRouter as HistoryBrowser, BrowserRouter} from "react-router-dom";
+import { unstable_HistoryRouter as HistoryBrowser } from "react-router-dom";
 // import slick carousel
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
