@@ -36,9 +36,7 @@ const Film: React.FC = () => {
     if (isLoading) {
       return <SkeletonCard />;
     }
-    return filmList.map((film) => {
-      return <FilmItem filmItem={film} key={film.maPhim} />;
-    });
+    return _.map(filmList, (film) => (<FilmItem filmItem={film} key={film.maPhim} />))
   }, [isLoading, filmList]);
 
   const isMobile = useMediaQuery({ maxWidth: 640 });
