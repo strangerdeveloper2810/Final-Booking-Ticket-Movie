@@ -109,6 +109,14 @@ const Detail: React.FC = () => {
     })
   }
 
+  const playTrailerFilm = () => {
+    if (detailFilm?.trailer.includes("https://www.youtube.com/watch?")) {
+      window.open(`${detailFilm?.trailer}`)
+    } else {
+      toast.error("Not Trailer")
+    }
+  }
+
   return (
     <div>
       <div className="flex justify-center mt-6">
@@ -122,12 +130,7 @@ const Detail: React.FC = () => {
             />
           }
           actions={[
-            <PlayCircleOutlined key="play trailer" onClick={() => {
-              if (detailFilm?.trailer.includes("https://www.youtube.com/watch?")) {
-                window.open(`${detailFilm?.trailer}`)
-              }
-              return toast.error("Not Trailer")
-            }} />
+            <PlayCircleOutlined key="play trailer" onClick={playTrailerFilm} />
           ]}>
           <Tag color="geekblue">Tên Phim: {_.get(detailFilm, "tenPhim", "")}</Tag>
 
