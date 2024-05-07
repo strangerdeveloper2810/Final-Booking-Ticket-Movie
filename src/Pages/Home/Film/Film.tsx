@@ -14,7 +14,7 @@ interface ButtonSlick {
 }
 const Film: React.FC = () => {
   const filmList = useSelector(
-    (state: RootState) => state.FlimListSaga.arrFilm
+    (state: RootState) => _.get(state, "FlimList.arrFilm", [])
   );
 
   const { isLoading } = useSelector((state: RootState) => state.Loading);

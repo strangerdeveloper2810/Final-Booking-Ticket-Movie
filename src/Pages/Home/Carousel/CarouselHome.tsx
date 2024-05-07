@@ -8,7 +8,7 @@ import SkeletonCarousel from "Components/SkeletonCarousel";
 const CarouselHome: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
 
-  const { arrBanner } = useSelector((state: RootState) => state.BannerSaga);
+  const { arrBanner } = useSelector((state: RootState) => state.Banner);
   const { isLoading } = useSelector((state: RootState) => state.Loading);
 
   const getBannerSaga = React.useCallback(() => {
@@ -27,12 +27,12 @@ const CarouselHome: React.FC = () => {
     if (isLoading) {
       return <SkeletonCarousel />;
     }
-    return _.map(arrBanner, (banner)=> (
+    return _.map(arrBanner, (banner) => (
       <div className="banner" key={banner.maBanner}>
-          <div className="content-style">
-            <img src={banner.hinhAnh} alt="banner" />
-          </div>
+        <div className="content-style">
+          <img src={banner.hinhAnh} alt="banner" />
         </div>
+      </div>
     ));
   }, [isLoading, arrBanner]);
 
