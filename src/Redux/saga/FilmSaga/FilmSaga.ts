@@ -2,8 +2,8 @@ import { SagaIterator } from "redux-saga";
 import { call, delay, put, takeLatest } from "redux-saga/effects";
 import { GET_ALL_FILM } from "../../constant/FilmConstants";
 import { http, GROUP_ID } from "util/setting";
-import { FilmListAction } from "Redux/reducer/FilmListSagaReducer";
-import { LoadingSagaAction } from "Redux/reducer/LoadingReducer";
+import { FilmListAction } from "Redux/reducer/FilmListSaga.reducer";
+import { LoadingSagaAction } from "Redux/reducer/Loading.reducer";
 export function* getAllFilmSaga(): SagaIterator {
   try {
     yield put(LoadingSagaAction.setLoading(true));

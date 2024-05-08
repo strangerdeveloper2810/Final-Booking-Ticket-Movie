@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { ListCinema } from "Redux/types/ListCinemaType";
-import { initialListCinema } from "constanst/ListCinema";
+import { initialListCinema } from "constants/ListCinema";
 export type ListCinemaState = {
   arrListCinema: ListCinema[];
 };

@@ -4,13 +4,13 @@ import { takeLatest, put, call } from "redux-saga/effects";
 import { http, history } from "util/setting";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { LoadingSagaAction } from "Redux/reducer/LoadingReducer";
+import { LoadingSagaAction } from "Redux/reducer/Loading.reducer";
 import { UserRegister, UserLogin } from "Redux/types/UserType";
 import {
   USER_REGISTER_API,
   USER_LOGIN_API,
 } from "Redux/constant/UserConstants";
-import { UserSagaAction } from "Redux/reducer/UserSagaReducer";
+import { UserSagaAction } from "Redux/reducer/UserSaga.reducer";
 export function* registerSaga(
   action: PayloadAction<UserRegister>
 ): SagaIterator {

@@ -1,19 +1,21 @@
 import { configureStore } from "@reduxjs/toolkit";
 import createSagaMiddleware from "redux-saga";
 import { rootSaga } from "./saga/rootSaga";
-import BannerReducerSaga from "./reducer/BannerSagaReducer";
-import FilmListSagaReducer from "./reducer/FilmListSagaReducer";
-import LoadingReducer from "./reducer/LoadingReducer";
-import ListCinemaSagaReducer from "./reducer/ListCinemaSagaReducer";
-import UserSagaReducer from "./reducer/UserSagaReducer";
+import BannerReducerSaga from "./reducer/BannerSaga.reducer";
+import FilmListSagaReducer from "./reducer/FilmListSaga.reducer";
+import LoadingReducer from "./reducer/Loading.reducer";
+import ListCinemaSagaReducer from "./reducer/ListCinemaSaga.reducer";
+import UserSagaReducer from "./reducer/UserSaga.reducer";
+import BookingTicketReducer from "./reducer/BookingTicket.reducer";
 const sagaMiddleware = createSagaMiddleware();
 export const store = configureStore({
   reducer: {
-    BannerSaga: BannerReducerSaga,
-    FlimListSaga: FilmListSagaReducer,
+    Banner: BannerReducerSaga,
+    FlimList: FilmListSagaReducer,
     Loading: LoadingReducer,
     ListCinema: ListCinemaSagaReducer,
     UserSaga: UserSagaReducer,
+    Booking: BookingTicketReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(sagaMiddleware),

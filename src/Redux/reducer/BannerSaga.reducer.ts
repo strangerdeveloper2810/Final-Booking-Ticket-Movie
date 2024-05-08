@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { Banner } from "Redux/types/BannerType";
-import { initialBanner } from "constanst/banner";
+import { initialBanner } from "constants/banner";
 
 export type BannerState = {
   arrBanner: Banner[];
@@ -10,7 +10,7 @@ const initialState: BannerState = {
 };
 
 const BannerSagaReducer = createSlice({
-  name: "BannerSagaReducer",
+  name: "Banner",
   initialState,
   reducers: {
     getAllBanner(state: BannerState, action: PayloadAction<Banner[]>) {

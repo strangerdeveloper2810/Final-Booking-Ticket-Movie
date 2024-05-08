@@ -2,8 +2,8 @@ import { SagaIterator } from "redux-saga";
 import { call, takeLatest, put, delay } from "redux-saga/effects";
 import { http } from "util/setting";
 import { GET_ALL_BANNER } from "../../constant/BannerConstants";
-import { BannerSagaAction } from "Redux/reducer/BannerSagaReducer";
-import { LoadingSagaAction } from "Redux/reducer/LoadingReducer";
+import { BannerSagaAction } from "Redux/reducer/BannerSaga.reducer";
+import { LoadingSagaAction } from "Redux/reducer/Loading.reducer";
 
 export function* getAllBannerApi(): SagaIterator {
   try {
