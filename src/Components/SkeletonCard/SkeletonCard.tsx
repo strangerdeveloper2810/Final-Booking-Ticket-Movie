@@ -1,6 +1,6 @@
-import React from "react";
+import { FC, JSX } from "react";
 
-const SekeletonCard: React.FC = () => {
+const SekeletonCard: FC = (): JSX.Element => {
   return (
     <div
       role="status"
@@ -42,4 +42,4 @@ const SekeletonCard: React.FC = () => {
   );
 };
 
-export default React.memo(SekeletonCard);
+export default SekeletonCard;

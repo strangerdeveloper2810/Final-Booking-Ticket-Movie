@@ -1,19 +1,19 @@
-import React from "react";
-import LoadingNew from "Components/LoadingNew";
-const LazyCarousel = React.lazy(() => import("./Carousel"));
-const LazyListCinema = React.lazy(() => import("./ListCinema"));
-const LazyFilm = React.lazy(() => import("./Film"));
+import { Suspense, lazy, FC, JSX } from "react";
+import { LoadingNew } from "Components";
+const LazyCarousel = lazy(() => import("./Carousel"));
+const LazyListCinema = lazy(() => import("./ListCinema"));
+const LazyFilm = lazy(() => import("./Film"));
 
-const Home: React.FC = () => {
+const Home: FC = (): JSX.Element => {
   return (
     <main className="w-screen">
-      <React.Suspense fallback={<LoadingNew />}>
+      <Suspense fallback={<LoadingNew />}>
         <LazyCarousel />
         <LazyFilm />
         <LazyListCinema />
-      </React.Suspense>
+      </Suspense>
     </main>
   );
 };
 
-export default React.memo(Home);
+export default Home;

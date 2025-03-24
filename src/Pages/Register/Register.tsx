@@ -1,4 +1,4 @@
-import React from "react";
+import { useCallback, FC, JSX } from "react";
 import { useDispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
 import { useFormik } from "formik";
@@ -6,10 +6,10 @@ import { validationSchema } from "./validation/validationSchema";
 import { UserRegister } from "Redux/types/UserType";
 import { AppDispatch } from "Redux/store";
 import { USER_REGISTER_API } from "Redux/constant/UserConstants";
-export const Register: React.FC = () => {
+export const Register: FC = (): JSX.Element => {
   const dispatch: AppDispatch = useDispatch();
 
-  const handleSubmitRegister = React.useCallback(
+  const handleSubmitRegister = useCallback(
     (values: UserRegister) => {
       dispatch({
         type: USER_REGISTER_API,
@@ -150,4 +150,4 @@ export const Register: React.FC = () => {
   );
 };
 
-export default React.memo(Register);
+export default Register;
