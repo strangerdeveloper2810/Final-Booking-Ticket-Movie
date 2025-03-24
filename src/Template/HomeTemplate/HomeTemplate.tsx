@@ -1,16 +1,15 @@
-import React from "react";
-import Header from "Components/Header";
-import Footer from "Components/Footer";
-import { Outlet } from "react-router-dom";
+import { memo, FC } from "react";
+import { Footer, Header } from "Components";
+import { ITemplate } from "types/ITemplate";
 
-const HomeTemplate: React.FC = () => {
+const HomeTemplate: FC<ITemplate> = ({ children }) => {
   return (
     <div className="container">
       <Header />
-      <Outlet />
+      {children}
       <Footer />
     </div>
   );
 };
 
-export default React.memo(HomeTemplate);
+export default memo(HomeTemplate);

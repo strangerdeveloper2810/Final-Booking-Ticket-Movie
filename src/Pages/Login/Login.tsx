@@ -1,4 +1,4 @@
-import React from "react";
+import { FC, JSX, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
 import { useFormik } from "formik";
@@ -6,10 +6,10 @@ import { AppDispatch } from "Redux/store";
 import { USER_LOGIN_API } from "Redux/constant/UserConstants";
 import { UserLogin } from "Redux/types/UserType";
 import { validationSchema } from "./Validation/ValidationSchema";
-export const Login: React.FC = () => {
+export const Login: FC = (): JSX.Element => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const handleSubmitLogin = React.useCallback(
+  const handleSubmitLogin = useCallback(
     (values: UserLogin) => {
       dispatch({
         type: USER_LOGIN_API,
@@ -107,4 +107,4 @@ export const Login: React.FC = () => {
   );
 };
 
-export default React.memo(Login);
+export default Login;

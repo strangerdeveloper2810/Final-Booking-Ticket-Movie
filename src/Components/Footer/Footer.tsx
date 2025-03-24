@@ -1,6 +1,6 @@
-import React from "react";
+import { FC, JSX } from "react";
 
-const Footer: React.FC = () => {
+const Footer: FC = (): JSX.Element => {
   return (
     <footer className="flex justify-center items-center content-center text-2xl subpixel-antialiased footer">
       Design By Stranger Developer ©.
@@ -8,4 +8,4 @@ const Footer: React.FC = () => {
   );
 };
 
-export default React.memo(Footer);
+export default Footer;

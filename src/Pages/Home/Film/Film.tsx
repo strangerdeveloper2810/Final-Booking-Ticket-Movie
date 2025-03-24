@@ -1,6 +1,14 @@
-import React from "react";
+import {
+  FC,
+  JSX,
+  useEffect,
+  useCallback,
+  CSSProperties,
+  MouseEventHandler,
+  ComponentType,
+} from "react";
 import { useSelector, useDispatch } from "react-redux";
-import _ from "lodash"
+import { get, isEmpty } from "lodash";
 import Slider from "react-slick";
 import { useMediaQuery } from "react-responsive";
 import { RootState, AppDispatch } from "Redux/store";
@@ -9,30 +17,30 @@ import FilmItem from "./FilmItem/FilmItem";
 import SkeletonCard from "Components/SkeletonCard";
 interface ButtonSlick {
   className?: string;
-  style?: React.CSSProperties;
-  onClick?: React.MouseEventHandler<HTMLDivElement>;
+  style?: CSSProperties;
+  onClick?: MouseEventHandler<HTMLDivElement>;
 }
-const Film: React.FC = () => {
-  const filmList = useSelector(
-    (state: RootState) => _.get(state, "FlimList.arrFilm", [])
+const Film: FC = (): JSX.Element => {
+  const filmList = useSelector((state: RootState) =>
+    get(state, "FlimList.arrFilm", [])
   );
 
   const { isLoading } = useSelector((state: RootState) => state.Loading);
   const dispatch = useDispatch<AppDispatch>();
 
-  const getFilmSaga = React.useCallback(() => {
+  const getFilmSaga = useCallback(() => {
     dispatch({
       type: GET_ALL_FILM,
     });
   }, [dispatch]);
 
-  React.useEffect(() => {
-    if (_.isEmpty(filmList)) {
+  useEffect(() => {
+    if (isEmpty(filmList)) {
       getFilmSaga();
     }
   }, [filmList.length, getFilmSaga]);
 
-  const renderFilmItem = React.useCallback(() => {
+  const renderFilmItem = useCallback(() => {
     if (isLoading) {
       return <SkeletonCard />;
     }
@@ -86,11 +94,13 @@ const Film: React.FC = () => {
     centerPadding: "15px",
   };
 
+  const SlickSlider = Slider as unknown as ComponentType<any>;
+
   return (
-    <React.Fragment>
-      <Slider {...settings}>{renderFilmItem()}</Slider>
-    </React.Fragment>
+    <>
+      <SlickSlider {...settings}>{renderFilmItem()}</SlickSlider>
+    </>
   );
 };
 
-export default React.memo(Film);
+export default Film;

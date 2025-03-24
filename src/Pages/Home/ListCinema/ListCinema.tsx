@@ -1,6 +1,6 @@
-import React from "react";
+import { FC, useState, useCallback, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import _ from "lodash"
+import { isEmpty, map } from "lodash";
 import { AppDispatch, RootState } from "Redux/store";
 import { Tabs } from "antd";
 import { GET_ALL_CINEMA } from "Redux/constant/CinemaConstants";
@@ -12,27 +12,27 @@ import {
 
 type TabPosition = "left";
 
-const ListCinema: React.FC = () => {
+const ListCinema: FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const listCinema = useSelector(
     (state: RootState) => state.ListCinema.arrListCinema
   );
-  const [tabPosition] = React.useState<TabPosition>("left");
+  const [tabPosition] = useState<TabPosition>("left");
 
-  React.useEffect(() => {
-    if (_.isEmpty(listCinema)) {
+  useEffect(() => {
+    if (isEmpty(listCinema)) {
       dispatch({
         type: GET_ALL_CINEMA,
       });
     }
-  }, [_.isEmpty(listCinema), dispatch]);
+  }, [isEmpty(listCinema), dispatch]);
 
-  const renderMovieByCinema = React.useCallback((cinema: LstCumRap) => {
+  const renderMovieByCinema = useCallback((cinema: LstCumRap) => {
     return <ListMovie cinema={cinema} />;
   }, []);
 
-  const renderCinemaTabs = React.useCallback(() => {
-    return _.map(listCinema, (cinemaSystem: ListCinemaType) => {
+  const renderCinemaTabs = useCallback(() => {
+    return map(listCinema, (cinemaSystem: ListCinemaType) => {
       const tab = {
         label: (
           <img
@@ -76,4 +76,4 @@ const ListCinema: React.FC = () => {
   return <Tabs tabPosition={tabPosition} items={renderCinemaTabs()} />;
 };
 
-export default React.memo(ListCinema);
+export default ListCinema;

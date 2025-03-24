@@ -1,6 +1,6 @@
-import React from "react";
+import { FC, JSX } from "react";
 
-const SkeletonCarousel: React.FC = () => {
+const SkeletonCarousel: FC = (): JSX.Element => {
   return (
     <div
       role="status"
@@ -21,4 +21,4 @@ const SkeletonCarousel: React.FC = () => {
   );
 };
 
-export default React.memo(SkeletonCarousel);
+export default SkeletonCarousel;
