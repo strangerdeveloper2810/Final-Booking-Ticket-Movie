@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { Banner } from "Redux/types/BannerType";
-import { initialBanner } from "constants/banner";
+import { Banner } from "../types/BannerType";
+import { initialBanner } from "../../constants/banner";
 
 export type BannerState = {
   arrBanner: Banner[];

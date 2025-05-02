@@ -2,15 +2,15 @@ import { PayloadAction } from "@reduxjs/toolkit";
 import { SagaIterator } from "redux-saga";
 import { takeLatest, put, call } from "redux-saga/effects";
 import { isEmpty } from "lodash";
-import { history } from "util/setting";
+import { history } from "../../../util/setting";
 import { toast } from "react-toastify";
-import { UserRegister, UserLogin } from "Redux/types/UserType";
+import { UserRegister, UserLogin } from "../../types/UserType";
 import {
   USER_REGISTER_API,
   USER_LOGIN_API,
-} from "Redux/constant/UserConstants";
-import { UserSagaAction } from "Redux/reducer/UserSaga.reducer";
-import { AuthServices } from 'services'
+} from "../../constant/UserConstants";
+import { UserSagaAction } from "../../reducer/UserSaga.reducer";
+import { AuthServices } from '../../../services'
 
 export function* registerSaga(
   action: PayloadAction<UserRegister>

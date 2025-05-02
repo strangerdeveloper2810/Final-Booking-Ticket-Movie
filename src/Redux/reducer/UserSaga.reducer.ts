@@ -16,8 +16,8 @@ export interface UserState {
 }
 
 const initialState: UserState = {
-  userLogin: settings.getStorageJson(USER_LOGIN)
-    ? settings.getCookieJson(USER_LOGIN)
+  userLogin: settings?.getStorageJson(USER_LOGIN)
+    ? settings?.getCookieJson(USER_LOGIN)
     : null,
 };
 const UserSagaReducer = createSlice({
