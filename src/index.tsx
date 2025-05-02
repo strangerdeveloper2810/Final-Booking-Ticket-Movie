@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+import "react-toastify/dist/ReactToastify.css";
 // Reset CSS from Antdesign
 import "antd/dist/reset.css";
 // CSS for project

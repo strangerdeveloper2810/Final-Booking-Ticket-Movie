@@ -1,9 +1,9 @@
-export interface UserLogin {
+interface UserLogin {
   taiKhoan: string;
   matKhau: string;
 }
 
-export interface UserRegister {
+interface UserRegister {
   taiKhoan: string;
   matKhau: string;
   email: string;
@@ -11,3 +11,5 @@ export interface UserRegister {
   maNhom: string;
   hoTen: string;
 }
+
+export type { UserLogin, UserRegister }

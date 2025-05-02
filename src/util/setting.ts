@@ -121,15 +121,16 @@ http.interceptors.response.use(
     return response;
   },
   (error) => {
-    //Hàm cấu hình cho tất cả lỗi nhận về
-    if (error.response?.status === 400 || error.response?.status === 404) {
-      //Chuyển hướng trang về trang chủ
-      return;
-    }
+    // //Hàm cấu hình cho tất cả lỗi nhận về
+    // if (error.response?.status === 400 || error.response?.status === 404) {
+    //   //Chuyển hướng trang về trang chủ
+    //   console.log({ error })
+    //   return;
+    // }
 
-    if (error.response?.status === 401 || error.response?.status === 403) {
-      history.push("/login");
-    }
+    // if (error.response?.status === 401 || error.response?.status === 403) {
+    //   history.push("/login");
+    // }
 
     return Promise.reject(error);
   }
