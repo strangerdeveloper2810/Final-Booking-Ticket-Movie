@@ -158,19 +158,17 @@ async function prerender() {
     return html; // fallback — no replacement
   }
 
-  // Process public/index.html
-  if (fs.existsSync(publicIndexPath)) {
-    const publicHtml = fs.readFileSync(publicIndexPath, "utf8");
-    fs.writeFileSync(publicIndexPath, injectSSG(publicHtml), "utf8");
-    console.log("✅ Injected SSG into public/index.html");
-  }
-
-  // Process build/index.html
+  // ⚠️  ONLY inject into build/index.html (Webpack output).
+  // public/index.html is the Webpack TEMPLATE and must stay clean with an empty #root.
+  // Modifying the template causes SSG content to accumulate outside #root on repeat builds.
   if (fs.existsSync(buildIndexPath)) {
     const buildHtml = fs.readFileSync(buildIndexPath, "utf8");
     fs.writeFileSync(buildIndexPath, injectSSG(buildHtml), "utf8");
-    console.log("🚀 SSG Static Pre-rendering completed cleanly on build/index.html!");
+    console.log("🚀 SSG Pre-rendering done → build/index.html");
+  } else {
+    console.warn("⚠️  build/index.html not found — run webpack build first.");
   }
 }
 
 prerender();
+
