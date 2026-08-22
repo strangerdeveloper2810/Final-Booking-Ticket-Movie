@@ -18,6 +18,15 @@ import { APP_ROUTES } from "shared/constants/routes";
 import { HTTP_STATUS } from "shared/constants/appConstants";
 import SEO from "shared/components/SEO/SEO";
 
+/**
+ * EN: Film detail page. Shows a movie's hero banner (poster, rating, synopsis, trailer) and its
+ * full showtime schedule grouped by cinema chain -> cinema cluster -> showtime, letting the user
+ * jump straight into the booking flow for a specific showtime.
+ * VI: Trang chi tiết phim. Hiển thị banner đầu trang (poster, đánh giá, mô tả, trailer) và toàn
+ * bộ lịch chiếu được nhóm theo hệ thống rạp -> cụm rạp -> suất chiếu, cho phép người dùng đặt vé
+ * trực tiếp cho một suất chiếu cụ thể.
+ * @returns EN: the rendered film detail page. VI: trang chi tiết phim đã được render.
+ */
 const Detail: FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -27,6 +36,18 @@ const Detail: FC = () => {
   const [calendarMovieTheaterFilm, setCalendarMovieTheaterFilm] = useState<CalendarMovieTheaterFilm>();
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
 
+  // EN: Data fetching here uses local component useState/useEffect + plain service class
+  // instances (filmDetailServiceInstance / managementServiceInstance) instead of Redux, even
+  // though this feature has a `redux/types` folder. This is a real, deliberate-looking but
+  // inconsistent architectural choice worth flagging for future maintainers: there is no shared/
+  // cached store for this data, each mount re-fetches, and other components can't subscribe to
+  // it without lifting state or introducing a proper Redux slice.
+  // VI: Việc lấy dữ liệu ở đây dùng useState/useEffect cục bộ của component cùng các instance
+  // service class thuần (filmDetailServiceInstance / managementServiceInstance) thay vì Redux,
+  // dù tính năng này có thư mục `redux/types`. Đây là một điểm không nhất quán thực sự về kiến
+  // trúc, cần lưu ý cho người bảo trì sau này: không có store dùng chung/cache cho dữ liệu này,
+  // mỗi lần mount đều gọi lại API, và các component khác không thể lấy dữ liệu này nếu không nâng
+  // state lên cấp cao hơn hoặc xây dựng một Redux slice thực sự.
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -50,10 +71,25 @@ const Detail: FC = () => {
     fetchData();
   }, [id]);
 
+  /**
+   * EN: Navigates to the booking flow for a specific showtime.
+   * VI: Điều hướng sang luồng đặt vé cho một suất chiếu cụ thể.
+   * @param maLichChieu - EN: the showtime's unique id (Cybersoft API field name). VI: mã lịch chiếu (tên trường từ API Cybersoft).
+   */
   const handleBookingTicket = (maLichChieu: number | string) => {
     navigate(APP_ROUTES.BOOKING(maLichChieu));
   };
 
+  // EN: Builds JSON-LD structured data for SEO (movie rich snippets). KNOWN LIMITATION:
+  // `ratingCount` is a fixed placeholder ("100"), not a real field from the API. The Cybersoft
+  // film-detail response only exposes `danhGia` (a single rating value out of 10) — there is no
+  // vote/review-count field to source this from. Search engines consuming this markup will see
+  // an inaccurate rating count until a real source for it is available.
+  // VI: Xây dựng dữ liệu có cấu trúc JSON-LD phục vụ SEO (rich snippet cho phim). HẠN CHẾ ĐÃ BIẾT:
+  // `ratingCount` là giá trị cố định ("100"), không phải trường dữ liệu thật từ API. Response chi
+  // tiết phim của Cybersoft chỉ có `danhGia` (một giá trị đánh giá trên thang điểm 10) — không có
+  // trường số lượt đánh giá/bình chọn để lấy dữ liệu này. Công cụ tìm kiếm đọc dữ liệu này sẽ thấy
+  // số lượt đánh giá không chính xác cho đến khi có nguồn dữ liệu thật.
   const movieJsonLd = detailFilm
     ? {
         "@context": "https://schema.org",
@@ -71,6 +107,25 @@ const Detail: FC = () => {
       }
     : undefined;
 
+  /**
+   * EN: Builds the Ant Design `Tabs` `items` for the showtime schedule: one tab per cinema chain
+   * (heThongRapChieu), each rendering its cinema clusters (cumRapChieu) and their showtimes
+   * (lichChieuPhim). The nested `map` calls intentionally mirror the API's existing 3-level
+   * grouping (chain -> cluster -> showtime) rather than being reshaped with `groupBy` — the data
+   * already arrives pre-grouped from the backend, so regrouping it here would add complexity
+   * without removing real duplication, and risks subtly changing what's rendered in this
+   * UI-critical path.
+   * VI: Xây dựng `items` cho `Tabs` của Ant Design để hiển thị lịch chiếu: mỗi tab tương ứng một
+   * hệ thống rạp (heThongRapChieu), bên trong hiển thị các cụm rạp (cumRapChieu) và suất chiếu
+   * (lichChieuPhim) của cụm rạp đó. Các `map` lồng nhau cố tình đi theo đúng cấu trúc phân cấp 3
+   * tầng có sẵn từ API (hệ thống rạp -> cụm rạp -> suất chiếu) thay vì tái cấu trúc bằng
+   * `groupBy` — dữ liệu đã được nhóm sẵn từ backend, nên việc nhóm lại ở đây chỉ làm tăng độ phức
+   * tạp mà không loại bỏ được sự trùng lặp thực sự, đồng thời có nguy cơ vô tình làm thay đổi kết
+   * quả hiển thị ở phần giao diện quan trọng này.
+   * @returns EN: an array of Ant Design `TabsProps["items"]` entries, or an empty array when
+   * there are no cinema chains to show. VI: một mảng các phần tử `TabsProps["items"]` của Ant
+   * Design, hoặc mảng rỗng nếu không có hệ thống rạp nào để hiển thị.
+   */
   const renderScheduleTabItems = () => {
     const listCinemas = get(calendarMovieTheaterFilm, "heThongRapChieu", []);
     if (isEmpty(listCinemas)) return [];

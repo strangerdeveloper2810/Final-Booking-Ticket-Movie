@@ -6,6 +6,18 @@ interface LogoProps {
   className?: string;
 }
 
+/**
+ * EN: App brand mark (glowing icon + "Cinefix" wordmark) reused in the Header and Footer, with
+ * three preset sizes. `size` is a closed union so the lookup below can never miss — no need for
+ * a defensive/deep-path accessor here.
+ * VI: Logo thương hiệu (icon phát sáng + chữ "Cinefix") được dùng lại ở Header và Footer, có 3
+ * kích thước dựng sẵn. `size` là union đóng nên phép tra cứu bên dưới không bao giờ bị thiếu —
+ * không cần dùng cách truy cập an toàn (deep-path) ở đây.
+ * @param size - EN: preset size ("sm" | "md" | "lg"), defaults to "md". VI: kích thước dựng sẵn, mặc định "md".
+ * @param showText - EN: whether to render the "Cinefix" wordmark next to the icon. VI: có hiển thị chữ "Cinefix" cạnh icon hay không.
+ * @param className - EN: extra classes merged onto the root element. VI: các class bổ sung gắn vào phần tử gốc.
+ * @returns EN: the logo JSX element. VI: phần tử JSX của logo.
+ */
 const Logo: FC<LogoProps> = ({ size = "md", showText = true, className = "" }) => {
   const dimensions = {
     sm: { container: "w-8 h-8 rounded-lg", svg: "w-4 h-4", text: "text-lg" },

@@ -6,6 +6,13 @@ import Star from "shared/components/Star/Star";
 import { APP_ROUTES } from "shared/constants/routes";
 import { FilmItemProps } from "../types/home.types";
 
+/**
+ * EN: Card that displays a single film's poster, title, description, and rating, with a
+ * "book now" call to action that navigates to that film's detail page.
+ * VI: Thẻ hiển thị poster, tên phim, mô tả và đánh giá của một phim, kèm nút "đặt vé ngay"
+ * để điều hướng tới trang chi tiết của phim đó.
+ * @param filmItem - EN: the film record to render. VI: bản ghi phim cần hiển thị.
+ */
 const FilmItem: FC<FilmItemProps> = ({ filmItem }) => {
   const navigate = useNavigate();
   const { t } = useTranslation(["home", "common"]);

@@ -9,6 +9,17 @@ import { GET_TICKET_API, BOOK_TICKET_API } from "./BookingTicketActionTypes";
 import BookingTicketService, { TicketBookingPayload } from "../services/BookingTicketService";
 import BookingHubService from "../services/BookingHubService";
 
+/**
+ * EN: Saga that fetches the seat map + showtime info for a showtime via REST
+ * and stores it in Redux. Triggered by `GET_TICKET_API` (dispatched both on
+ * page mount and again after a successful booking to refresh this client's
+ * own view of the seat map).
+ * VI: Saga tải sơ đồ ghế + thông tin lịch chiếu qua REST và lưu vào Redux.
+ * Được kích hoạt bởi `GET_TICKET_API` (dispatch cả khi trang được mount lẫn
+ * sau khi đặt vé thành công để làm mới lại sơ đồ ghế phía client này).
+ * @param action - EN: Redux action carrying the showtime id (`maLichChieu`) to fetch. VI: action Redux mang theo mã lịch chiếu (`maLichChieu`) cần tải.
+ * @returns EN: nothing (side-effect saga). VI: không trả về gì (saga tác dụng phụ).
+ */
 export function* getTicketApi(action: PayloadAction<string | number>): SagaIterator {
   const maLichChieu = action.payload;
 
@@ -29,6 +40,18 @@ export function* getTicketApi(action: PayloadAction<string | number>): SagaItera
   }
 }
 
+/**
+ * EN: Saga that submits the currently selected seats to the booking REST
+ * endpoint, then (on success) clears the local selection, refreshes this
+ * client's own seat map, and re-invokes the DatVeHub room so every OTHER
+ * connected client gets a realtime seat-map update too.
+ * VI: Saga gửi danh sách ghế đang được chọn tới API đặt vé, sau đó (khi
+ * thành công) xóa lựa chọn ghế cục bộ, làm mới sơ đồ ghế của chính client
+ * này, và gọi lại phòng DatVeHub để mọi client khác đang kết nối cũng nhận
+ * được cập nhật sơ đồ ghế theo thời gian thực.
+ * @param action - EN: Redux action carrying the booking payload (showtime + selected seats). VI: action Redux mang theo dữ liệu đặt vé (lịch chiếu + ghế đã chọn).
+ * @returns EN: nothing (side-effect saga). VI: không trả về gì (saga tác dụng phụ).
+ */
 export function* bookTicketSaga(action: PayloadAction<TicketBookingPayload>): SagaIterator {
   try {
     yield put(BookingTicketAction.setBookingLoading(true));
@@ -39,21 +62,32 @@ export function* bookTicketSaga(action: PayloadAction<TicketBookingPayload>): Sa
     if (get(result, "status") === 200 || get(result, "data.statusCode") === 200) {
       toast.success(i18n.t("booking:bookingSuccess"));
       yield put(BookingTicketAction.clearSelectedSeats());
-      // Refresh this client's own seat map via REST.
+      // EN: Refresh this client's own seat map via REST.
+      // VI: Làm mới sơ đồ ghế của chính client này thông qua REST.
       yield put({ type: GET_TICKET_API, payload: payload.maLichChieu });
 
-      // DatVeHub only broadcasts loadDanhSachGheDaDat to a room when
-      // someone invokes loadDanhSachGhe — the REST DatVe endpoint does NOT
-      // trigger that broadcast on its own (the REST API and the hub are
-      // separate on this server). So the client that just booked has to
-      // re-invoke loadDanhSachGhe itself to make the server recompute and
-      // push the fresh seat map to every OTHER client in the room.
+      // EN: DatVeHub only broadcasts loadDanhSachGheDaDat to a room when
+      // EN: someone invokes loadDanhSachGhe — the REST DatVe endpoint does NOT
+      // EN: trigger that broadcast on its own (the REST API and the hub are
+      // EN: separate on this server). So the client that just booked has to
+      // EN: re-invoke loadDanhSachGhe itself to make the server recompute and
+      // EN: push the fresh seat map to every OTHER client in the room.
+      // VI: DatVeHub chỉ phát (broadcast) loadDanhSachGheDaDat tới một phòng
+      // VI: khi có ai đó gọi loadDanhSachGhe — endpoint REST DatVe KHÔNG tự
+      // VI: kích hoạt việc phát tin này (API REST và hub là hai thứ tách biệt
+      // VI: trên server này). Vì vậy client vừa đặt vé xong phải tự gọi lại
+      // VI: loadDanhSachGhe để server tính toán lại và đẩy sơ đồ ghế mới nhất
+      // VI: tới mọi client KHÁC đang ở trong phòng.
       try {
         yield call(BookingHubService.joinShowtimeRoom, payload.maLichChieu);
       } catch (hubError) {
-        // A failed rebroadcast trigger must never surface as a booking
-        // failure — the REST booking already succeeded. Other clients will
-        // simply stay stale until their own next hub interaction.
+        // EN: A failed rebroadcast trigger must never surface as a booking
+        // EN: failure — the REST booking already succeeded. Other clients will
+        // EN: simply stay stale until their own next hub interaction.
+        // VI: Một lỗi khi kích hoạt phát lại dữ liệu không được phép hiển thị
+        // VI: như một lỗi đặt vé — vì việc đặt vé qua REST đã thành công rồi.
+        // VI: Các client khác chỉ đơn giản là sẽ có dữ liệu cũ (stale) cho đến
+        // VI: lần tương tác tiếp theo với hub của chính chúng.
         console.error("Failed to trigger realtime seat rebroadcast", hubError);
       }
     } else {
@@ -66,6 +100,13 @@ export function* bookTicketSaga(action: PayloadAction<TicketBookingPayload>): Sa
   }
 }
 
+/**
+ * EN: Root watcher saga for the booking feature's REST actions — wires
+ * `GET_TICKET_API` and `BOOK_TICKET_API` to their respective saga handlers.
+ * VI: Saga theo dõi (watcher) gốc cho các action REST của tính năng đặt vé —
+ * nối `GET_TICKET_API` và `BOOK_TICKET_API` với các saga xử lý tương ứng.
+ * @returns EN: nothing (registers watchers for the saga middleware). VI: không trả về gì (đăng ký các watcher cho saga middleware).
+ */
 export function* actionGetTicketApi() {
   yield takeLatest(GET_TICKET_API, getTicketApi);
   yield takeLatest(BOOK_TICKET_API, bookTicketSaga);

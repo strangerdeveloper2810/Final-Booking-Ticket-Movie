@@ -5,6 +5,13 @@ import { Carousel } from "antd";
 import SkeletonCarousel from "shared/components/SkeletonCarousel/SkeletonCarousel";
 import { useGetBannersQuery } from "shared/services/movieApi";
 
+/**
+ * EN: Hero carousel shown at the top of the home page; it auto-rotates promotional banners
+ * fetched from the API and falls back to a skeleton placeholder while loading or when no
+ * banner data is available.
+ * VI: Carousel banner chính hiển thị ở đầu trang chủ; tự động xoay các banner quảng cáo lấy
+ * từ API, hiển thị khung xương (skeleton) khi đang tải hoặc khi không có dữ liệu banner.
+ */
 const CarouselHome: FC = () => {
   const { data: arrBanner, isLoading } = useGetBannersQuery();
 

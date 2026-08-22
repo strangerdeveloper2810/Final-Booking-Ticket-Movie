@@ -1,4 +1,5 @@
 import { type FC, Suspense, lazy } from "react";
+import map from "lodash/map";
 import { useTranslation } from "react-i18next";
 import LoadingNew from "shared/components/LoadingNew/LoadingNew";
 import SEO from "shared/components/SEO/SEO";
@@ -14,6 +15,14 @@ const CarouselHome = lazy(() => import("../components/CarouselHome"));
 const Film = lazy(() => import("../components/Film"));
 const ListCinema = lazy(() => import("../components/ListCinema"));
 
+/**
+ * EN: Home page: composes the hero banner carousel, the "now showing" film section, the
+ * cinema/showtime listing, and several TMDB-powered movie showcase sections; also emits
+ * SEO metadata and JSON-LD structured data for the page.
+ * VI: Trang chủ: ghép các phần carousel banner chính, mục phim "đang chiếu", danh sách
+ * rạp/lịch chiếu và nhiều mục giới thiệu phim từ TMDB; đồng thời phát ra metadata SEO và
+ * dữ liệu có cấu trúc JSON-LD cho trang.
+ */
 const Home: FC = () => {
   const { t, i18n } = useTranslation(["home", "common"]);
 
@@ -22,13 +31,16 @@ const Home: FC = () => {
   const { data: topRatedMovies = [], isLoading: loadingTopRated } = useGetTopRatedMoviesQuery(i18n.language);
   const { data: upcomingMovies = [], isLoading: loadingUpcoming } = useGetUpcomingMoviesQuery(i18n.language);
 
-  // Structured JSON-LD Schema for Google Rich Results
+  // EN: Structured JSON-LD Schema for Google Rich Results — top 10 trending movies only,
+  // matching Google's recommended list size for ItemList rich results.
+  // VI: Dữ liệu có cấu trúc JSON-LD cho Google Rich Results — chỉ lấy 10 phim thịnh hành
+  // đầu tiên, theo khuyến nghị của Google về kích thước danh sách cho ItemList rich results.
   const homeJsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
     name: t("home:seoTitle"),
     description: t("home:seoDescription"),
-    itemListElement: trendingMovies.slice(0, 10).map((movie, index) => ({
+    itemListElement: map(trendingMovies.slice(0, 10), (movie, index) => ({
       "@type": "ListItem",
       position: index + 1,
       item: {

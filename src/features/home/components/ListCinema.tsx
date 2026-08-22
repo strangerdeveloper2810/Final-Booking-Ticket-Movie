@@ -1,4 +1,5 @@
 import { type FC } from "react";
+import defaultTo from "lodash/defaultTo";
 import { Tabs } from "antd";
 import { useTranslation } from "react-i18next";
 import ListMovie from "./ListMovie";
@@ -8,10 +9,22 @@ import {
 } from "../redux/cinema/ListCinemaType";
 import { useGetCinemasQuery } from "shared/services/movieApi";
 
+/**
+ * EN: Home page section that renders a two-level tab structure: outer tabs for each cinema
+ * system (e.g. CGV, Lotte) and, nested inside, left-side tabs for each cinema cluster of
+ * that system, showing its movies via ListMovie.
+ * VI: Mục ở trang chủ hiển thị cấu trúc tab hai cấp: tab ngoài cho từng hệ thống rạp
+ * (VD: CGV, Lotte) và bên trong là các tab bên trái cho từng cụm rạp của hệ thống đó,
+ * hiển thị phim của cụm rạp qua ListMovie.
+ */
 const ListCinema: FC = () => {
   const { data: listCinema = [] } = useGetCinemasQuery();
   const { t } = useTranslation(["home", "common"]);
 
+  // EN: Build the nested Tabs `items` config (cinema system -> cinema cluster) from the
+  // API response, guarding against a missing/non-array payload.
+  // VI: Dựng cấu hình `items` cho Tabs lồng nhau (hệ thống rạp -> cụm rạp) từ dữ liệu API,
+  // đồng thời phòng trường hợp dữ liệu trả về bị thiếu hoặc không phải mảng.
   const getTabItems = () => {
     if (!listCinema || !Array.isArray(listCinema)) return [];
     return listCinema.map((cinemaSystem: ListCinemaType) => ({
@@ -29,7 +42,7 @@ const ListCinema: FC = () => {
         <Tabs
           tabPosition="left"
           className="cinema-cluster-tabs"
-          items={(cinemaSystem.lstCumRap || []).map((clusterCinema: LstCumRap, index: number) => ({
+          items={defaultTo(cinemaSystem.lstCumRap, []).map((clusterCinema: LstCumRap, index: number) => ({
             label: (
               <div className="text-left py-1 pr-2 max-w-[200px]">
                 <p className="font-bold text-text-primary text-sm line-clamp-1">

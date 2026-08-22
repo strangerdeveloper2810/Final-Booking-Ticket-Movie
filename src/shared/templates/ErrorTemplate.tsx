@@ -4,6 +4,15 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { APP_ROUTES } from "shared/constants/routes";
 
+/**
+ * EN: 404 "not found" page content, shown by the router for any unmatched path. Distinct from
+ * `ErrorBoundary`, which catches unexpected runtime errors — this is for a deliberately
+ * unmatched route.
+ * VI: Nội dung trang 404 "không tìm thấy", được router hiển thị cho mọi đường dẫn không khớp.
+ * Khác với `ErrorBoundary` (bắt các lỗi runtime không mong muốn) — component này dùng cho
+ * trường hợp route không khớp một cách có chủ đích.
+ * @returns EN: the 404 page JSX element. VI: phần tử JSX của trang 404.
+ */
 const ErrorTemplate: FC = () => {
   const navigate = useNavigate();
   const { t } = useTranslation(["common"]);

@@ -1,6 +1,9 @@
 import { type FC, useEffect, useState } from "react";
 import get from "lodash/get";
 import isEmpty from "lodash/isEmpty";
+import map from "lodash/map";
+import some from "lodash/some";
+import sumBy from "lodash/sumBy";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import { Button, Card, Tag, Divider, App } from "antd";
@@ -25,6 +28,16 @@ import { APP_ROUTES } from "shared/constants/routes";
 import { SeatType } from "shared/constants/appConstants";
 import SEO from "shared/components/SEO/SEO";
 
+/**
+ * EN: Formats a millisecond duration as an "M:SS" countdown string (e.g.
+ * 90000ms -> "1:30"), used to render the seat-hold countdown next to the
+ * selected seats.
+ * VI: Định dạng một khoảng thời gian tính bằng mili-giây thành chuỗi đếm
+ * ngược dạng "M:SS" (ví dụ: 90000ms -> "1:30"), dùng để hiển thị bộ đếm ngược
+ * giữ ghế bên cạnh danh sách ghế đã chọn.
+ * @param ms - EN: remaining time in milliseconds. VI: thời gian còn lại tính bằng mili-giây.
+ * @returns EN: a "minutes:seconds" formatted string. VI: chuỗi được định dạng theo "phút:giây".
+ */
 function formatCountdown(ms: number): string {
   const totalSeconds = Math.ceil(ms / 1000);
   const minutes = Math.floor(totalSeconds / 60);
@@ -32,11 +45,32 @@ function formatCountdown(ms: number): string {
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 }
 
+/**
+ * EN: Seat-booking page for a single showtime — renders the seat map, keeps
+ * it in sync with realtime DatVeHub seat updates, tracks the client-side
+ * seat-hold countdown, and submits the final booking request.
+ * VI: Trang đặt vé chọn ghế cho một lịch chiếu — hiển thị sơ đồ ghế, đồng bộ
+ * với các cập nhật ghế theo thời gian thực từ DatVeHub, theo dõi bộ đếm
+ * ngược giữ ghế phía client, và gửi yêu cầu đặt vé cuối cùng.
+ * @returns EN: the rendered booking page. VI: trang đặt vé đã được render.
+ */
 const BookingTicket: FC = () => {
   const { maLichChieu } = useParams();
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation(["booking", "common"]);
+  // EN: `App.useApp()` (AntD v5's context-aware app API) is used here instead
+  // EN: of the static `Modal.confirm`/`message.warning` imports — the static
+  // EN: APIs render outside AntD's ConfigProvider/theme context, so they miss
+  // EN: the app's theme tokens (e.g. dark mode) and any App-level static
+  // EN: function config. Using the hook keeps modals/toasts visually
+  // EN: consistent with the rest of the themed UI.
+  // VI: `App.useApp()` (API app nhận biết context của AntD v5) được dùng ở
+  // VI: đây thay vì import tĩnh `Modal.confirm`/`message.warning` — các API
+  // VI: tĩnh render bên ngoài context ConfigProvider/theme của AntD, nên sẽ
+  // VI: bị thiếu các token theme của app (ví dụ: dark mode) cũng như mọi cấu
+  // VI: hình static function ở cấp App. Dùng hook này giúp modal/thông báo
+  // VI: hiển thị nhất quán về mặt giao diện với phần còn lại của UI đã theme.
   const { modal, message } = App.useApp();
 
   const bookingDetail = useSelector((state: RootState) =>
@@ -53,11 +87,16 @@ const BookingTicket: FC = () => {
   );
   const { userLogin } = useSelector((state: RootState) => state.UserSaga);
 
-  // Seat-hold countdown: ticks every second while a selection is held, and
-  // auto-releases the seats (with a toast) once the deadline passes — there's
-  // no server-side reservation lock on the Cybersoft API, so this is enforced
-  // purely client-side, same spirit as the countdown on most real booking
-  // platforms.
+  // EN: Seat-hold countdown: ticks every second while a selection is held, and
+  // EN: auto-releases the seats (with a toast) once the deadline passes — there's
+  // EN: no server-side reservation lock on the Cybersoft API, so this is enforced
+  // EN: purely client-side, same spirit as the countdown on most real booking
+  // EN: platforms.
+  // VI: Bộ đếm ngược giữ ghế: chạy mỗi giây trong khi một lượt chọn ghế đang
+  // VI: được giữ, và tự động giải phóng ghế (kèm thông báo) khi hết thời hạn —
+  // VI: vì API Cybersoft không có cơ chế khóa giữ chỗ ở phía server, nên việc
+  // VI: này được xử lý hoàn toàn ở phía client, cùng tinh thần với bộ đếm
+  // VI: ngược trên hầu hết các nền tảng đặt vé thực tế.
   const [remainingMs, setRemainingMs] = useState(0);
 
   useEffect(() => {
@@ -88,9 +127,13 @@ const BookingTicket: FC = () => {
         type: GET_TICKET_API,
         payload: maLichChieu,
       });
-      // Join the DatVeHub SignalR room for this showtime — the server
-      // pushes a fresh seat map to everyone in the room whenever anyone
-      // books a seat, so occupancy updates live without polling.
+      // EN: Join the DatVeHub SignalR room for this showtime — the server
+      // EN: pushes a fresh seat map to everyone in the room whenever anyone
+      // EN: books a seat, so occupancy updates live without polling.
+      // VI: Tham gia phòng SignalR của DatVeHub cho lịch chiếu này — server
+      // VI: sẽ đẩy sơ đồ ghế mới nhất tới mọi người trong phòng mỗi khi có ai
+      // VI: đó đặt ghế, nhờ vậy tình trạng ghế được cập nhật theo thời gian
+      // VI: thực mà không cần polling.
       dispatch({
         type: JOIN_SEAT_ROOM,
         payload: maLichChieu,
@@ -106,13 +149,34 @@ const BookingTicket: FC = () => {
   const thongTinPhim: ThongTinPhim | undefined = get(bookingDetail, "thongTinPhim");
   const danhSachGhe: DanhSachGhe[] = get(bookingDetail, "danhSachGhe", []);
 
-  const totalPrice = selectedSeats.reduce((sum: number, seat: DanhSachGhe) => sum + (seat.giaVe || 0), 0);
+  // EN: `sumBy` with a callback (rather than the `'giaVe'` iteratee shorthand)
+  // keeps the exact same "treat missing/falsy price as 0" defensive fallback
+  // the previous `.reduce` had, in case the API ever sends a null/undefined
+  // `giaVe` despite the TS type declaring it as a required `number`.
+  // VI: Dùng `sumBy` với callback (thay vì dạng rút gọn iteratee `'giaVe'`)
+  // để giữ nguyên hành vi phòng thủ "coi giá vé bị thiếu/falsy là 0" mà
+  // `.reduce` trước đây đã có, phòng trường hợp API trả về `giaVe` là
+  // null/undefined dù kiểu TS khai báo là `number` bắt buộc.
+  const totalPrice = sumBy(selectedSeats, (seat: DanhSachGhe) => seat.giaVe || 0);
 
+  /**
+   * EN: Toggles a seat's selection state, unless it's already booked by
+   * someone else (occupied seats are not selectable).
+   * VI: Bật/tắt trạng thái chọn của một ghế, trừ khi ghế đó đã được người
+   * khác đặt (ghế đã có người đặt thì không thể chọn).
+   * @param seat - EN: the seat the user clicked. VI: ghế mà người dùng vừa bấm chọn.
+   */
   const handleSelectSeat = (seat: DanhSachGhe) => {
     if (seat.daDat) return;
     dispatch(BookingTicketAction.toggleSelectSeat(seat));
   };
 
+  /**
+   * EN: Validates preconditions (logged in, at least one seat selected) and,
+   * if they pass, dispatches the booking submission action.
+   * VI: Kiểm tra các điều kiện tiên quyết (đã đăng nhập, đã chọn ít nhất một
+   * ghế) và, nếu hợp lệ, dispatch action gửi yêu cầu đặt vé.
+   */
   const handleBookTicket = () => {
     if (isEmpty(userLogin)) {
       modal.confirm({
@@ -134,7 +198,7 @@ const BookingTicket: FC = () => {
 
     const payload = {
       maLichChieu: Number(maLichChieu),
-      danhSachVe: selectedSeats.map((seat) => ({
+      danhSachVe: map(selectedSeats, (seat) => ({
         maGhe: seat.maGhe,
         giaVe: seat.giaVe,
       })),
@@ -205,8 +269,16 @@ const BookingTicket: FC = () => {
           {/* Seat Grid */}
           <div className="bg-surface border border-border rounded-xl p-4 sm:p-6 overflow-x-auto transition-colors">
             <div className="grid grid-cols-10 sm:grid-cols-16 gap-2 min-w-[500px]">
+              {/* EN: Kept as native `.map()` (not lodash) since it returns JSX per
+                  iteration — the idiomatic React list-rendering pattern; only the
+                  boolean `isSelected` lookup below is a genuine data-transform swap. */}
+              {/* VI: Vẫn dùng `.map()` gốc (không dùng lodash) vì nó trả về JSX cho
+                  mỗi lượt lặp — đây là cách render danh sách chuẩn (idiomatic) của
+                  React; chỉ có phép tra cứu boolean `isSelected` bên dưới mới thực
+                  sự là một phép chuyển đổi dữ liệu đáng để thay bằng lodash. */}
               {danhSachGhe.map((seat) => {
-                const isSelected = selectedSeats.some(
+                const isSelected = some(
+                  selectedSeats,
                   (s) => s.maGhe === seat.maGhe
                 );
                 const isOccupied = seat.daDat;

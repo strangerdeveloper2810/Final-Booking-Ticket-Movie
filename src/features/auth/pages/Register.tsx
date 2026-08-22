@@ -21,6 +21,23 @@ import { APP_ROUTES } from "shared/constants/routes";
 import { registerSchema, RegisterFormData } from "../schemas/auth.schema";
 import SEO from "shared/components/SEO/SEO";
 
+/**
+ * EN: Registration page. Same `Controller`-per-field pattern as Login.tsx
+ * and for the same reason: antd's `Input`/`Input.Password` are controlled
+ * components, so `react-hook-form`'s uncontrolled `register()` API doesn't
+ * fit them directly — `Controller` supplies the `value`/`onChange` pair via
+ * `field`. `maNhom` (the Cybersoft group/cohort code) isn't a form field —
+ * it's appended to the validated form data at submit time from `GROUP_ID`,
+ * since every account created by this app must belong to the same group.
+ * VI: Trang Đăng ký. Cùng kiểu bọc `Controller` cho từng trường như
+ * Login.tsx và cùng lý do: `Input`/`Input.Password` của antd là component
+ * có kiểm soát nên API `register()` không kiểm soát của `react-hook-form`
+ * không dùng trực tiếp được — `Controller` cung cấp cặp `value`/`onChange`
+ * qua `field`. `maNhom` (mã nhóm Cybersoft) không phải là trường nhập liệu
+ * — nó được thêm vào dữ liệu form đã validate lúc submit, lấy từ
+ * `GROUP_ID`, vì mọi tài khoản tạo bởi app này phải thuộc cùng một nhóm.
+ * @returns EN: the rendered registration form inside `AuthLayout`. VI: form đăng ký đã render bên trong `AuthLayout`.
+ */
 const Register: FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { t } = useTranslation(["auth", "common"]);

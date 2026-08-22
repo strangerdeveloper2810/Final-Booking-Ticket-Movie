@@ -2,6 +2,13 @@ import { type FC } from "react";
 import { Spin } from "antd";
 import { useTranslation } from "react-i18next";
 
+/**
+ * EN: Full-section loading indicator shown while a lazily-loaded route/component is being
+ * fetched (used as the `Suspense` fallback in `app/routes.tsx`).
+ * VI: Chỉ báo đang tải cho cả một khu vực, hiển thị trong lúc route/component được lazy-load
+ * đang được tải (dùng làm fallback cho `Suspense` trong `app/routes.tsx`).
+ * @returns EN: the loading indicator JSX element. VI: phần tử JSX của chỉ báo đang tải.
+ */
 const LoadingNew: FC = () => {
   const { t } = useTranslation("common");
 

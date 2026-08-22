@@ -1,6 +1,19 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { http, GROUP_ID } from "shared/utils/setting";
 
+/**
+ * EN: Adapts the shared axios instance (`http`, which already carries the
+ * Cybersoft auth interceptor from `setting.ts`) into RTK Query's
+ * `BaseQueryFn` shape, so `createApi` below can use axios instead of the
+ * default `fetch`-based `fetchBaseQuery`. Every request/response still goes
+ * through the same interceptors as the legacy Redux-Saga services.
+ * VI: Chuyển đổi instance axios dùng chung (`http`, vốn đã có interceptor
+ * xác thực Cybersoft từ `setting.ts`) sang đúng khuôn dạng `BaseQueryFn` của
+ * RTK Query, để `createApi` bên dưới dùng axios thay vì `fetchBaseQuery`
+ * mặc định dựa trên `fetch`. Mọi request/response vẫn đi qua cùng các
+ * interceptor như các service Redux-Saga cũ.
+ * @returns EN: a `BaseQueryFn` compatible query function for `createApi`. VI: một hàm query tương thích `BaseQueryFn` cho `createApi`.
+ */
 const axiosBaseQuery =
   () =>
   async ({
@@ -24,6 +37,12 @@ const axiosBaseQuery =
         params,
         headers,
       });
+      // EN: The Cybersoft API always wraps the real payload in a
+      // `{ content, message, ... }` envelope — unwrap it here once so every
+      // endpoint below gets the plain data, matching its declared type.
+      // VI: API Cybersoft luôn bọc dữ liệu thật trong khung `{ content,
+      // message, ... }` — bóc tách một lần ở đây để mỗi endpoint bên dưới
+      // nhận được dữ liệu thuần, khớp với kiểu đã khai báo.
       return { data: result.data.content };
     } catch (axiosError: any) {
       let err = axiosError;
@@ -36,6 +55,20 @@ const axiosBaseQuery =
     }
   };
 
+/**
+ * EN: RTK Query API slice for the Cybersoft movie-booking backend (movies,
+ * banners, cinemas, showtimes, user management). Note: this coexists with
+ * an older Redux-Saga-driven fetch path (`features/home/redux/**Saga*`) that
+ * targets some of the *same* Cybersoft endpoints (banners/films/cinemas) —
+ * see `app/store.ts` for why those saga slices are effectively legacy/dead
+ * code today, with this RTK Query API being the actively consumed path.
+ * VI: API slice của RTK Query cho backend đặt vé phim Cybersoft (phim,
+ * banner, rạp, lịch chiếu, quản lý người dùng). Lưu ý: file này tồn tại
+ * song song với luồng fetch cũ dùng Redux-Saga (`features/home/redux/**Saga*`)
+ * vốn cũng gọi tới CÙNG một số endpoint Cybersoft (banner/phim/rạp) — xem
+ * `app/store.ts` để biết vì sao các slice saga đó hiện là code cũ/không còn
+ * dùng, trong khi API RTK Query này mới là luồng đang được sử dụng thực sự.
+ */
 export const movieApi = createApi({
   reducerPath: "movieApi",
   baseQuery: axiosBaseQuery(),
@@ -124,6 +157,12 @@ export const movieApi = createApi({
   }),
 });
 
+/**
+ * EN: Auto-generated React hooks (one per endpoint above) — this is the
+ * actual public surface most components import from this file.
+ * VI: Các hook React được RTK Query tự sinh (mỗi endpoint ở trên một hook)
+ * — đây mới là phần công khai mà hầu hết component import từ file này.
+ */
 export const {
   useGetBannersQuery,
   useGetFilmListQuery,

@@ -18,8 +18,24 @@ import enAuth from "../locales/en/auth.json";
 import enDetail from "../locales/en/detail.json";
 import enFooter from "../locales/en/footer.json";
 
+/**
+ * EN: The i18next namespace used when a component calls `useTranslation()`
+ * without specifying a namespace explicitly. Keeping a single default avoids
+ * having to pass a namespace string at every call site for the common cases.
+ * VI: Namespace i18next mặc định khi component gọi `useTranslation()` mà
+ * không truyền namespace cụ thể. Có một namespace mặc định giúp không phải
+ * truyền chuỗi namespace ở mọi nơi gọi cho các trường hợp phổ biến.
+ */
 export const defaultNS = "common";
 
+/**
+ * EN: Translation resource bundle for both supported locales, split into
+ * per-feature namespaces (common/header/home/booking/auth/detail/footer) so
+ * each feature only loads the JSON it needs instead of one giant file.
+ * VI: Bộ tài nguyên dịch cho cả hai ngôn ngữ được hỗ trợ, chia theo namespace
+ * từng feature (common/header/home/booking/auth/detail/footer) để mỗi
+ * feature chỉ tải đúng phần JSON cần dùng thay vì một file khổng lồ duy nhất.
+ */
 export const resources = {
   vi: {
     common: viCommon,
@@ -41,6 +57,14 @@ export const resources = {
   },
 } as const;
 
+// EN: Wire up i18next once at app startup: LanguageDetector picks the user's
+// language from browser/localStorage, initReactI18next exposes the `useTranslation`
+// hook, and `fallbackLng: "vi"` means Vietnamese is used whenever the detected
+// language (or a missing key) isn't available.
+// VI: Khởi tạo i18next một lần khi ứng dụng chạy: LanguageDetector tự phát
+// hiện ngôn ngữ người dùng (từ trình duyệt/localStorage), initReactI18next
+// cung cấp hook `useTranslation`, và `fallbackLng: "vi"` nghĩa là dùng tiếng
+// Việt khi không phát hiện được ngôn ngữ (hoặc thiếu khóa dịch).
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
@@ -49,6 +73,10 @@ i18n
     fallbackLng: "vi",
     defaultNS,
     interpolation: {
+      // EN: React already escapes output, so let i18next skip its own
+      // HTML-escaping to avoid double-escaping interpolated values.
+      // VI: React đã tự escape khi render, nên tắt escape của i18next để
+      // tránh escape hai lần đối với các giá trị được nội suy.
       escapeValue: false,
     },
   });

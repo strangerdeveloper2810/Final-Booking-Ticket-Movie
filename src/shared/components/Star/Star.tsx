@@ -1,5 +1,16 @@
 import { FC, JSX } from "react";
 
+/**
+ * EN: Static 5-star rating badge (always renders 5 filled stars + a fixed "5.0" label). The
+ * five `<svg>` icons are hand-written rather than generated from an array because the count is
+ * fixed and each one carries a distinct `<title>` for accessibility — there is no per-item
+ * transform logic here worth extracting into a loop/lodash call.
+ * VI: Huy hiệu đánh giá 5 sao tĩnh (luôn hiển thị 5 sao đầy + nhãn "5.0" cố định). Năm icon
+ * `<svg>` được viết tay thay vì sinh ra từ mảng vì số lượng cố định và mỗi icon có `<title>`
+ * riêng phục vụ accessibility — không có logic biến đổi theo từng phần tử đáng để tách thành
+ * vòng lặp/lodash.
+ * @returns EN: the star-rating JSX element. VI: phần tử JSX của huy hiệu đánh giá sao.
+ */
 const Star: FC = (): JSX.Element => {
   return (
     <div className="flex items-center mt-2.5 mb-5">

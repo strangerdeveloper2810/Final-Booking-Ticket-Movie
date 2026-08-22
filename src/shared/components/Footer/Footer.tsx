@@ -4,6 +4,15 @@ import { useTranslation } from "react-i18next";
 import { APP_ROUTES } from "shared/constants/routes";
 import Logo from "shared/components/Logo/Logo";
 
+/**
+ * EN: Global site footer shown on every page via `HomeTemplate`. Renders brand info, static
+ * quick-link/policy sections, and the copyright line — all text is pulled from i18n so it
+ * follows the current language automatically.
+ * VI: Footer chung của trang, hiển thị ở mọi trang thông qua `HomeTemplate`. Hiển thị thông tin
+ * thương hiệu, các mục liên kết nhanh/chính sách tĩnh và dòng bản quyền — toàn bộ text lấy từ i18n
+ * nên tự động đổi theo ngôn ngữ hiện tại.
+ * @returns EN: the footer JSX element. VI: phần tử JSX của footer.
+ */
 const Footer: FC = () => {
   const { t } = useTranslation(["footer", "common"]);
 

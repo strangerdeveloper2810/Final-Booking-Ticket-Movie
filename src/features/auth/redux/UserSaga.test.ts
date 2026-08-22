@@ -2,7 +2,7 @@ import { put } from "redux-saga/effects";
 import { registerSaga, loginSaga } from "./UserSaga";
 import { UserSagaAction } from "./UserSaga.reducer";
 import { toast } from "react-toastify";
-import { history } from "shared/utils/setting";
+import { navigateTo } from "shared/utils/navigation";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { UserLogin, UserRegister } from "./UserType";
 
@@ -13,10 +13,14 @@ jest.mock("react-toastify", () => ({
   },
 }));
 
-jest.mock("shared/utils/setting", () => ({
-  history: {
-    push: jest.fn(),
-  },
+// EN: UserSaga.ts navigates via the shared `navigateTo` helper (see
+// shared/utils/navigation.ts) instead of the old, silently-disconnected
+// `history` package instance — mock that module instead.
+// VI: UserSaga.ts điều hướng qua helper `navigateTo` dùng chung (xem
+// shared/utils/navigation.ts) thay vì instance package `history` cũ vốn đã
+// âm thầm bị ngắt kết nối — mock module đó thay thế.
+jest.mock("shared/utils/navigation", () => ({
+  navigateTo: jest.fn(),
 }));
 
 describe("User Saga", () => {
@@ -63,7 +67,7 @@ describe("User Saga", () => {
     expect(nextStep.value).toEqual(put(UserSagaAction.setUserInfo(mockUser)));
 
     generator.next();
-    expect(history.push).toHaveBeenCalledWith("/login");
+    expect(navigateTo).toHaveBeenCalledWith("/login");
     expect(generator.next().done).toBe(true);
   });
 
@@ -99,7 +103,7 @@ describe("User Saga", () => {
 
     generator.next(mockUser);
     generator.next();
-    expect(history.push).toHaveBeenCalledWith("/");
+    expect(navigateTo).toHaveBeenCalledWith("/");
   });
 
   it("should handle login with string error", () => {

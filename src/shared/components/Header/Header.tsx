@@ -11,6 +11,8 @@ import {
   GlobalOutlined,
 } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
+import map from "lodash/map";
+import find from "lodash/find";
 import { RootState } from "app/store";
 import { settings, ACCESS_TOKEN, USER_LOGIN } from "shared/utils/setting";
 import { APP_ROUTES } from "shared/constants/routes";
@@ -18,6 +20,17 @@ import { useTheme } from "shared/theme/ThemeContext";
 import { SUPPORTED_LANGUAGES, LanguageCode } from "shared/constants/languages";
 import Logo from "shared/components/Logo/Logo";
 
+/**
+ * EN: Global site header/navbar shown on every page via `HomeTemplate`. Handles desktop nav
+ * links (with hash-scroll behaviour), the language-switcher dropdown, theme toggle, auth
+ * state (login/register vs. user info + logout), and a mobile drawer mirroring the same
+ * controls for small screens.
+ * VI: Header/navbar chung của trang, hiển thị ở mọi trang qua `HomeTemplate`. Xử lý các liên kết
+ * điều hướng trên desktop (có cuộn tới id/hash), dropdown đổi ngôn ngữ, nút chuyển theme, trạng thái
+ * đăng nhập (đăng nhập/đăng ký hoặc thông tin người dùng + đăng xuất), và một drawer cho di động
+ * chứa các control tương tự.
+ * @returns EN: the header JSX element. VI: phần tử JSX của header.
+ */
 const Header: FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const navigate = useNavigate();
@@ -72,7 +85,9 @@ const Header: FC = () => {
     i18n.changeLanguage(lng);
   };
 
-  const languageMenuItems = SUPPORTED_LANGUAGES.map((lang) => ({
+  // EN: Build the antd Dropdown `menu.items` shape from the static language list.
+  // VI: Dựng dữ liệu `menu.items` cho Dropdown của antd từ danh sách ngôn ngữ tĩnh.
+  const languageMenuItems = map(SUPPORTED_LANGUAGES, (lang) => ({
     key: lang.code,
     label: (
       <span className="flex items-center gap-2">
@@ -90,9 +105,13 @@ const Header: FC = () => {
   ];
 
   const isDark = themeMode === "dark";
-  const currentLang = SUPPORTED_LANGUAGES.find(
-    (l) => l.code === (i18n.language || LanguageCode.VI)
-  ) || SUPPORTED_LANGUAGES[0];
+  // EN: Look up the active language's metadata (flag/label) for display; fall back to the
+  // first supported language if the i18n language code isn't in our list.
+  // VI: Tìm thông tin (cờ/tên) của ngôn ngữ đang dùng để hiển thị; nếu mã ngôn ngữ của i18n
+  // không có trong danh sách hỗ trợ thì dùng ngôn ngữ đầu tiên làm mặc định.
+  const currentLang =
+    find(SUPPORTED_LANGUAGES, (l) => l.code === (i18n.language || LanguageCode.VI)) ||
+    SUPPORTED_LANGUAGES[0];
 
   return (
     <header className="sticky top-0 z-50 bg-surface/90 backdrop-blur-md border-b border-border transition-colors">
@@ -104,7 +123,7 @@ const Header: FC = () => {
 
         {/* Desktop Nav Links */}
         <nav className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => {
+          {map(navLinks, (link) => {
             const isHashLink = link.path.includes("#");
             const hash = isHashLink ? link.path.substring(link.path.indexOf("#")) : "";
             const isActive = isHashLink
@@ -212,7 +231,7 @@ const Header: FC = () => {
           <div className="flex items-center justify-between w-full">
             <Logo size="sm" />
             <div className="flex items-center gap-2">
-              {SUPPORTED_LANGUAGES.map((lang) => (
+              {map(SUPPORTED_LANGUAGES, (lang) => (
                 <Button
                   key={lang.code}
                   size="small"
@@ -232,7 +251,7 @@ const Header: FC = () => {
       >
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-4">
-            {navLinks.map((link) => (
+            {map(navLinks, (link) => (
               <a
                 key={link.label}
                 href={link.path}

@@ -1,4 +1,6 @@
 import { type FC } from "react";
+import isEmpty from "lodash/isEmpty";
+import map from "lodash/map";
 import { useNavigate } from "react-router-dom";
 import { Tag } from "antd";
 import { CalendarOutlined } from "@ant-design/icons";
@@ -8,11 +10,19 @@ import { parseScheduleMovie } from "shared/utils/common";
 import { APP_ROUTES } from "shared/constants/routes";
 import { ListMovieProps } from "../types/home.types";
 
+/**
+ * EN: Lists the films currently scheduled at a single cinema cluster, each with its
+ * available showtime buttons; shows a fallback message when the cluster has no schedule.
+ * VI: Hiển thị danh sách phim đang có lịch chiếu tại một cụm rạp, kèm các nút suất chiếu
+ * khả dụng; hiển thị thông báo dự phòng khi cụm rạp chưa có lịch chiếu.
+ * @param cinema - EN: the cinema cluster (with its film schedule) to render. VI: cụm rạp
+ * (kèm lịch chiếu phim) cần hiển thị.
+ */
 const ListMovie: FC<ListMovieProps> = ({ cinema }) => {
   const navigate = useNavigate();
   const { t } = useTranslation(["home", "common"]);
 
-  if (!cinema.danhSachPhim || cinema.danhSachPhim.length === 0) {
+  if (isEmpty(cinema.danhSachPhim)) {
     return (
       <div className="py-8 text-center text-text-secondary">
         Chưa có lịch chiếu cho cụm rạp này.
@@ -22,7 +32,7 @@ const ListMovie: FC<ListMovieProps> = ({ cinema }) => {
 
   return (
     <div className="flex flex-col gap-6 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
-      {cinema.danhSachPhim.map((movie: DanhSachPhim) => (
+      {map(cinema.danhSachPhim, (movie: DanhSachPhim) => (
         <div
           key={movie.maPhim}
           className="bg-background p-4 rounded-xl border border-border flex flex-col sm:flex-row gap-4 hover:border-primary/30 transition-colors"
@@ -56,7 +66,7 @@ const ListMovie: FC<ListMovieProps> = ({ cinema }) => {
                 {t("home:availableSchedules")}
               </span>
               <div className="flex flex-wrap gap-2 max-h-36 overflow-y-auto pr-1">
-                {movie.lstLichChieuTheoPhim.slice(0, 12).map((schedule: LstLichChieuTheoPhim, idx: number) => {
+                {map(movie.lstLichChieuTheoPhim.slice(0, 12), (schedule: LstLichChieuTheoPhim, idx: number) => {
                   const { date, time } = parseScheduleMovie(schedule.ngayChieuGioChieu);
                   return (
                     <button

@@ -13,6 +13,27 @@ import { APP_ROUTES } from "shared/constants/routes";
 import { loginSchema, LoginFormData } from "../schemas/auth.schema";
 import SEO from "shared/components/SEO/SEO";
 
+/**
+ * EN: Login page. Uses `react-hook-form` + zod (`loginSchema`) for
+ * validation, but wraps every field in `Controller` instead of calling
+ * `register()` directly: antd's `Input`/`Input.Password` are controlled
+ * components (they need a `value`/`onChange` pair driven by React state),
+ * whereas `register()` is built for uncontrolled/ref-based native
+ * `<input>` elements. `Controller` bridges the two by handing antd's props
+ * through `field`. Submitting doesn't call an API directly — it dispatches
+ * a plain `{ type: USER_LOGIN_API, payload }` action that `actionLoginSaga`
+ * (see UserSaga.ts) is watching for via `takeLatest`.
+ * VI: Trang Đăng nhập. Dùng `react-hook-form` + zod (`loginSchema`) để
+ * validate, nhưng bọc mỗi trường trong `Controller` thay vì gọi `register()`
+ * trực tiếp: `Input`/`Input.Password` của antd là component có kiểm soát
+ * (controlled — cần cặp `value`/`onChange` do state React điều khiển),
+ * trong khi `register()` được thiết kế cho `<input>` gốc không kiểm soát
+ * (uncontrolled, dùng ref). `Controller` là cầu nối, truyền props của antd
+ * qua đối tượng `field`. Việc submit không gọi API trực tiếp — nó dispatch
+ * một action thuần `{ type: USER_LOGIN_API, payload }` mà `actionLoginSaga`
+ * (xem UserSaga.ts) đang lắng nghe qua `takeLatest`.
+ * @returns EN: the rendered login form inside `AuthLayout`. VI: form đăng nhập đã render bên trong `AuthLayout`.
+ */
 const Login: FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { t } = useTranslation(["auth", "common"]);

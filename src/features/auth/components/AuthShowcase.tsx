@@ -4,6 +4,27 @@ import { useTranslation } from "react-i18next";
 import { useGetTrendingMoviesQuery, getTMDBImageUrl } from "shared/services/tmdbApi";
 import { useGetBannersQuery } from "shared/services/movieApi";
 
+/**
+ * EN: Left-column visual for the auth screens — an auto-rotating carousel
+ * that prefers live TMDB trending-movie data, falls back to app banners,
+ * and finally to static marketing quotes if neither API has data yet. Purely
+ * decorative/no user input, so it has no lodash array logic to swap: the
+ * `.map` below renders 4 fixed dot indicators from a literal array, and the
+ * `||` fallbacks below intentionally treat an empty string the same as
+ * missing data (an empty image URL should also fall back to the placeholder,
+ * which `lodash/defaultTo` would not do since it only replaces
+ * null/undefined/NaN) — left as `||` on purpose.
+ * VI: Phần hiển thị bên trái của màn hình xác thực — carousel tự động xoay
+ * vòng, ưu tiên dữ liệu phim thịnh hành từ TMDB, dự phòng bằng banner của
+ * app, và cuối cùng là các câu quote tĩnh nếu cả hai API đều chưa có dữ
+ * liệu. Chỉ mang tính trang trí/không nhận input người dùng nên không có
+ * logic mảng nào cần đổi sang lodash: `.map` bên dưới chỉ render 4 chấm chỉ
+ * báo cố định từ một mảng literal, và các fallback `||` bên dưới cố ý coi
+ * chuỗi rỗng giống như thiếu dữ liệu (URL ảnh rỗng cũng cần rơi về ảnh mặc
+ * định, điều mà `lodash/defaultTo` sẽ không làm vì nó chỉ thay thế
+ * null/undefined/NaN) — nên giữ nguyên `||` một cách có chủ đích.
+ * @returns EN: the animated showcase panel. VI: khung showcase có hiệu ứng chuyển động.
+ */
 const AuthShowcase: FC = () => {
   const { t, i18n } = useTranslation(["auth", "common"]);
   const { data: tmdbMovies = [] } = useGetTrendingMoviesQuery(i18n.language);
@@ -19,6 +40,15 @@ const AuthShowcase: FC = () => {
   const totalItems = Math.max(tmdbMovies.length, banners.length, fallbackQuotes.length);
 
   useEffect(() => {
+    // EN: Guard against a zero-length carousel (all sources still loading).
+    // Not swapped to `isEmpty(totalItems)`: `totalItems` is a number, and
+    // lodash's `isEmpty` treats every primitive (including non-zero numbers)
+    // as empty, which would incorrectly skip the interval even when there
+    // are items.
+    // VI: Chặn trường hợp carousel có độ dài bằng 0 (các nguồn dữ liệu chưa
+    // tải xong). Không đổi sang `isEmpty(totalItems)`: `totalItems` là số,
+    // và `isEmpty` của lodash coi mọi kiểu nguyên thủy (kể cả số khác 0) là
+    // rỗng, sẽ vô tình bỏ qua interval dù vẫn còn item.
     if (totalItems === 0) return;
     const timer = setInterval(() => {
       setActiveIndex((prev) => (prev + 1) % totalItems);

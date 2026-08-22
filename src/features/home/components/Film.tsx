@@ -1,5 +1,6 @@
 import { type FC } from "react";
 import isEmpty from "lodash/isEmpty";
+import map from "lodash/map";
 import SliderComponent from "react-slick";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
@@ -7,6 +8,10 @@ import FilmItem from "./FilmItem";
 import SkeletonCard from "shared/components/SkeletonCard/SkeletonCard";
 import { useGetFilmListQuery } from "shared/services/movieApi";
 
+// EN: react-slick injects `onClick` (and other nav props) into the component passed as
+// `nextArrow`; we only need to forward that click handler to a custom-styled button.
+// VI: react-slick tự bơm prop `onClick` (và các prop điều hướng khác) vào component được
+// truyền cho `nextArrow`; ta chỉ cần chuyển tiếp handler click đó cho nút bấm tùy chỉnh.
 const CustomNextArrow = (props: any) => {
   const { onClick } = props;
   return (
@@ -33,12 +38,24 @@ const CustomPrevArrow = (props: any) => {
   );
 };
 
+/**
+ * EN: "Now showing" section on the home page; renders the film list fetched from the API
+ * as an auto-playing carousel of FilmItem cards, with a skeleton grid while loading/empty.
+ * VI: Mục "Đang chiếu" ở trang chủ; hiển thị danh sách phim lấy từ API dưới dạng carousel
+ * tự động chạy gồm các thẻ FilmItem, kèm lưới khung xương khi đang tải hoặc rỗng.
+ */
 const Film: FC = () => {
   const { data: filmList = [], isLoading } = useGetFilmListQuery();
   const { t } = useTranslation(["home", "common"]);
 
   const sliderSettings = {
     dots: false,
+    // EN: Disable infinite looping when there are 4 or fewer films — react-slick's
+    // infinite mode duplicates slides and can render oddly when the count doesn't
+    // exceed slidesToShow.
+    // VI: Tắt chế độ lặp vô hạn khi có từ 4 phim trở xuống — chế độ infinite của
+    // react-slick sẽ nhân bản slide và hiển thị bất thường khi số lượng không
+    // vượt quá slidesToShow.
     infinite: filmList.length > 4,
     speed: 500,
     slidesToShow: 4,
@@ -84,7 +101,7 @@ const Film: FC = () => {
         <div className="relative px-2">
           {/* @ts-ignore */}
           <SliderComponent {...sliderSettings}>
-            {filmList.map((film: any) => (
+            {map(filmList, (film: any) => (
               <div key={film.maPhim} className="px-2 py-2">
                 <FilmItem filmItem={film} />
               </div>
