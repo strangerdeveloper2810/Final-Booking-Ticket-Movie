@@ -16,6 +16,7 @@ import { settings, ACCESS_TOKEN, USER_LOGIN } from "shared/utils/setting";
 import { APP_ROUTES } from "shared/constants/routes";
 import { useTheme } from "shared/theme/ThemeContext";
 import { SUPPORTED_LANGUAGES, LanguageCode } from "shared/constants/languages";
+import Logo from "shared/components/Logo/Logo";
 
 const Header: FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -60,13 +61,8 @@ const Header: FC = () => {
     <header className="sticky top-0 z-50 bg-surface/90 backdrop-blur-md border-b border-border transition-colors">
       <div className="max-w-screen-xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
         {/* Brand Logo */}
-        <NavLink to={APP_ROUTES.HOME} className="flex items-center gap-2 group">
-          <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center font-bold text-white text-xl shadow-md shadow-primary/30 group-hover:scale-105 transition-transform">
-            C
-          </div>
-          <span className="text-xl font-bold text-text-primary tracking-wide">
-            Cinefix
-          </span>
+        <NavLink to={APP_ROUTES.HOME}>
+          <Logo size="md" />
         </NavLink>
 
         {/* Desktop Nav Links */}
@@ -143,7 +139,7 @@ const Header: FC = () => {
               <Button
                 type="primary"
                 onClick={() => navigate(APP_ROUTES.REGISTER)}
-                className="bg-primary hover:bg-primary-hover"
+                className="bg-primary hover:bg-primary-hover border-none font-semibold"
               >
                 {t("header:register")}
               </Button>
@@ -170,12 +166,7 @@ const Header: FC = () => {
       <Drawer
         title={
           <div className="flex items-center justify-between w-full">
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center font-bold text-white">
-                C
-              </div>
-              <span className="font-bold text-text-primary">Cinefix</span>
-            </div>
+            <Logo size="sm" />
             <div className="flex items-center gap-2">
               {SUPPORTED_LANGUAGES.map((lang) => (
                 <Button
@@ -252,7 +243,7 @@ const Header: FC = () => {
                     setDrawerOpen(false);
                     navigate(APP_ROUTES.REGISTER);
                   }}
-                  className="bg-primary hover:bg-primary-hover"
+                  className="bg-primary hover:bg-primary-hover border-none font-semibold"
                 >
                   {t("header:register")}
                 </Button>

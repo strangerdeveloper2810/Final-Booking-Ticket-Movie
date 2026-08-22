@@ -2,6 +2,7 @@ import React, { FC } from "react";
 import { NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { APP_ROUTES } from "shared/constants/routes";
+import Logo from "shared/components/Logo/Logo";
 
 const Footer: FC = () => {
   const { t } = useTranslation(["footer", "common"]);
@@ -12,11 +13,8 @@ const Footer: FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           {/* Brand Info */}
           <div>
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center font-bold text-white text-lg">
-                C
-              </div>
-              <span className="text-lg font-bold text-text-primary">Cinefix</span>
+            <div className="mb-3">
+              <Logo size="sm" />
             </div>
             <p className="text-sm leading-relaxed text-text-secondary">
               {t("footer:aboutText")}
