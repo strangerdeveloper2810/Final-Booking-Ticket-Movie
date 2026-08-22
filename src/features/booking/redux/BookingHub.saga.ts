@@ -12,13 +12,13 @@ import { JOIN_SEAT_ROOM, LEAVE_SEAT_ROOM } from "./BookingTicketActionTypes";
  * external event emitter (WebSocket, SignalR, DOM events, ...) into
  * something a saga can `take()` from just like a dispatched Redux action.
  *
- * NOTE: this assumes the hub's `loadDanhSachGheDaDat` broadcast carries the
- * full, fresh `DanhSachGhe[]` seat list for the room (matching the shape of
- * `GET /QuanLyDatVe/LayDanhSachPhongVe`'s `danhSachGhe` field) — the most
- * common shape for this exact Cybersoft course hub. Verify this against the
- * live hub payload during QA and adjust `applyRealtimeSeatUpdate` in
- * BookingTicket.reducer.ts if the real server sends a different shape
- * (e.g. only the list of newly-booked seat IDs).
+ * NOTE: confirmed by live testing, `loadDanhSachGheDaDat`'s payload is a
+ * PARTIAL `DanhSachGhe[]` — only the seats currently booked, not the full
+ * room seat map (an earlier version of this code wrongly assumed it was the
+ * full list and replaced state.bookingDetail.danhSachGhe with it wholesale,
+ * which blanked the entire seat grid whenever a room had zero booked seats
+ * to report). `applyRealtimeSeatUpdate` in BookingTicket.reducer.ts merges
+ * this list into the existing seats by `maGhe` instead of replacing them.
  */
 function createSeatUpdateChannel(): EventChannel<DanhSachGhe[]> {
   return eventChannel<DanhSachGhe[]>((emit) => {

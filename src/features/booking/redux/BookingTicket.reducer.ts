@@ -61,24 +61,32 @@ const BookingTicketReducer = createSlice({
       state.selectionExpiresAt = null;
     },
     /**
-     * Applied whenever the DatVeHub SignalR connection pushes a fresh seat
-     * map for the room the user is currently in (see BookingHub.saga.ts).
-     * Mirrors getDetailBookingTicket's reconciliation: any seat the current
-     * user had selected that another client just booked is dropped from
-     * the local selection the moment the realtime update arrives.
+     * Applied whenever DatVeHub pushes "loadDanhSachGheDaDat" for the room
+     * the user is currently in (see BookingHub.saga.ts). Per the hub's own
+     * naming ("load list of seats ALREADY BOOKED"), and confirmed by live
+     * testing, this payload is a PARTIAL list — only the seats that are
+     * currently booked, not the full seat map (it can legitimately be an
+     * empty array if nobody has booked yet). It must be MERGED into the
+     * existing seat list by maGhe, never used to replace state.bookingDetail
+     * .danhSachGhe wholesale — doing that previously wiped the entire seat
+     * grid blank the moment a room had zero booked seats to report.
      */
     applyRealtimeSeatUpdate: (
       state: BookingState,
       action: PayloadAction<DanhSachGhe[]>
     ) => {
       if (!("thongTinPhim" in state.bookingDetail)) return;
-      const freshSeats = action.payload;
-      state.bookingDetail.danhSachGhe = freshSeats;
+      const bookedSeatIds = new Set(action.payload.map((s) => s.maGhe));
+      if (bookedSeatIds.size === 0) return;
+
+      state.bookingDetail.danhSachGhe = state.bookingDetail.danhSachGhe.map(
+        (seat) => (bookedSeatIds.has(seat.maGhe) ? { ...seat, daDat: true } : seat)
+      );
+
       if (state.selectedSeats.length) {
-        state.selectedSeats = state.selectedSeats.filter((selected) => {
-          const match = freshSeats.find((s) => s.maGhe === selected.maGhe);
-          return !match || !match.daDat;
-        });
+        state.selectedSeats = state.selectedSeats.filter(
+          (selected) => !bookedSeatIds.has(selected.maGhe)
+        );
         if (state.selectedSeats.length === 0) {
           state.selectionExpiresAt = null;
         }
