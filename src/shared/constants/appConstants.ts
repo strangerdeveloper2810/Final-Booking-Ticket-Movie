@@ -18,6 +18,12 @@ export const STORAGE_KEYS = {
   USER_LOGIN: "userLogin",
 } as const;
 
+// How long a seat stays "held" for the current user after they select the
+// first seat, before the selection auto-releases — mirrors the hold-timer
+// pattern used by most real ticketing platforms (CGV/Ticketbox-style),
+// since there's no server-side reservation/lock on the Cybersoft API itself.
+export const SEAT_HOLD_DURATION_MS = 5 * 60 * 1000; // 5 minutes
+
 export const API_CONFIG = {
   DOMAIN: process.env.REACT_APP_DOMAIN || "https://movienew.cybersoft.edu.vn/api",
   TOKEN_CYBERSOFT: process.env.REACT_APP_TOKEN_CYBERSOFT || "",

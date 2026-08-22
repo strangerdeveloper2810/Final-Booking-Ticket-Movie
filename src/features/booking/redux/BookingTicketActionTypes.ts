@@ -1,2 +1,4 @@
 export const GET_TICKET_API = "GET_TICKET_API";
 export const BOOK_TICKET_API = "BOOK_TICKET_API";
+export const JOIN_SEAT_ROOM = "JOIN_SEAT_ROOM";
+export const LEAVE_SEAT_ROOM = "LEAVE_SEAT_ROOM";

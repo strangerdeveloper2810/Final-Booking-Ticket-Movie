@@ -20,5 +20,9 @@
   "bookingSuccess": "Đặt vé thành công!",
   "bookingError": "Đặt vé không thành công. Vui lòng thử lại!",
   "bookTicketFor": "Đặt Vé Phim {{movie}}",
-  "bookTicketDesc": "Đặt vé phim {{movie}} tại {{cinema}} - {{theater}}."
+  "bookTicketDesc": "Đặt vé phim {{movie}} tại {{cinema}} - {{theater}}.",
+  "liveSeatSync": "Trực Tiếp",
+  "liveSeatSyncHint": "Sơ đồ ghế được đồng bộ realtime qua SignalR — ghế người khác vừa đặt sẽ tự động cập nhật.",
+  "seatHoldHint": "Ghế sẽ được tự động bỏ chọn nếu bạn không thanh toán trước khi hết giờ.",
+  "seatHoldExpired": "Đã hết thời gian giữ ghế. Vui lòng chọn lại ghế để tiếp tục đặt vé."
 }

@@ -1,13 +1,23 @@
-import { type FC, useEffect } from "react";
+import { type FC, useEffect, useState } from "react";
 import get from "lodash/get";
 import isEmpty from "lodash/isEmpty";
 import { useSelector, useDispatch } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
-import { Button, Card, Tag, Modal, Divider } from "antd";
-import { UserOutlined, ClockCircleOutlined, EnvironmentOutlined } from "@ant-design/icons";
+import { Button, Card, Tag, Divider, App } from "antd";
+import {
+  UserOutlined,
+  ClockCircleOutlined,
+  EnvironmentOutlined,
+  HourglassOutlined,
+} from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { AppDispatch, RootState } from "app/store";
-import { GET_TICKET_API, BOOK_TICKET_API } from "../redux/BookingTicketActionTypes";
+import {
+  GET_TICKET_API,
+  BOOK_TICKET_API,
+  JOIN_SEAT_ROOM,
+  LEAVE_SEAT_ROOM,
+} from "../redux/BookingTicketActionTypes";
 import { BookingTicketAction } from "../redux/BookingTicket.reducer";
 import { DanhSachGhe, ThongTinPhim } from "../redux/BookingTicketType";
 import LoadingNew from "shared/components/LoadingNew/LoadingNew";
@@ -15,11 +25,19 @@ import { APP_ROUTES } from "shared/constants/routes";
 import { SeatType } from "shared/constants/appConstants";
 import SEO from "shared/components/SEO/SEO";
 
+function formatCountdown(ms: number): string {
+  const totalSeconds = Math.ceil(ms / 1000);
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+}
+
 const BookingTicket: FC = () => {
   const { maLichChieu } = useParams();
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation(["booking", "common"]);
+  const { modal, message } = App.useApp();
 
   const bookingDetail = useSelector((state: RootState) =>
     get(state, "Booking.bookingDetail", {})
@@ -30,7 +48,39 @@ const BookingTicket: FC = () => {
   const isBooking = useSelector((state: RootState) =>
     get(state, "Booking.isBooking", false)
   );
+  const selectionExpiresAt = useSelector(
+    (state: RootState) => state.Booking.selectionExpiresAt
+  );
   const { userLogin } = useSelector((state: RootState) => state.UserSaga);
+
+  // Seat-hold countdown: ticks every second while a selection is held, and
+  // auto-releases the seats (with a toast) once the deadline passes — there's
+  // no server-side reservation lock on the Cybersoft API, so this is enforced
+  // purely client-side, same spirit as the countdown on most real booking
+  // platforms.
+  const [remainingMs, setRemainingMs] = useState(0);
+
+  useEffect(() => {
+    if (!selectionExpiresAt) {
+      setRemainingMs(0);
+      return;
+    }
+
+    const tick = () => {
+      const remaining = selectionExpiresAt - Date.now();
+      if (remaining <= 0) {
+        setRemainingMs(0);
+        dispatch(BookingTicketAction.clearSelectedSeats());
+        message.warning(t("booking:seatHoldExpired"));
+        return;
+      }
+      setRemainingMs(remaining);
+    };
+
+    tick();
+    const interval = setInterval(tick, 1000);
+    return () => clearInterval(interval);
+  }, [selectionExpiresAt, dispatch, message, t]);
 
   useEffect(() => {
     if (maLichChieu) {
@@ -38,9 +88,17 @@ const BookingTicket: FC = () => {
         type: GET_TICKET_API,
         payload: maLichChieu,
       });
+      // Join the DatVeHub SignalR room for this showtime — the server
+      // pushes a fresh seat map to everyone in the room whenever anyone
+      // books a seat, so occupancy updates live without polling.
+      dispatch({
+        type: JOIN_SEAT_ROOM,
+        payload: maLichChieu,
+      });
     }
 
     return () => {
+      dispatch({ type: LEAVE_SEAT_ROOM });
       dispatch(BookingTicketAction.removeDetailBookingTicket());
     };
   }, [maLichChieu, dispatch]);
@@ -57,7 +115,7 @@ const BookingTicket: FC = () => {
 
   const handleBookTicket = () => {
     if (isEmpty(userLogin)) {
-      Modal.confirm({
+      modal.confirm({
         title: t("booking:loginRequired"),
         content: t("booking:loginRequiredMessage"),
         okText: t("auth:login"),
@@ -68,7 +126,7 @@ const BookingTicket: FC = () => {
     }
 
     if (isEmpty(selectedSeats)) {
-      Modal.warning({
+      modal.warning({
         title: t("booking:selectSeatsFirst"),
       });
       return;
@@ -132,6 +190,16 @@ const BookingTicket: FC = () => {
             <span className="text-xs uppercase font-semibold text-text-secondary tracking-widest">
               {t("booking:screen")}
             </span>
+            <div
+              className="absolute right-0 top-4 flex items-center gap-1.5 text-[10px] uppercase tracking-wide text-text-secondary"
+              title={t("booking:liveSeatSyncHint")}
+            >
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#52c41a] opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#52c41a]" />
+              </span>
+              {t("booking:liveSeatSync")}
+            </div>
           </div>
 
           {/* Seat Grid */}
@@ -233,7 +301,18 @@ const BookingTicket: FC = () => {
               <Divider className="my-3 border-border" />
 
               <div>
-                <span className="text-text-secondary block mb-2">{t("booking:selectedSeats")}</span>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-text-secondary">{t("booking:selectedSeats")}</span>
+                  {remainingMs > 0 && (
+                    <span
+                      className="flex items-center gap-1 text-xs font-semibold text-primary"
+                      title={t("booking:seatHoldHint")}
+                    >
+                      <HourglassOutlined />
+                      {formatCountdown(remainingMs)}
+                    </span>
+                  )}
+                </div>
                 {!isEmpty(selectedSeats) ? (
                   <div className="flex flex-wrap gap-1.5">
                     {selectedSeats.map((seat) => (

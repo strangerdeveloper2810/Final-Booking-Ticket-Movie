@@ -20,5 +20,9 @@
   "bookingSuccess": "Ticket booking successful!",
   "bookingError": "Ticket booking failed. Please try again!",
   "bookTicketFor": "Book Tickets for {{movie}}",
-  "bookTicketDesc": "Book tickets for {{movie}} at {{cinema}} - {{theater}}."
+  "bookTicketDesc": "Book tickets for {{movie}} at {{cinema}} - {{theater}}.",
+  "liveSeatSync": "Live",
+  "liveSeatSyncHint": "The seat map is synced in realtime via SignalR — seats other people just booked update automatically.",
+  "seatHoldHint": "Your seats will be automatically released if you don't complete checkout before time runs out.",
+  "seatHoldExpired": "Your seat hold has expired. Please select your seats again to continue booking."
 }

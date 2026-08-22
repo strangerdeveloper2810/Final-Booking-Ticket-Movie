@@ -4,6 +4,7 @@ import * as cinema from "features/home/redux/cinema/CinemaSaga";
 import * as film from "features/home/redux/filmList/FilmSaga";
 import * as user from "features/auth/redux/UserSaga";
 import * as booking from "features/booking/redux/Booking.saga";
+import { watchSeatRoom } from "features/booking/redux/BookingHub.saga";
 
 export function* rootSaga() {
   yield all([
@@ -13,5 +14,6 @@ export function* rootSaga() {
     film.actionGetAllFilm(),
     cinema.actionGetAllCinema(),
     booking.actionGetTicketApi(),
+    watchSeatRoom(),
   ]);
 }
