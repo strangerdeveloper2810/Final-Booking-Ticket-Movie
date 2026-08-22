@@ -1,0 +1,15 @@
+export const tokens = {
+  background: "#0B0D12",
+  surface: "#151822",
+  surfaceHover: "#1D2130",
+  border: "#262B3A",
+  primary: "#F2545B",
+  primaryHover: "#FF6B72",
+  secondary: "#FFC857",
+  textPrimary: "#F5F6FA",
+  textSecondary: "#9AA0B4",
+  success: "#52c41a",
+  danger: "#ff4d4f",
+  borderRadiusCard: 10,
+  borderRadiusButton: 8,
+};

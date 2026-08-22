@@ -1,6 +1,0 @@
-export { default as Header } from './Header'
-export { default as Footer } from './Footer'
-export { default as LoadingNew } from './LoadingNew'
-export { default as SkeletonCard } from './SkeletonCard'
-export { default as SkeletonCarousel } from './SkeletonCarousel'
-export { default as Star } from './Star'

@@ -8,6 +8,8 @@ module.exports = {
     "\\.(css|less)$": "<rootDir>/src/__mocks__/styleMock.ts",
   },
   setupFilesAfterEnv: ["<rootDir>/src/setupTests.ts"],
+  moduleDirectories: ["node_modules", "src"],
+  modulePathIgnorePatterns: ["<rootDir>/.claude"],
   collectCoverageFrom: [
     "**/*.{ts,tsx}",
     "!**/*.d.ts",

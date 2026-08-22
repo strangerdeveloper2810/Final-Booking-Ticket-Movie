@@ -2,10 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-.container {
-  @apply flex flex-col h-screen;
-}
-
-.footer {
-  @apply mt-auto;
+@layer base {
+  body {
+    @apply bg-[#0B0D12] text-[#F5F6FA] antialiased selection:bg-[#F2545B] selection:text-white;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  }
 }
