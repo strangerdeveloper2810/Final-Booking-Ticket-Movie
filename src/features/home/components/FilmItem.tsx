@@ -17,7 +17,7 @@ const FilmItem: React.FC<FilmItemProps> = ({ filmItem }) => {
   return (
     <Card
       hoverable
-      className="bg-surface border-border overflow-hidden flex flex-col h-full rounded-xl transition-all duration-300 hover:border-primary/50 hover:-translate-y-1 shadow-sm"
+      className="bg-surface border-border overflow-hidden flex flex-col h-full rounded-xl transition-all duration-300 hover:border-primary/50 hover:-translate-y-1 shadow-md"
       bodyStyle={{ padding: "16px", display: "flex", flexDirection: "column", flex: 1 }}
       cover={
         <div className="relative h-72 overflow-hidden group">
@@ -42,7 +42,7 @@ const FilmItem: React.FC<FilmItemProps> = ({ filmItem }) => {
             {filmItem.tenPhim}
           </h3>
           <p className="text-xs text-text-secondary line-clamp-2 leading-relaxed mb-2">
-            {filmItem.moTa || "..."}
+            {filmItem.moTa ? filmItem.moTa : t("home:noDescription")}
           </p>
           <div className="flex items-center gap-1">
             <Star />
@@ -56,7 +56,7 @@ const FilmItem: React.FC<FilmItemProps> = ({ filmItem }) => {
           type="primary"
           block
           onClick={handleBooking}
-          className="bg-primary hover:bg-primary-hover font-semibold h-10 mt-2 border-none"
+          className="bg-primary hover:bg-primary-hover font-semibold h-10 mt-2 border-none shadow-md shadow-primary/20"
         >
           {t("home:bookNow")}
         </Button>

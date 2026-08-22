@@ -3,11 +3,38 @@ import { useSelector, useDispatch } from "react-redux";
 import get from "lodash/get";
 import isEmpty from "lodash/isEmpty";
 import SliderComponent from "react-slick";
+import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { RootState, AppDispatch } from "app/store";
 import { GET_ALL_FILM } from "../redux/filmList/FilmActionTypes";
 import FilmItem from "./FilmItem";
 import SkeletonCard from "shared/components/SkeletonCard/SkeletonCard";
+
+const CustomNextArrow = (props: any) => {
+  const { onClick } = props;
+  return (
+    <button
+      onClick={onClick}
+      aria-label="Next slide"
+      className="absolute right-[-12px] top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-[#F2545B] hover:bg-[#FF6B72] text-white shadow-xl shadow-[#F2545B]/40 flex items-center justify-center transition-all hover:scale-110 border-2 border-white/20"
+    >
+      <RightOutlined className="text-base font-bold" />
+    </button>
+  );
+};
+
+const CustomPrevArrow = (props: any) => {
+  const { onClick } = props;
+  return (
+    <button
+      onClick={onClick}
+      aria-label="Previous slide"
+      className="absolute left-[-12px] top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-[#F2545B] hover:bg-[#FF6B72] text-white shadow-xl shadow-[#F2545B]/40 flex items-center justify-center transition-all hover:scale-110 border-2 border-white/20"
+    >
+      <LeftOutlined className="text-base font-bold" />
+    </button>
+  );
+};
 
 const Film: FC = () => {
   const filmList = useSelector((state: RootState) =>
@@ -35,6 +62,8 @@ const Film: FC = () => {
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 4000,
+    nextArrow: <CustomNextArrow />,
+    prevArrow: <CustomPrevArrow />,
     responsive: [
       {
         breakpoint: 1280,
@@ -46,7 +75,7 @@ const Film: FC = () => {
       },
       {
         breakpoint: 640,
-        settings: { slidesToShow: 1, slidesToScroll: 1 },
+        settings: { slidesToShow: 1, slidesToScroll: 1, arrows: false },
       },
     ],
   };
@@ -69,7 +98,7 @@ const Film: FC = () => {
           ))}
         </div>
       ) : (
-        <div className="px-2">
+        <div className="relative px-2">
           {/* @ts-ignore */}
           <SliderComponent {...sliderSettings}>
             {filmList.map((film) => (

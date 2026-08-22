@@ -3,12 +3,12 @@
 @tailwind utilities;
 
 :root {
-  --bg-color: #F8F9FA;
+  --bg-color: #F1F5F9;
   --surface-color: #FFFFFF;
-  --surface-hover-color: #F3F4F6;
-  --border-color: #E5E7EB;
-  --text-primary-color: #111827;
-  --text-secondary-color: #4B5563;
+  --surface-hover-color: #F8FAFC;
+  --border-color: #E2E8F0;
+  --text-primary-color: #0F172A;
+  --text-secondary-color: #64748B;
 }
 
 .dark {
@@ -83,4 +83,20 @@
 
 .ant-drawer-title {
   color: var(--text-primary-color) !important;
+}
+
+/* Custom Slick Carousel Arrows & Dots */
+.slick-prev:before,
+.slick-next:before {
+  display: none !important;
+}
+
+.slick-dots li button:before {
+  color: var(--text-secondary-color) !important;
+  opacity: 0.4 !important;
+}
+
+.slick-dots li.slick-active button:before {
+  color: #F2545B !important;
+  opacity: 1 !important;
 }

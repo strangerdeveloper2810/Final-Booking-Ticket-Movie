@@ -27,14 +27,14 @@ const CarouselHome: FC = () => {
       return <SkeletonCarousel />;
     }
     return map(arrBanner, (banner) => (
-      <div key={banner.maBanner} className="relative h-[300px] sm:h-[420px] md:h-[520px] outline-none">
+      <div key={banner.maBanner} className="relative h-[320px] sm:h-[440px] md:h-[540px] outline-none">
         <img
           src={banner.hinhAnh}
           alt={`Banner ${banner.maBanner}`}
           className="w-full h-full object-cover"
         />
-        {/* Gradient Overlay for Cinematic Legibility */}
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent transition-colors" />
+        {/* Cinematic Gradient Overlay (Dark bottom gradient for visual contrast) */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
       </div>
     ));
   }, [isLoading, arrBanner]);

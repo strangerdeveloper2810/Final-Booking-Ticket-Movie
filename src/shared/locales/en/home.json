@@ -1,10 +1,9 @@
 {
-  "heroTitle": "Ultimate Cinema Experience",
-  "heroSubtitle": "Book movie tickets quickly, choose the best seats in just a few clicks.",
   "nowShowingTitle": "Now Showing",
   "comingSoonTitle": "Coming Soon",
-  "cinemaTitle": "Cinema Complexes",
+  "cinemaTitle": "Cinemas & Theaters",
+  "searchPlaceholder": "Search movie by name...",
   "bookNow": "Book Now",
-  "trailer": "Watch Trailer",
-  "availableSchedules": "Available Showtimes:"
+  "availableSchedules": "Available showtimes:",
+  "noDescription": "Exciting movie currently showing at cinemas nationwide."
 }

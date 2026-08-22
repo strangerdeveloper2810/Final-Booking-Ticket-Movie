@@ -1,10 +1,9 @@
 {
-  "heroTitle": "Trải Nghiệm Điện Ảnh Đỉnh Cao",
-  "heroSubtitle": "Đặt vé xem phim chiếu rạp nhanh chóng, chọn vị trí ngồi đẹp nhất chỉ với vài thao tác.",
   "nowShowingTitle": "Phim Đang Chiếu",
   "comingSoonTitle": "Phim Sắp Chiếu",
-  "cinemaTitle": "Hệ Thống Cụm Rạp",
-  "bookNow": "Đặt vé ngay",
-  "trailer": "Xem Trailer",
-  "availableSchedules": "Lịch chiếu khả dụng:"
+  "cinemaTitle": "Hệ Thống Rạp Chiếu",
+  "searchPlaceholder": "Nhập tên phim cần tìm...",
+  "bookNow": "Đặt Vé Ngay",
+  "availableSchedules": "Lịch chiếu khả dụng:",
+  "noDescription": "Phim chiếu rạp đặc sắc đang được công chiếu tại các cụm rạp trên toàn quốc."
 }
