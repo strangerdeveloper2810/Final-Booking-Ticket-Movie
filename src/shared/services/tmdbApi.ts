@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { API_CONFIG } from "shared/constants/appConstants";
 
 export interface TMDBMovie {
   id: number;
@@ -18,26 +19,35 @@ export interface TMDBResponse {
   total_results: number;
 }
 
-const TMDB_READ_ACCESS_TOKEN =
-  "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmMTQ0NjViYmRjNjcxODAzYzI2NmQ4ZjQ4ZjA5NWVlOCIsInN1YiI6IjY1ZDZkYWYxYTI5NmVlMDE2Mzg4OWI0MyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.4YxXJ8sI0Jg5J16n74158145185";
+const tmdbBaseUrl = API_CONFIG.TMDB_DOMAIN.endsWith("/")
+  ? API_CONFIG.TMDB_DOMAIN
+  : `${API_CONFIG.TMDB_DOMAIN}/`;
 
 export const tmdbApi = createApi({
   reducerPath: "tmdbApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://api.themoviedb.org/3/",
+    baseUrl: tmdbBaseUrl,
     prepareHeaders: (headers) => {
-      headers.set("Authorization", `Bearer ${TMDB_READ_ACCESS_TOKEN}`);
+      if (API_CONFIG.TMDB_TOKEN) {
+        headers.set("Authorization", `Bearer ${API_CONFIG.TMDB_TOKEN}`);
+      }
       headers.set("accept", "application/json");
       return headers;
     },
   }),
   endpoints: (builder) => ({
     getTrendingMovies: builder.query<TMDBMovie[], void>({
-      query: () => "trending/movie/day?language=vi-VN",
+      query: () =>
+        `trending/movie/day?language=vi-VN${
+          API_CONFIG.TMDB_API_KEY ? `&api_key=${API_CONFIG.TMDB_API_KEY}` : ""
+        }`,
       transformResponse: (response: TMDBResponse) => response.results || [],
     }),
     getPopularMovies: builder.query<TMDBMovie[], void>({
-      query: () => "movie/popular?language=vi-VN&page=1",
+      query: () =>
+        `movie/popular?language=vi-VN&page=1${
+          API_CONFIG.TMDB_API_KEY ? `&api_key=${API_CONFIG.TMDB_API_KEY}` : ""
+        }`,
       transformResponse: (response: TMDBResponse) => response.results || [],
     }),
   }),
@@ -45,7 +55,10 @@ export const tmdbApi = createApi({
 
 export const { useGetTrendingMoviesQuery, useGetPopularMoviesQuery } = tmdbApi;
 
-export const getTMDBImageUrl = (path?: string, size: "original" | "w1280" | "w500" = "w1280") => {
+export const getTMDBImageUrl = (
+  path?: string,
+  size: "original" | "w1280" | "w500" = "w1280"
+) => {
   if (!path) return "https://picsum.photos/1200/800";
   if (path.startsWith("http")) return path;
   return `https://image.tmdb.org/t/p/${size}${path}`;

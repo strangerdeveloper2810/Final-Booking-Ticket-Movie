@@ -74,13 +74,22 @@ module.exports = {
     new webpack.DefinePlugin({
       "process.env.PUBLIC_URL": JSON.stringify(""),
       "process.env.REACT_APP_DOMAIN": JSON.stringify(
-        process.env.REACT_APP_DOMAIN || "https://movienew.cybersoft.edu.vn"
+        process.env.REACT_APP_DOMAIN || "https://movienew.cybersoft.edu.vn/api"
       ),
       "process.env.REACT_APP_TOKEN_CYBERSOFT": JSON.stringify(
         process.env.REACT_APP_TOKEN_CYBERSOFT || ""
       ),
       "process.env.REACT_APP_GROUP_ID": JSON.stringify(
         process.env.REACT_APP_GROUP_ID || "GP01"
+      ),
+      "process.env.REACT_APP_TMDB_DOMAIN": JSON.stringify(
+        process.env.REACT_APP_TMDB_DOMAIN || "https://api.themoviedb.org/3"
+      ),
+      "process.env.REACT_APP_TMDB_API_KEY": JSON.stringify(
+        process.env.REACT_APP_TMDB_API_KEY || ""
+      ),
+      "process.env.REACT_APP_TMDB_TOKEN": JSON.stringify(
+        process.env.REACT_APP_TMDB_TOKEN || ""
       ),
     }),
   ],
