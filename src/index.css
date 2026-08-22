@@ -100,3 +100,32 @@
   color: #F2545B !important;
   opacity: 1 !important;
 }
+
+/* ─── CLS Prevention ───────────────────────────────────────────────────────── */
+/* Reserve height for nav so it doesn't shift when React mounts */
+nav {
+  min-height: 2.5rem;
+}
+
+/* Slick carousel: reserve space to prevent layout shifts from async images */
+.slick-list {
+  min-height: 1px; /* prevents collapsed state before slide renders */
+}
+
+.slick-track {
+  display: flex !important;
+}
+
+.slick-slide {
+  height: auto;
+}
+
+/* Isolate carousel reflow from surrounding content */
+.slick-slider {
+  contain: layout style;
+}
+
+/* Prevent slick dots from causing CLS by reserving their space */
+.slick-dots {
+  min-height: 20px;
+}

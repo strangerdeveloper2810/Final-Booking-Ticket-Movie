@@ -29,14 +29,12 @@ export const CustomThemeProvider: FC<CustomThemeProviderProps> = ({ children }) 
 
   useEffect(() => {
     const root = document.documentElement;
+    // Toggle .dark class only — colors are handled by CSS vars in index.css
+    // Avoid setting inline styles here as they override CSS and cause CLS
     if (themeMode === "dark") {
       root.classList.add("dark");
-      root.style.backgroundColor = tokens.background;
-      root.style.color = tokens.textPrimary;
     } else {
       root.classList.remove("dark");
-      root.style.backgroundColor = "#F8F9FA";
-      root.style.color = "#1F2937";
     }
   }, [themeMode]);
 

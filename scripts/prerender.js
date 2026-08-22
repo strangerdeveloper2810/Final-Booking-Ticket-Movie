@@ -85,7 +85,7 @@ async function prerender() {
     )
     .join("");
 
-  const cleanSinglePrerenderedMarkup = `<div id="root">
+  const prerenderedBlock = `<!-- SSG_START --><div id="root">
     <header style="background: rgba(23, 27, 38, 0.9); border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between;">
       <div style="font-weight: 800; font-size: 1.25rem; color: #F2545B; display: flex; align-items: center; gap: 0.5rem;">
         🎬 Cinefix
@@ -110,7 +110,7 @@ async function prerender() {
           Phim Đang Chiếu tại Rạp
         </h2>
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; margin-top: 1rem;">
-          ${cybersoftHtmlList}
+          ${csMovies.length > 0 ? cybersoftHtmlList : ""}
         </div>
       </section>
 
@@ -119,27 +119,57 @@ async function prerender() {
           🔥 Phim Thịnh Hành TMDB
         </h2>
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; margin-top: 1rem;">
-          ${tmdbHtmlList}
+          ${tmMovies.length > 0 ? tmdbHtmlList : ""}
         </div>
       </section>
     </main>
-  </div>`;
+  </div><!-- SSG_END -->`;
+
+  /**
+   * Inject into an HTML string.
+   * Strategy:
+   *   1. If SSG_START/SSG_END markers exist (re-run), replace the whole block.
+   *   2. Otherwise find the bare <div id="root"> ... </div> using a balanced-div
+   *      search so we never partially replace.
+   */
+  function injectSSG(html) {
+    // Case 1: idempotent re-injection
+    if (html.includes("<!-- SSG_START -->")) {
+      return html.replace(/<!-- SSG_START -->[\s\S]*?<!-- SSG_END -->/, prerenderedBlock);
+    }
+    // Case 2: find the outermost <div id="root"> by counting nested divs
+    const startTag = '<div id="root">';
+    const startIdx = html.indexOf(startTag);
+    if (startIdx === -1) return html;
+    let depth = 0;
+    let i = startIdx;
+    while (i < html.length) {
+      if (html.startsWith("<div", i)) { depth++; i += 4; continue; }
+      if (html.startsWith("</div>", i)) {
+        depth--;
+        if (depth === 0) {
+          const endIdx = i + "</div>".length;
+          return html.slice(0, startIdx) + prerenderedBlock + html.slice(endIdx);
+        }
+        i += 6; continue;
+      }
+      i++;
+    }
+    return html; // fallback — no replacement
+  }
 
   // Process public/index.html
   if (fs.existsSync(publicIndexPath)) {
-    let publicHtml = fs.readFileSync(publicIndexPath, "utf8");
-    publicHtml = publicHtml.replace(/<div id="root">[\s\S]*?<\/div>/, cleanSinglePrerenderedMarkup);
-    fs.writeFileSync(publicIndexPath, publicHtml, "utf8");
+    const publicHtml = fs.readFileSync(publicIndexPath, "utf8");
+    fs.writeFileSync(publicIndexPath, injectSSG(publicHtml), "utf8");
+    console.log("✅ Injected SSG into public/index.html");
   }
 
   // Process build/index.html
   if (fs.existsSync(buildIndexPath)) {
-    let buildHtml = fs.readFileSync(buildIndexPath, "utf8");
-    buildHtml = buildHtml.replace(/<div id="root">[\s\S]*?<\/div>/, cleanSinglePrerenderedMarkup);
-    fs.writeFileSync(buildIndexPath, buildHtml, "utf8");
-    console.log(
-      "🚀 SSG Static Pre-rendering completed cleanly on public/index.html & build/index.html!"
-    );
+    const buildHtml = fs.readFileSync(buildIndexPath, "utf8");
+    fs.writeFileSync(buildIndexPath, injectSSG(buildHtml), "utf8");
+    console.log("🚀 SSG Static Pre-rendering completed cleanly on build/index.html!");
   }
 }
 
