@@ -55,7 +55,7 @@ const Film: FC = () => {
   }, [filmList, getFilmSaga]);
 
   const sliderSettings = {
-    dots: true,
+    dots: false,
     infinite: filmList.length > 4,
     speed: 500,
     slidesToShow: 4,
@@ -67,15 +67,15 @@ const Film: FC = () => {
     responsive: [
       {
         breakpoint: 1280,
-        settings: { slidesToShow: 3, slidesToScroll: 1 },
+        settings: { slidesToShow: 3, slidesToScroll: 1, dots: false },
       },
       {
         breakpoint: 1024,
-        settings: { slidesToShow: 2, slidesToScroll: 1 },
+        settings: { slidesToShow: 2, slidesToScroll: 1, dots: false },
       },
       {
         breakpoint: 640,
-        settings: { slidesToShow: 1, slidesToScroll: 1, arrows: false },
+        settings: { slidesToShow: 1, slidesToScroll: 1, arrows: false, dots: false },
       },
     ],
   };
