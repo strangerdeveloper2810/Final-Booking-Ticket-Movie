@@ -3,7 +3,7 @@
   "outputDirectory": "build",
   "buildCommand": "pnpm run build",
   "devCommand": "pnpm dev",
-  "installCommand": "pnpm install",
+  "installCommand": "pnpm install --no-frozen-lockfile",
   "framework": null,
   "rewrites": [
     {
