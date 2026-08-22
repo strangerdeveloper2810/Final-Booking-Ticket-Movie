@@ -23,6 +23,11 @@ const tmdbBaseUrl = API_CONFIG.TMDB_DOMAIN.endsWith("/")
   ? API_CONFIG.TMDB_DOMAIN
   : `${API_CONFIG.TMDB_DOMAIN}/`;
 
+const getTMDBLanguageCode = (lang?: string) => {
+  if (lang === "vi" || lang === "vi-VN") return "vi-VN";
+  return "en-US";
+};
+
 export const tmdbApi = createApi({
   reducerPath: "tmdbApi",
   baseQuery: fetchBaseQuery({
@@ -36,32 +41,40 @@ export const tmdbApi = createApi({
     },
   }),
   endpoints: (builder) => ({
-    getTrendingMovies: builder.query<TMDBMovie[], void>({
-      query: () =>
-        `trending/movie/day?language=vi-VN${
+    getTrendingMovies: builder.query<TMDBMovie[], string | void>({
+      query: (lang) => {
+        const tmdbLang = getTMDBLanguageCode(lang || undefined);
+        return `trending/movie/day?language=${tmdbLang}${
           API_CONFIG.TMDB_API_KEY ? `&api_key=${API_CONFIG.TMDB_API_KEY}` : ""
-        }`,
+        }`;
+      },
       transformResponse: (response: TMDBResponse) => response.results || [],
     }),
-    getPopularMovies: builder.query<TMDBMovie[], void>({
-      query: () =>
-        `movie/popular?language=vi-VN&page=1${
+    getPopularMovies: builder.query<TMDBMovie[], string | void>({
+      query: (lang) => {
+        const tmdbLang = getTMDBLanguageCode(lang || undefined);
+        return `movie/popular?language=${tmdbLang}&page=1${
           API_CONFIG.TMDB_API_KEY ? `&api_key=${API_CONFIG.TMDB_API_KEY}` : ""
-        }`,
+        }`;
+      },
       transformResponse: (response: TMDBResponse) => response.results || [],
     }),
-    getTopRatedMovies: builder.query<TMDBMovie[], void>({
-      query: () =>
-        `movie/top_rated?language=vi-VN&page=1${
+    getTopRatedMovies: builder.query<TMDBMovie[], string | void>({
+      query: (lang) => {
+        const tmdbLang = getTMDBLanguageCode(lang || undefined);
+        return `movie/top_rated?language=${tmdbLang}&page=1${
           API_CONFIG.TMDB_API_KEY ? `&api_key=${API_CONFIG.TMDB_API_KEY}` : ""
-        }`,
+        }`;
+      },
       transformResponse: (response: TMDBResponse) => response.results || [],
     }),
-    getUpcomingMovies: builder.query<TMDBMovie[], void>({
-      query: () =>
-        `movie/upcoming?language=vi-VN&page=1${
+    getUpcomingMovies: builder.query<TMDBMovie[], string | void>({
+      query: (lang) => {
+        const tmdbLang = getTMDBLanguageCode(lang || undefined);
+        return `movie/upcoming?language=${tmdbLang}&page=1${
           API_CONFIG.TMDB_API_KEY ? `&api_key=${API_CONFIG.TMDB_API_KEY}` : ""
-        }`,
+        }`;
+      },
       transformResponse: (response: TMDBResponse) => response.results || [],
     }),
   }),

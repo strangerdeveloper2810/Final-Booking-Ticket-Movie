@@ -15,12 +15,12 @@ const Film = lazy(() => import("../components/Film"));
 const ListCinema = lazy(() => import("../components/ListCinema"));
 
 const Home: FC = () => {
-  const { t } = useTranslation(["home", "common"]);
+  const { t, i18n } = useTranslation(["home", "common"]);
 
-  const { data: trendingMovies = [], isLoading: loadingTrending } = useGetTrendingMoviesQuery();
-  const { data: popularMovies = [], isLoading: loadingPopular } = useGetPopularMoviesQuery();
-  const { data: topRatedMovies = [], isLoading: loadingTopRated } = useGetTopRatedMoviesQuery();
-  const { data: upcomingMovies = [], isLoading: loadingUpcoming } = useGetUpcomingMoviesQuery();
+  const { data: trendingMovies = [], isLoading: loadingTrending } = useGetTrendingMoviesQuery(i18n.language);
+  const { data: popularMovies = [], isLoading: loadingPopular } = useGetPopularMoviesQuery(i18n.language);
+  const { data: topRatedMovies = [], isLoading: loadingTopRated } = useGetTopRatedMoviesQuery(i18n.language);
+  const { data: upcomingMovies = [], isLoading: loadingUpcoming } = useGetUpcomingMoviesQuery(i18n.language);
 
   // Structured JSON-LD Schema for Google Rich Results
   const homeJsonLd = {

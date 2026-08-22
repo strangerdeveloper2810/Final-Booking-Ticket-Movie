@@ -1,38 +1,22 @@
 import { type FC, useState, useEffect } from "react";
 import { StarFilled, SafetyCertificateOutlined, PlaySquareOutlined } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 import { useGetTrendingMoviesQuery, getTMDBImageUrl } from "shared/services/tmdbApi";
 import { useGetBannersQuery } from "shared/services/movieApi";
 
-interface MovieQuote {
-  quote: string;
-  movie: string;
-  year: string;
-}
-
-const FALLBACK_QUOTES: MovieQuote[] = [
-  {
-    quote: "Trải nghiệm điện ảnh đỉnh cao — Nơi lưu giữ những khoảnh khắc cảm xúc vô giá.",
-    movie: "Cinefix Cinema",
-    year: "2026",
-  },
-  {
-    quote: "Mỗi bộ phim là một cuộc hành trình. Hãy chọn chỗ ngồi đẹp nhất và tận hưởng!",
-    movie: "Premiere Showcase",
-    year: "2026",
-  },
-  {
-    quote: "Đặt vé nhanh chóng trong 30 giây — Trải nghiệm âm thanh Dolby Atmos vượt trội.",
-    movie: "IMAX Experience",
-    year: "2026",
-  },
-];
-
 const AuthShowcase: FC = () => {
-  const { data: tmdbMovies = [] } = useGetTrendingMoviesQuery();
+  const { t, i18n } = useTranslation(["auth", "common"]);
+  const { data: tmdbMovies = [] } = useGetTrendingMoviesQuery(i18n.language);
   const { data: banners = [] } = useGetBannersQuery();
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const totalItems = Math.max(tmdbMovies.length, banners.length, FALLBACK_QUOTES.length);
+  const fallbackQuotes = [
+    { quote: t("auth:quote1"), movie: "Cinefix Cinema", year: "2026" },
+    { quote: t("auth:quote2"), movie: "Premiere Showcase", year: "2026" },
+    { quote: t("auth:quote3"), movie: "IMAX Experience", year: "2026" },
+  ];
+
+  const totalItems = Math.max(tmdbMovies.length, banners.length, fallbackQuotes.length);
 
   useEffect(() => {
     if (totalItems === 0) return;
@@ -44,7 +28,7 @@ const AuthShowcase: FC = () => {
 
   const currentTMDB = tmdbMovies[activeIndex % Math.max(tmdbMovies.length, 1)];
   const currentBanner = banners[activeIndex % Math.max(banners.length, 1)]?.hinhAnh;
-  const currentQuote = FALLBACK_QUOTES[activeIndex % FALLBACK_QUOTES.length];
+  const currentQuote = fallbackQuotes[activeIndex % fallbackQuotes.length];
 
   const backdropUrl = currentTMDB?.backdrop_path
     ? getTMDBImageUrl(currentTMDB.backdrop_path, "original")
@@ -77,7 +61,7 @@ const AuthShowcase: FC = () => {
         <div className="flex items-center gap-2.5 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-full shadow-lg">
           <PlaySquareOutlined className="text-primary text-lg" />
           <span className="text-xs font-bold uppercase tracking-wider text-white">
-            TMDB Trending Movie
+            {t("auth:showcaseBadge")}
           </span>
         </div>
 
@@ -92,7 +76,7 @@ const AuthShowcase: FC = () => {
       {/* Center Showcase Content */}
       <div className="relative z-10 my-auto max-w-xl space-y-6">
         <div className="inline-block px-3.5 py-1 rounded-md bg-primary/20 border border-primary/30 text-primary text-xs font-bold uppercase tracking-widest">
-          Phim Hot Trong Tuần
+          {t("auth:showcaseTag")}
         </div>
         <h1 className="text-4xl xl:text-6xl font-black tracking-tight text-white leading-tight drop-shadow-2xl line-clamp-2">
           {movieTitle}
@@ -114,7 +98,7 @@ const AuthShowcase: FC = () => {
       <div className="relative z-10 pt-6 border-t border-white/10 flex items-center justify-between text-xs text-gray-300">
         <div className="flex items-center gap-2">
           <SafetyCertificateOutlined className="text-primary text-base" />
-          <span>Bảo mật tài khoản 100%</span>
+          <span>{t("auth:securityBadge")}</span>
         </div>
         <div className="flex gap-1.5">
           {[0, 1, 2, 3].map((idx) => (

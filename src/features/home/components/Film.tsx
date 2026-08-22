@@ -64,7 +64,7 @@ const Film: FC = () => {
   };
 
   return (
-    <section id="now-showing" className="py-10">
+    <section id="showtimes" className="py-10">
       <div className="flex items-center justify-between mb-8">
         <div>
           <h2 className="text-2xl md:text-3xl font-extrabold text-text-primary tracking-tight">

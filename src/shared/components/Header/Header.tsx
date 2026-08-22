@@ -1,6 +1,6 @@
-import { type FC, useState } from "react";
+import { type FC, useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { Button, Drawer, Avatar, Dropdown } from "antd";
 import {
   MenuOutlined,
@@ -21,9 +21,46 @@ import Logo from "shared/components/Logo/Logo";
 const Header: FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { userLogin } = useSelector((state: RootState) => state.UserSaga);
   const { themeMode, toggleTheme } = useTheme();
   const { t, i18n } = useTranslation(["header", "common"]);
+
+  const scrollToHash = (hash: string) => {
+    const target = document.querySelector(hash);
+    if (target) {
+      target.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  useEffect(() => {
+    if (location.hash) {
+      setTimeout(() => {
+        scrollToHash(location.hash);
+      }, 200);
+    }
+  }, [location.hash, location.pathname]);
+
+  const handleNavClick = (e: React.MouseEvent, path: string) => {
+    if (path.includes("#")) {
+      e.preventDefault();
+      const hash = path.substring(path.indexOf("#"));
+      if (location.pathname === APP_ROUTES.HOME) {
+        scrollToHash(hash);
+      } else {
+        navigate(APP_ROUTES.HOME);
+        setTimeout(() => {
+          scrollToHash(hash);
+        }, 300);
+      }
+    } else {
+      if (location.pathname === APP_ROUTES.HOME) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        navigate(path);
+      }
+    }
+  };
 
   const handleLogOut = () => {
     settings.eraseCookie(ACCESS_TOKEN);
@@ -61,25 +98,32 @@ const Header: FC = () => {
     <header className="sticky top-0 z-50 bg-surface/90 backdrop-blur-md border-b border-border transition-colors">
       <div className="max-w-screen-xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
         {/* Brand Logo */}
-        <NavLink to={APP_ROUTES.HOME}>
+        <NavLink to={APP_ROUTES.HOME} onClick={(e) => handleNavClick(e, APP_ROUTES.HOME)}>
           <Logo size="md" />
         </NavLink>
 
         {/* Desktop Nav Links */}
         <nav className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <NavLink
-              key={link.label}
-              to={link.path}
-              className={({ isActive }) =>
-                `text-sm font-medium transition-colors hover:text-primary ${
+          {navLinks.map((link) => {
+            const isHashLink = link.path.includes("#");
+            const hash = isHashLink ? link.path.substring(link.path.indexOf("#")) : "";
+            const isActive = isHashLink
+              ? location.hash === hash
+              : location.pathname === APP_ROUTES.HOME && !location.hash;
+
+            return (
+              <a
+                key={link.label}
+                href={link.path}
+                onClick={(e) => handleNavClick(e, link.path)}
+                className={`text-sm font-medium transition-colors hover:text-primary ${
                   isActive ? "text-primary font-semibold" : "text-text-secondary"
-                }`
-              }
-            >
-              {link.label}
-            </NavLink>
-          ))}
+                }`}
+              >
+                {link.label}
+              </a>
+            );
+          })}
         </nav>
 
         {/* Desktop Controls (Theme + Language + Auth) */}
@@ -189,14 +233,17 @@ const Header: FC = () => {
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-4">
             {navLinks.map((link) => (
-              <NavLink
+              <a
                 key={link.label}
-                to={link.path}
-                onClick={() => setDrawerOpen(false)}
+                href={link.path}
+                onClick={(e) => {
+                  setDrawerOpen(false);
+                  handleNavClick(e, link.path);
+                }}
                 className="text-base font-medium text-text-secondary hover:text-primary py-2 border-b border-border"
               >
                 {link.label}
-              </NavLink>
+              </a>
             ))}
           </div>
 
