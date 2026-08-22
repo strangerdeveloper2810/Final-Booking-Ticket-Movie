@@ -8,6 +8,12 @@ dotenv.config();
 
 module.exports = {
   entry: "./src/index.tsx",
+  cache: {
+    type: "filesystem",
+    buildDependencies: {
+      config: [__filename],
+    },
+  },
   resolve: {
     extensions: [".tsx", ".ts", ".jsx", ".js", ".json"],
     modules: [path.resolve(__dirname, "../src"), "node_modules"],
@@ -23,6 +29,8 @@ module.exports = {
         use: {
           loader: "babel-loader",
           options: {
+            cacheDirectory: true,
+            cacheCompression: false,
             presets: [
               "@babel/preset-env",
               ["@babel/preset-react", { runtime: "automatic" }],

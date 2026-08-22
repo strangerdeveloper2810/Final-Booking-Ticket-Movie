@@ -69,6 +69,12 @@ module.exports = (env) => {
             priority: 30,
             chunks: "all",
           },
+          antdIcons: {
+            test: /[\\/]node_modules[\\/]@ant-design[\\/]icons[\\/]/,
+            name: "antd-icons",
+            priority: 25,
+            chunks: "all",
+          },
           antd: {
             test: /[\\/]node_modules[\\/](antd|@ant-design)[\\/]/,
             name: "antd",
