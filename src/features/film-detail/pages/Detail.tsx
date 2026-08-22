@@ -13,7 +13,7 @@ import {
 } from "../redux/types/CalendarFilmType";
 import filmDetailServiceInstance from "../services/FlimDetailService";
 import managementServiceInstance from "../services/ManagementMovieService";
-import { parseScheduleMovie } from "shared/utils/common";
+import { parseScheduleMovie, formatLocalizedDate } from "shared/utils/common";
 import { APP_ROUTES } from "shared/constants/routes";
 import { HTTP_STATUS } from "shared/constants/appConstants";
 import SEO from "shared/components/SEO/SEO";
@@ -147,8 +147,9 @@ const Detail: FC = () => {
     <div className="min-h-screen bg-background pb-16 transition-colors">
       <SEO
         title={detailFilm?.tenPhim ? `${detailFilm.tenPhim} - ${t("detail:showtimesTitle")}` : t("detail:showtimesTitle")}
-        description={detailFilm?.moTa || t("detail:descriptionPlaceholder")}
+        description={detailFilm?.moTa ? `${detailFilm.tenPhim} - ${detailFilm.moTa}` : t("detail:descriptionPlaceholder")}
         image={detailFilm?.hinhAnh}
+        type="video.movie"
         jsonLd={movieJsonLd}
       />
 
@@ -188,9 +189,7 @@ const Detail: FC = () => {
                 <div className="flex items-center gap-1">
                   <CalendarOutlined className="text-primary" />
                   <span>
-                    {new Date(detailFilm.ngayKhoiChieu).toLocaleDateString(
-                      i18n.language === "vi" ? "vi-VN" : "en-US"
-                    )}
+                    {formatLocalizedDate(detailFilm.ngayKhoiChieu, i18n.language)}
                   </span>
                 </div>
               )}
