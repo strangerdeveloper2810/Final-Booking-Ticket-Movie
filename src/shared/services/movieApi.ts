@@ -1,12 +1,24 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { http, DOMAIN, GROUP_ID } from "shared/utils/setting";
+import { http, GROUP_ID } from "shared/utils/setting";
 
 const axiosBaseQuery =
-  ({ baseUrl }: { baseUrl: string } = { baseUrl: DOMAIN }) =>
-  async ({ url, method, data, params, headers }: { url: string; method?: string; data?: any; params?: any; headers?: any }) => {
+  () =>
+  async ({
+    url,
+    method,
+    data,
+    params,
+    headers,
+  }: {
+    url: string;
+    method?: string;
+    data?: any;
+    params?: any;
+    headers?: any;
+  }) => {
     try {
       const result = await http({
-        url: baseUrl + url,
+        url,
         method: method || "GET",
         data,
         params,
