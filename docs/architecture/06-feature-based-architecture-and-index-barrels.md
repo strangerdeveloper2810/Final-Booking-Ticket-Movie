@@ -1,8 +1,8 @@
-# 06. Feature-Based Architecture & the `index.ts` Barrel Convention
+# 06. Feature-Based Architecture & Quy ước Barrel `index.ts`
 
-This is the doc for the question "why does almost every folder have an `index.ts`?" — answered honestly, with the real usage numbers, not the idealized textbook answer. Read this alongside actually browsing `src/` in an editor; the folder tree below is exactly what's on disk today.
+Đây là tài liệu trả lời cho câu hỏi "tại sao hầu như mọi thư mục đều có một `index.ts`?" — được trả lời một cách trung thực, với các con số sử dụng thực tế, chứ không phải câu trả lời lý tưởng hóa kiểu sách giáo khoa. Hãy đọc tài liệu này song song với việc thực sự duyệt qua `src/` trong một trình soạn thảo; cây thư mục bên dưới chính xác là những gì đang có trên đĩa ngày hôm nay.
 
-## The folder tree
+## Cây thư mục
 
 ```
 src/
@@ -40,29 +40,29 @@ src/
     ├── constants/, i18n/, locales/, redux/loading/, services/, templates/, theme/, types/, utils/
 ```
 
-## The composition root pattern (`src/app/`)
+## Mẫu hình composition root (`src/app/`)
 
-`app/` is the one place in the codebase allowed to know about *every* feature simultaneously, and to reach past each feature's public barrel into its internals (`store.ts` and `rootSaga.ts` both import each feature's concrete redux files directly, not through `features/x/index.ts`, because those barrels only export pages, not redux internals). `features/*` never imports from another `features/*` folder — verified by exhaustive grep, there are **zero** cross-feature imports anywhere in the app. `home` doesn't know `auth` exists; `booking` doesn't know `film-detail` exists.
+`app/` là nơi duy nhất trong codebase được phép biết về *mọi* feature cùng lúc, và được phép vượt qua public barrel của mỗi feature để chạm vào phần nội bộ của nó (`store.ts` và `rootSaga.ts` đều import trực tiếp các file redux cụ thể của từng feature, chứ không thông qua `features/x/index.ts`, vì các barrel đó chỉ export pages, không export phần nội bộ của redux). `features/*` không bao giờ import từ một thư mục `features/*` khác — đã được xác minh bằng grep toàn diện, **không có** import chéo feature (cross-feature import) nào trong toàn bộ ứng dụng. `home` không biết `auth` tồn tại; `booking` không biết `film-detail` tồn tại.
 
-What would break if, say, `routes.tsx` moved inside `features/home/`: it needs to import all five pages (Home, Detail, BookingTicket, Login, Register) to build one shared route table. Moving it into `home` would force `home` to import from `auth`, `booking`, and `film-detail` — turning one peer feature into a de facto orchestrator every other feature is implicitly coupled to, and breaking the "any feature can be deleted without touching another feature's code" property that currently holds.
+Điều gì sẽ hỏng nếu, chẳng hạn, `routes.tsx` được chuyển vào bên trong `features/home/`: nó cần import cả năm pages (Home, Detail, BookingTicket, Login, Register) để xây dựng một bảng route dùng chung. Việc chuyển nó vào `home` sẽ buộc `home` phải import từ `auth`, `booking`, và `film-detail` — biến một feature ngang hàng thành một orchestrator trên thực tế mà mọi feature khác đều bị ràng buộc ngầm vào, đồng thời phá vỡ tính chất "bất kỳ feature nào cũng có thể bị xóa mà không đụng đến code của feature khác" hiện đang được duy trì.
 
-## `shared/` vs `features/`: the rule, tested against real files
+## `shared/` so với `features/`: quy tắc, được kiểm chứng bằng các file thực tế
 
-**The rule that holds up well**: something belongs in `shared/` if it's genuinely used by more than one feature (or by `app/`), or if it's feature-agnostic infrastructure (i18n bootstrapping, theming, the redux store itself). This is true for the shared UI components (`Header`, `Footer`, `LoadingNew`, the `Skeleton*` components, `Star`) — all are consumed from at least one feature or from `app/`.
+**Quy tắc vẫn đứng vững**: một thứ gì đó thuộc về `shared/` nếu nó thực sự được sử dụng bởi nhiều hơn một feature (hoặc bởi `app/`), hoặc nếu nó là hạ tầng không phụ thuộc feature (feature-agnostic) (khởi tạo i18n, theming, bản thân redux store). Điều này đúng với các shared UI components (`Header`, `Footer`, `LoadingNew`, các component `Skeleton*`, `Star`) — tất cả đều được sử dụng từ ít nhất một feature hoặc từ `app/`.
 
-**Where the rule gets fuzzier, with real evidence:**
-- `shared/redux/loading/Loading.reducer.ts` (a single `isLoading` boolean) is only ever *written to* by two sagas inside `features/home/` — and never *read* by any `useSelector` anywhere in the app. It's registered in the store and dispatched to, but nothing displays it. It lives in `shared/` on the assumption that a global loading flag *could* be used by multiple features, not because it demonstrably is today — write-only dead state, filed by intent rather than actual usage.
-- `shared/types/IRoutes.ts` (an `IRoute` interface) is never imported anywhere except its own declaration — `app/routes.tsx` actually types its route table with react-router's own `RouteObject` instead. This looks like an early-draft type that was superseded and never deleted.
-- `shared/types/ITemplate.ts` has exactly one consumer (`shared/templates/HomeTemplate.tsx`) — not really "shared" by the multi-consumer test, but filed in `shared/types/` because the team's practical convention is "typed interfaces live in `shared/types/`," a rule based on *file kind* more than *actual sharing need*.
-- `ErrorBoundary` lives in `shared/components/` but both of its real usages (`App.tsx`, `index.tsx`) are in composition-root files, not inside any feature — no feature currently wraps its own sub-tree in it. See [doc 09](./09-error-boundary-and-resilience.md) for the full picture.
+**Nơi quy tắc trở nên mơ hồ hơn, với bằng chứng thực tế:**
+- `shared/redux/loading/Loading.reducer.ts` (một boolean `isLoading` duy nhất) chỉ từng bị *ghi vào (written to)* bởi hai saga bên trong `features/home/` — và không bao giờ được *đọc (read)* bởi bất kỳ `useSelector` nào trong toàn bộ ứng dụng. Nó được đăng ký trong store và được dispatch tới, nhưng không có gì hiển thị nó. Nó nằm trong `shared/` dựa trên giả định rằng một cờ loading toàn cục *có thể* được dùng bởi nhiều feature, chứ không phải vì điều đó đã được chứng minh ở hiện tại — đây là trạng thái chết chỉ-để-ghi (write-only dead state), được xếp vào theo chủ đích chứ không theo cách sử dụng thực tế.
+- `shared/types/IRoutes.ts` (một interface `IRoute`) không bao giờ được import ở bất kỳ đâu ngoài chính khai báo của nó — `app/routes.tsx` trên thực tế lại định kiểu (type) cho bảng route của nó bằng `RouteObject` riêng của react-router. Điều này trông giống như một type nháp ban đầu (early-draft) đã bị thay thế nhưng chưa từng bị xóa.
+- `shared/types/ITemplate.ts` chỉ có đúng một nơi tiêu thụ (consumer) (`shared/templates/HomeTemplate.tsx`) — không thực sự "shared" theo tiêu chí nhiều-consumer, nhưng được xếp vào `shared/types/` vì quy ước thực tế của team là "các typed interface sống trong `shared/types/`," một quy tắc dựa trên *loại file* nhiều hơn là *nhu cầu chia sẻ thực sự*.
+- `ErrorBoundary` sống trong `shared/components/` nhưng cả hai nơi sử dụng thực tế của nó (`App.tsx`, `index.tsx`) đều nằm trong các file composition-root, không nằm bên trong bất kỳ feature nào — hiện không có feature nào bọc sub-tree của chính nó bằng component này. Xem [tài liệu 09](./09-error-boundary-and-resilience.md) để có bức tranh đầy đủ.
 
-**Honest summary**: the `shared`/`features` split is real and well-applied for *code* that's demonstrably reused, but for *types* and for a few composition-root-adjacent pieces, the actual organizing principle is closer to "this kind of file always goes here" than "this specific file is proven to need sharing" — and at least one file (`IRoutes.ts`) is outright dead, and one slice (`Loading.reducer.ts`) is write-only dead state. Naming this precisely is more useful for training purposes than presenting the split as perfectly principled.
+**Tóm tắt trung thực**: sự phân tách `shared`/`features` là có thật và được áp dụng tốt đối với *code* đã được chứng minh là tái sử dụng, nhưng đối với *types* và một vài phần liên quan gần đến composition-root, nguyên tắc tổ chức thực tế gần với "loại file này luôn nằm ở đây" hơn là "file cụ thể này đã được chứng minh là cần chia sẻ" — và ít nhất một file (`IRoutes.ts`) hoàn toàn chết (dead), và một slice (`Loading.reducer.ts`) là trạng thái chết chỉ-để-ghi. Việc gọi tên chính xác điều này hữu ích cho mục đích đào tạo hơn là trình bày sự phân tách như thể nó hoàn toàn có nguyên tắc.
 
-## Now, the `index.ts` question
+## Bây giờ, đến câu hỏi về `index.ts`
 
-There are **13** `index.ts`/`index.tsx` files under `src/` (excluding the app entry point `src/index.tsx` itself). Here's what each one actually does, and — critically — **who actually imports through it** versus who bypasses it and reaches for the concrete file directly.
+Có **13** file `index.ts`/`index.tsx` bên dưới `src/` (không tính điểm vào của ứng dụng `src/index.tsx`). Dưới đây là những gì mỗi file thực sự làm, và — quan trọng hơn — **ai thực sự import thông qua nó** so với ai bỏ qua nó và trực tiếp lấy file cụ thể.
 
-### Feature-level "public API" barrels — 4 files, 0 real consumers
+### Các barrel "public API" cấp feature — 4 file, 0 consumer thực sự
 
 ```typescript
 // src/features/auth/index.ts — representative example
@@ -70,49 +70,49 @@ export { default as Login } from "./pages/Login";
 export { default as Register } from "./pages/Register";
 export { default as AuthLayout } from "./components/AuthLayout";
 ```
-Every one of `features/{home,film-detail,booking,auth}/index.ts` follows this shape: re-export the feature's page component(s) (and, for `auth`, one shared component). **Grepped exhaustively for `from "features/x"` (and the single-quote variant) across all of `src/`: zero matches, for all four.** Every real consumer reaches directly for the concrete file instead:
+Mỗi file trong số `features/{home,film-detail,booking,auth}/index.ts` đều theo cùng một khuôn mẫu: re-export (các) component page của feature (và, đối với `auth`, thêm một shared component). **Đã grep toàn diện cho `from "features/x"` (và biến thể dấu nháy đơn) trên toàn bộ `src/`: không có kết quả khớp nào, cho cả bốn feature.** Mọi consumer thực sự đều trực tiếp lấy file cụ thể thay vào đó:
 ```typescript
 // src/app/routes.tsx — actual usage
 const Login = lazy(() => import("features/auth/pages/Login"));
 ```
-This isn't carelessness — it's mechanically necessary. `React.lazy(() => import(...))` needs a dynamic import whose specifier resolves to exactly the module you want in its own chunk. If `routes.tsx` imported `{ Login, Register }` from the `features/auth` barrel instead, it would pull `Login.tsx`, `Register.tsx`, *and* `AuthLayout.tsx` into one shared module graph node — defeating per-route code splitting entirely. This is a live, concrete example of the classic "barrel files can hurt code-splitting" caveat, not a hypothetical.
+Đây không phải là sự bất cẩn — mà là điều bắt buộc về mặt cơ chế kỹ thuật. `React.lazy(() => import(...))` cần một dynamic import mà specifier của nó phân giải (resolve) chính xác đến module bạn muốn, trong chunk riêng của nó. Nếu `routes.tsx` import `{ Login, Register }` từ barrel `features/auth` thay vào đó, nó sẽ kéo theo cả `Login.tsx`, `Register.tsx`, *và* `AuthLayout.tsx` vào chung một node trong module graph — phá vỡ hoàn toàn việc code splitting theo từng route. Đây là một ví dụ thực tế, cụ thể của lưu ý kinh điển "barrel file có thể gây hại cho code-splitting," không phải là một tình huống giả định.
 
-### Component-level barrels — 7 files, 1 actually used
+### Các barrel cấp component — 7 file, 1 file thực sự được dùng
 
-| Folder | Barrel used? |
+| Thư mục | Barrel có được dùng không? |
 |---|---|
-| `shared/components/ErrorBoundary/` | **Yes** — both consumers (`App.tsx`, `index.tsx`) import `from "shared/components/ErrorBoundary"` |
-| `shared/components/Footer/` | No — consumer imports `from "shared/components/Footer/Footer"` directly |
-| `shared/components/Header/` | No — same pattern |
-| `shared/components/LoadingNew/` | No — all 3 consumers import the concrete file |
-| `shared/components/SkeletonCard/` | No |
-| `shared/components/SkeletonCarousel/` | No |
-| `shared/components/Star/` | No |
+| `shared/components/ErrorBoundary/` | **Có** — cả hai consumer (`App.tsx`, `index.tsx`) đều import `from "shared/components/ErrorBoundary"` |
+| `shared/components/Footer/` | Không — consumer import trực tiếp `from "shared/components/Footer/Footer"` |
+| `shared/components/Header/` | Không — cùng khuôn mẫu |
+| `shared/components/LoadingNew/` | Không — cả 3 consumer đều import file cụ thể |
+| `shared/components/SkeletonCard/` | Không |
+| `shared/components/SkeletonCarousel/` | Không |
+| `shared/components/Star/` | Không |
 
-**1 out of 11 total re-export barrels (4 feature-level + 7 component-level) is ever actually imported through its folder path.** Every real import statement in this codebase, with one exception, spells out the concrete file.
+**1 trong tổng số 11 barrel re-export (4 cấp feature + 7 cấp component) từng thực sự được import thông qua đường dẫn thư mục của nó.** Mọi câu lệnh import thực tế trong codebase này, ngoại trừ một trường hợp duy nhất, đều chỉ rõ file cụ thể.
 
-### Why `ErrorBoundary` is the one that works — proof from git history
+### Tại sao `ErrorBoundary` là trường hợp hoạt động hiệu quả — bằng chứng từ lịch sử git
 
-This isn't a guess — the repo's own commit history shows it happening:
-- One commit created `shared/components/ErrorBoundary/index.tsx` (the component itself, 198 lines, implemented directly inside a file literally named `index.tsx`).
-- The very next commit renamed it: `index.tsx` → `ErrorBoundary.tsx`, and added a one-line `index.ts`: `export { default } from "./ErrorBoundary";`.
+Đây không phải là một phỏng đoán — chính lịch sử commit của repo cho thấy điều này đã xảy ra:
+- Một commit đã tạo ra `shared/components/ErrorBoundary/index.tsx` (chính component đó, 198 dòng, được triển khai trực tiếp bên trong một file có tên đúng nghĩa là `index.tsx`).
+- Commit ngay sau đó đã đổi tên nó: `index.tsx` → `ErrorBoundary.tsx`, và thêm một `index.ts` một dòng: `export { default } from "./ErrorBoundary";`.
 
-Both of `ErrorBoundary`'s consumers (`App.tsx`, `index.tsx`) needed **zero changes** across that rename, because they'd always imported the folder (`shared/components/ErrorBoundary`), not a specific filename inside it. That's the barrel pattern's real, demonstrated payoff, captured in this exact repo's history — and it's also almost certainly *why* the same `folder/Component.tsx + index.ts` shape got mechanically copied onto every other `shared/components/*` folder afterward, whether or not those folders had ever been renamed or needed the insulation.
+Cả hai consumer của `ErrorBoundary` (`App.tsx`, `index.tsx`) đều **không cần thay đổi gì** qua lần đổi tên đó, vì chúng luôn import thư mục (`shared/components/ErrorBoundary`), chứ không phải một tên file cụ thể bên trong nó. Đó chính là lợi ích thực sự, đã được chứng minh, của mẫu hình barrel, được ghi lại trong chính lịch sử của repo này — và đây gần như chắc chắn cũng là *lý do* vì sao cùng một khuôn mẫu `folder/Component.tsx + index.ts` đã được sao chép một cách máy móc sang mọi thư mục `shared/components/*` khác sau đó, bất kể những thư mục đó có từng được đổi tên hay có cần lớp cách ly (insulation) đó hay không.
 
-### The honest verdict
+### Kết luận trung thực
 
-The *idea* behind these barrels is sound — it maps onto a genuinely-respected module boundary (zero cross-feature imports were found; nothing outside `app/` reaches into a feature's redux internals). But the *execution* is almost entirely ceremonial: 10 of 11 barrels have never been imported by anyone, ever, and the two clearest reasons they're bypassed are mechanical, not stylistic (lazy-loading needs a concrete leaf module; the composition root needs internals no barrel exposes). The lesson for future work in this codebase: **a barrel file is aspirational infrastructure that only pays for itself once something actually imports through it.** Adding one "because that's the pattern here" without an actual multi-file-internals-to-hide situation is pure ceremony. Two folders break even the shared-components half of the convention outright — `shared/components/Logo/Logo.tsx` and `shared/components/SEO/SEO.tsx` are flat files with no `index.ts` at all, and nothing seems to have broken because of it.
+*Ý tưởng* đằng sau các barrel này là hợp lý — nó ánh xạ đúng vào một ranh giới module thực sự được tôn trọng (không tìm thấy import chéo feature nào; không có gì bên ngoài `app/` chạm vào phần nội bộ redux của một feature). Nhưng *việc thực thi* thì gần như hoàn toàn mang tính hình thức: 10 trong 11 barrel chưa từng được ai import, và hai lý do rõ ràng nhất khiến chúng bị bỏ qua đều mang tính cơ chế kỹ thuật, không phải phong cách (lazy-loading cần một module lá cụ thể; composition root cần phần nội bộ mà không barrel nào phơi bày ra). Bài học cho công việc tương lai trong codebase này: **một barrel file là hạ tầng mang tính kỳ vọng, chỉ thực sự đáng giá khi có thứ gì đó thực sự import thông qua nó.** Việc thêm một barrel "vì đó là pattern ở đây" mà không có tình huống thực sự cần che giấu nội bộ nhiều file là thuần túy hình thức. Thậm chí có hai thư mục phá vỡ hẳn nửa quy ước shared-components — `shared/components/Logo/Logo.tsx` và `shared/components/SEO/SEO.tsx` là các file phẳng (flat file) không hề có `index.ts`, và dường như không có gì bị hỏng vì điều đó.
 
-### A real, latent risk worth naming
+### Một rủi ro tiềm ẩn có thật, đáng được nêu tên
 
-`package.json` has no `"sideEffects"` field. This means webpack's production build cannot safely assume any of this project's own modules — including a barrel that does `export { default as Home } from "./pages/Home"` — are side-effect-free at the package-boundary level, which matters for aggressive tree-shaking. Today this costs nothing in practice, precisely because the barrels are never imported (dead code that's never reached from an entry point is never bundled, full stop) — but if someone starts using the feature barrels as originally intended without adding a `sideEffects` declaration, there's a real, unmeasured bundle-size question waiting.
+`package.json` không có trường `"sideEffects"`. Điều này có nghĩa là bản build production của webpack không thể an toàn giả định rằng bất kỳ module nào của chính dự án này — kể cả một barrel làm việc `export { default as Home } from "./pages/Home"` — là không có side-effect ở cấp ranh giới package, điều này quan trọng đối với tree-shaking mạnh mẽ (aggressive). Hiện tại điều này không tốn kém gì trong thực tế, chính xác là vì các barrel không bao giờ được import (dead code không bao giờ được với tới từ một entry point thì không bao giờ bị bundle, chấm hết) — nhưng nếu ai đó bắt đầu sử dụng các feature barrel đúng như mục đích ban đầu mà không thêm khai báo `sideEffects`, sẽ có một vấn đề thực sự về kích thước bundle chưa được đo lường đang chờ đợi.
 
-## How the absolute imports (`"features/home/..."`, `"shared/components/Header"`) actually resolve
+## Cách các absolute import (`"features/home/..."`, `"shared/components/Header"`) thực sự được phân giải (resolve)
 
-Two independent, uncoordinated mechanisms happen to agree, which is worth understanding precisely rather than assuming there's a shared alias config:
+Hai cơ chế độc lập, không được phối hợp với nhau, tình cờ lại nhất quán với nhau — điều này đáng để hiểu chính xác thay vì giả định rằng có một cấu hình alias dùng chung:
 
-- **TypeScript side**: `tsconfig.json` sets `baseUrl: "src"` and has **no `paths` map at all**. Under plain `moduleResolution: "node"` + `baseUrl`, TypeScript tries `<baseUrl>/<specifier>` for any non-relative import — that's the entire mechanism `tsc --noEmit` uses to accept `features/home/pages/Home`.
-- **Webpack side**: there is **no `tsconfig-paths-webpack-plugin`** (confirmed absent from `package.json` and `node_modules`). Instead, `config/webpack.common.js` does:
+- **Phía TypeScript**: `tsconfig.json` đặt `baseUrl: "src"` và **hoàn toàn không có map `paths`**. Với `moduleResolution: "node"` thuần túy + `baseUrl`, TypeScript sẽ thử `<baseUrl>/<specifier>` cho bất kỳ import không tương đối (non-relative) nào — đó là toàn bộ cơ chế mà `tsc --noEmit` dùng để chấp nhận `features/home/pages/Home`.
+- **Phía Webpack**: **không có `tsconfig-paths-webpack-plugin`** (đã xác nhận vắng mặt trong cả `package.json` lẫn `node_modules`). Thay vào đó, `config/webpack.common.js` thực hiện:
   ```javascript
   resolve: {
     extensions: [".tsx", ".ts", ".jsx", ".js", ".json"],
@@ -120,10 +120,10 @@ Two independent, uncoordinated mechanisms happen to agree, which is worth unders
     alias: { src: path.resolve(__dirname, "../src") },
   },
   ```
-  `resolve.modules` tells webpack to treat `src/` as **another root to search bare specifiers in, exactly like `node_modules`.** When webpack sees `import Home from "features/home/pages/Home"`, it tries `node_modules/features/...` (fails), then falls back to `src/features/...` (succeeds) — because `src` was prepended to the search-root list. This is coarser than a real path-alias plugin: it adds one extra search root rather than mapping named aliases.
+  `resolve.modules` báo cho webpack coi `src/` như **một root khác để tìm kiếm các bare specifier, hệt như `node_modules`.** Khi webpack thấy `import Home from "features/home/pages/Home"`, nó thử `node_modules/features/...` (thất bại), rồi rơi về `src/features/...` (thành công) — vì `src` đã được thêm vào đầu danh sách search-root. Cách này thô hơn so với một path-alias plugin thực thụ: nó chỉ thêm một search root phụ chứ không ánh xạ các alias có tên riêng.
 
-**These two mechanisms agree only because `baseUrl: "src"` and `resolve.modules: [".../src", ...]` happen to point at the same physical folder** — there's no shared source of truth enforcing that. If someone later added a `paths` entry to `tsconfig.json` (e.g. `"@features/*": ["features/*"]`) without a matching webpack change, TypeScript would accept it fine while webpack would fail to bundle it. Worth knowing if you ever wonder why an import "type-checks but won't build," or vice versa.
+**Hai cơ chế này chỉ nhất quán với nhau vì `baseUrl: "src"` và `resolve.modules: [".../src", ...]` tình cờ trỏ đến cùng một thư mục vật lý** — không có một nguồn sự thật (source of truth) chung nào ép buộc điều đó. Nếu sau này ai đó thêm một mục `paths` vào `tsconfig.json` (ví dụ `"@features/*": ["features/*"]`) mà không có thay đổi tương ứng ở webpack, TypeScript sẽ chấp nhận nó bình thường trong khi webpack sẽ không thể bundle được nó. Đáng để biết nếu bạn từng tự hỏi vì sao một import "type-check qua được nhưng không build được," hoặc ngược lại.
 
-## Component-folder conventions, precisely
+## Quy ước component-folder, một cách chính xác
 
-The `folder + Component.tsx + index.ts` shape is **not applied universally** — only to most of `shared/components/*`. Every component and page *inside* a feature (`features/*/components/*.tsx`, `features/*/pages/*.tsx`) is a flat file with no folder and no barrel — none of them have their own `index.ts`. So the practical rule, as actually followed: *reusable, standalone `shared/` UI atoms get a folder + barrel; feature-internal components and pages, however numerous, stay flat.* `Logo` and `SEO` are unexplained exceptions to even that half of the rule.
+Khuôn mẫu `folder + Component.tsx + index.ts` **không được áp dụng một cách phổ quát** — chỉ áp dụng cho phần lớn `shared/components/*`. Mọi component và page *bên trong* một feature (`features/*/components/*.tsx`, `features/*/pages/*.tsx`) đều là file phẳng (flat file), không có thư mục và không có barrel — không file nào trong số đó có `index.ts` riêng. Vì vậy, quy tắc thực tế, đúng như đang được tuân theo: *các UI atom `shared/` có thể tái sử dụng, độc lập thì có folder + barrel; các component và page nội bộ của feature, dù nhiều đến đâu, vẫn ở dạng phẳng.* `Logo` và `SEO` là những ngoại lệ không có lời giải thích, thậm chí đối với nửa quy tắc đó.

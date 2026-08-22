@@ -1,31 +1,31 @@
 # 01. React 19 & React Compiler Auto-Memoization
 
-## Theory: the problem this solves
+## Lý thuyết: vấn đề mà giải pháp này giải quyết
 
-Before React 19, avoiding wasteful re-renders in a component tree meant manually telling React what *not* to recompute:
+Trước React 19, để tránh việc re-render lãng phí trong một cây component, ta phải chủ động báo cho React biết những gì *không* cần tính toán lại:
 
-- `React.memo(Component)` — skip re-rendering a component if its props are shallow-equal to last time.
-- `useCallback(fn, deps)` — keep the same function reference across renders unless `deps` changed, so children wrapped in `React.memo` don't see a "new" prop every render.
-- `useMemo(fn, deps)` — cache an expensive computed value across renders unless `deps` changed.
+- `React.memo(Component)` — bỏ qua việc re-render một component nếu props của nó bằng nhau (shallow-equal) so với lần trước.
+- `useCallback(fn, deps)` — giữ nguyên tham chiếu hàm giữa các lần render trừ khi `deps` thay đổi, để các component con được bọc trong `React.memo` không thấy một prop "mới" ở mỗi lần render.
+- `useMemo(fn, deps)` — cache một giá trị tính toán tốn kém giữa các lần render trừ khi `deps` thay đổi.
 
-This works, but has three well-known failure modes:
-1. **Overhead.** Every performance-sensitive component needs 2-3 extra hooks and a dependency array, which is pure ceremony relative to the actual business logic.
-2. **Stale-closure bugs.** If you forget a value in a `useCallback`/`useMemo` dependency array, the memoized function/value silently keeps referencing an old value — a bug class specific to manual memoization that doesn't exist if you never memoize at all.
-3. **Memory/GC pressure from over-memoization.** Wrapping everything "just in case" creates more retained objects than the re-renders it was meant to prevent were actually costing.
+Cách này có hiệu quả, nhưng tồn tại ba kiểu lỗi đã được biết đến rộng rãi:
+1. **Chi phí phát sinh (Overhead).** Mỗi component nhạy cảm về hiệu năng cần thêm 2-3 hook và một dependency array, đây là phần thủ tục thuần túy so với logic nghiệp vụ thực sự.
+2. **Lỗi stale-closure.** Nếu bạn quên một giá trị trong dependency array của `useCallback`/`useMemo`, hàm/giá trị đã memoized sẽ âm thầm tiếp tục tham chiếu đến một giá trị cũ — đây là một loại lỗi đặc thù của việc memoization thủ công, không tồn tại nếu bạn không bao giờ memoize.
+3. **Áp lực bộ nhớ/GC do memoize quá mức.** Việc bọc mọi thứ "cho chắc" tạo ra nhiều object được giữ lại (retained objects) hơn cả chi phí của các lần re-render mà nó vốn định ngăn chặn.
 
-**React Compiler** (shipped as `babel-plugin-react-compiler`, still in beta as of this codebase's dependency pin — `^19.0.0-beta-e552027-20250112` in `package.json`) moves this decision out of the developer's hands entirely. It's a Babel AST transform that runs at build time, not a runtime library: for every component/hook function, it performs a dataflow analysis to determine which values can change between renders and which are derived from which inputs, then **rewrites the function body** to insert the equivalent of manual memoization automatically. If it can't prove a given expression is safe to memoize (e.g. it can't establish the "Rules of React" hold — no mutating props/state outside the render itself, no untracked side effects during render), it simply leaves that expression unmemoized rather than risk incorrect behavior. It never makes your code *less* correct; worst case it just doesn't help in a spot it can't prove is safe.
+**React Compiler** (được phát hành dưới dạng `babel-plugin-react-compiler`, vẫn đang ở giai đoạn beta tính đến thời điểm phiên bản phụ thuộc được ghim trong codebase này — `^19.0.0-beta-e552027-20250112` trong `package.json`) loại bỏ hoàn toàn quyết định này khỏi tay lập trình viên. Đây là một phép biến đổi Babel AST chạy tại thời điểm build, không phải một thư viện runtime: với mỗi hàm component/hook, nó thực hiện phân tích dataflow để xác định giá trị nào có thể thay đổi giữa các lần render và giá trị nào được suy ra từ đầu vào nào, sau đó **viết lại phần thân của hàm** để chèn vào phần tương đương của memoization thủ công một cách tự động. Nếu nó không thể chứng minh rằng một biểu thức cụ thể là an toàn để memoize (ví dụ: không thể đảm bảo "Rules of React" được tuân thủ — không mutate props/state bên ngoài chính quá trình render, không có side effect không được theo dõi trong khi render), nó đơn giản là để biểu thức đó không được memoize thay vì mạo hiểm gây ra hành vi sai. Nó không bao giờ khiến code của bạn *kém chính xác* hơn; trường hợp xấu nhất là nó chỉ đơn giản không giúp ích ở một chỗ mà nó không thể chứng minh là an toàn.
 
-## Why this codebase uses it
+## Tại sao codebase này sử dụng nó
 
-Verified by exhaustive grep across every `.tsx`/`.ts` file under `src/`: **there are zero occurrences of `useCallback`, `useMemo`, or `React.memo` anywhere in the codebase.** This is a deliberate, consistently-applied convention, not an oversight — the team writes plain functions and plain object/array literals directly in component bodies and lets the compiler handle memoization. A few real examples of code that would, in a pre-Compiler React 18 codebase, almost certainly have been wrapped in a memoization hook, and today just... isn't:
+Đã được xác minh bằng cách grep toàn diện qua mọi file `.tsx`/`.ts` trong `src/`: **không có bất kỳ lần xuất hiện nào của `useCallback`, `useMemo`, hay `React.memo` trong toàn bộ codebase.** Đây là một quy ước có chủ đích, được áp dụng nhất quán, không phải là một sự sơ suất — nhóm phát triển viết các hàm thuần túy (plain functions) và các object/array literal thuần túy trực tiếp trong phần thân component, và để trình biên dịch xử lý việc memoization. Dưới đây là một vài ví dụ thực tế về đoạn code mà, trong một codebase React 18 thời kỳ trước Compiler, gần như chắc chắn sẽ được bọc trong một memoization hook, nhưng ngày nay thì... không:
 
-- **`src/shared/components/Header/Header.tsx`** — `handleNavClick`, `handleLogOut`, and `changeLanguage` are plain functions redefined on every render and passed straight into `onClick` props of `NavLink`/`Button`/`Dropdown` menu items. `languageMenuItems` and `navLinks` are array-of-object literals (each containing an inline `onClick` closure) rebuilt every render — these feed into antd's `Dropdown menu` prop, whose identity churning would normally justify a `useMemo`.
-- **`src/features/home/components/TMDBMovieSection.tsx`** — `sliderSettings`, a fairly large object literal with a nested `responsive` array, is rebuilt every render and spread directly into `<Slider {...sliderSettings}>`. Classic `useMemo` bait, left as a bare literal.
-- **`src/features/home/components/CarouselHome.tsx`** and **`ListMovie.tsx`** — render-helper functions and inline event handlers are defined fresh every render with no `useCallback`.
+- **`src/shared/components/Header/Header.tsx`** — `handleNavClick`, `handleLogOut`, và `changeLanguage` là các hàm thuần túy được định nghĩa lại ở mỗi lần render và được truyền thẳng vào các prop `onClick` của các mục menu `NavLink`/`Button`/`Dropdown`. `languageMenuItems` và `navLinks` là các array-of-object literal (mỗi phần tử chứa một closure `onClick` nội tuyến) được tạo lại ở mỗi lần render — chúng được đưa vào prop `menu` của `Dropdown` trong antd, mà việc thay đổi định danh (identity churning) của nó thông thường sẽ là lý do chính đáng để dùng `useMemo`.
+- **`src/features/home/components/TMDBMovieSection.tsx`** — `sliderSettings`, một object literal khá lớn với một mảng `responsive` lồng bên trong, được tạo lại ở mỗi lần render và spread trực tiếp vào `<Slider {...sliderSettings}>`. Đây là một "mồi câu" (bait) kinh điển cho `useMemo`, nhưng được để lại dưới dạng một literal trần trụi.
+- **`src/features/home/components/CarouselHome.tsx`** và **`ListMovie.tsx`** — các hàm hỗ trợ render (render-helper) và trình xử lý sự kiện nội tuyến được định nghĩa mới ở mỗi lần render mà không cần `useCallback`.
 
-## How it's wired into the build
+## Cách nó được tích hợp vào quá trình build
 
-There is no `babel.config.js`/`.babelrc` in this repo — the entire Babel configuration lives inline inside the webpack loader options, in `config/webpack.common.js`:
+Không có file `babel.config.js`/`.babelrc` nào trong repo này — toàn bộ cấu hình Babel nằm trực tiếp bên trong các tùy chọn (options) của webpack loader, trong `config/webpack.common.js`:
 
 ```javascript
 // config/webpack.common.js
@@ -50,15 +50,15 @@ There is no `babel.config.js`/`.babelrc` in this repo — the entire Babel confi
 },
 ```
 
-`target: "19"` tells the compiler which React runtime APIs it can assume are available when it emits its memoization helpers. `@babel/preset-typescript` in the same pipeline is doing something unrelated but worth flagging here since it's adjacent: it strips TypeScript syntax so Babel can process `.tsx`, but it does **not** type-check anything — see [doc 10](./10-typescript-safety-and-cicd-gaps.md) for why that matters.
+`target: "19"` báo cho trình biên dịch biết những API runtime nào của React mà nó có thể giả định là khả dụng khi phát ra (emit) các helper memoization của nó. `@babel/preset-typescript` trong cùng pipeline đang thực hiện một việc không liên quan nhưng đáng được lưu ý ở đây vì nó nằm ngay bên cạnh: nó loại bỏ cú pháp TypeScript để Babel có thể xử lý `.tsx`, nhưng nó **không** kiểm tra kiểu (type-check) bất kỳ điều gì — xem [tài liệu 10](./10-typescript-safety-and-cicd-gaps.md) để hiểu vì sao điều này quan trọng.
 
-## Engineering trade-offs, honestly
+## Đánh đổi kỹ thuật, nói thẳng ra
 
-**Real benefits realized here:**
-- Every component in `src/features/*/components` and `src/features/*/pages` is measurably simpler to read — no dependency-array bookkeeping competing for attention with the actual UI logic.
-- Zero stale-closure bugs from manual memoization are possible, because there is no manual memoization to get wrong.
+**Lợi ích thực tế đã đạt được ở đây:**
+- Mọi component trong `src/features/*/components` và `src/features/*/pages` đều dễ đọc hơn một cách rõ rệt — không có việc quản lý dependency array cạnh tranh sự chú ý với logic UI thực sự.
+- Không thể xảy ra lỗi stale-closure từ memoization thủ công, vì không có memoization thủ công nào để làm sai.
 
-**Real costs/risks worth knowing about:**
-- **This dependency is a beta release.** `^19.0.0-beta-e552027-20250112` is a prerelease tag, not a GA version of the compiler. A caret range on a prerelease effectively pins to that exact prerelease train — upgrading requires deliberately bumping to a newer beta or the eventual stable release, and beta compiler behavior/bug surface is inherently less battle-tested than the hooks it replaces.
-- **The compiler is a black box relative to manual memoization.** When a hand-written `useMemo` doesn't behave as expected, you can read the dependency array and reason about it directly. When the compiler doesn't memoize something you expected it to, the only way to know is to inspect the compiled output or profile — there's no dependency array to eyeball in the source.
-- **This is an all-or-nothing team convention, not enforced by tooling.** Nothing in this repo (no lint rule, no CI check) actually prevents someone from adding a manual `useCallback` back in — it would just be redundant with what the compiler already does, not broken. The "no manual memoization" rule is presently a matter of team discipline, not a guardrail.
+**Chi phí/rủi ro thực tế đáng lưu ý:**
+- **Dependency này là một bản phát hành beta.** `^19.0.0-beta-e552027-20250112` là một tag prerelease, không phải phiên bản GA (chính thức) của trình biên dịch. Một dải caret (caret range) trên một bản prerelease thực chất chỉ ghim vào đúng chuỗi prerelease đó — việc nâng cấp đòi hỏi phải chủ động chuyển sang một bản beta mới hơn hoặc bản ổn định cuối cùng, và hành vi/bề mặt lỗi của compiler beta vốn dĩ chưa được kiểm chứng nhiều bằng các hook mà nó thay thế.
+- **Trình biên dịch là một hộp đen (black box) so với memoization thủ công.** Khi một `useMemo` viết tay không hoạt động như mong đợi, bạn có thể đọc dependency array và suy luận trực tiếp về nó. Khi trình biên dịch không memoize một thứ mà bạn kỳ vọng nó sẽ memoize, cách duy nhất để biết là kiểm tra output đã biên dịch hoặc profile — không có dependency array nào để nhìn lướt qua trong source.
+- **Đây là một quy ước all-or-nothing của nhóm, không được công cụ (tooling) thực thi bắt buộc.** Không có gì trong repo này (không có lint rule, không có CI check) thực sự ngăn ai đó thêm lại một `useCallback` thủ công — việc đó chỉ đơn giản là dư thừa so với những gì trình biên dịch đã làm, chứ không gây lỗi. Quy tắc "không memoization thủ công" hiện tại là vấn đề thuộc về kỷ luật của nhóm, không phải một rào chắn kỹ thuật (guardrail).

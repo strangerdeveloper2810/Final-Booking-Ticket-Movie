@@ -1,18 +1,18 @@
-# 07. Styling: Tailwind CSS, Design Tokens & antd Theming
+# 07. Tạo kiểu: Tailwind CSS, Design Tokens & antd Theming
 
-## Why Tailwind CSS at all — the utility-first trade-off
+## Tại sao lại dùng Tailwind CSS — sự đánh đổi của utility-first
 
-Tailwind CSS takes a different bet than the two more traditional alternatives:
+Tailwind CSS đặt cược theo một hướng khác so với hai lựa chọn thay thế truyền thống hơn:
 
-| Approach | What it looks like | Trade-off |
+| Cách tiếp cận | Trông như thế nào | Sự đánh đổi |
 |---|---|---|
-| **Hand-written CSS/SCSS** (this project's own pre-refactor state) | `.wrap-movie { display: flex; ... }` in a separate stylesheet, referenced by class name | Full control, but naming things is real work, and unused rules silently accumulate as dead weight — verified in this exact repo's own history: an earlier SCSS-based version had partials with genuinely dead rules (e.g. a `.carousel-container` selector matching no actual className anywhere in the app) that nobody noticed until an explicit audit. |
-| **CSS-in-JS** (styled-components, Emotion) | Styles co-located with the component, scoped automatically | Runtime cost (style injection happens in JS), and doesn't compose well with a component library that does its own runtime styling (antd v5's CSS-in-JS engine) — two CSS-in-JS runtimes in one app is a real anti-pattern to avoid. |
-| **Utility-first (Tailwind)** — what this project uses | `className="flex justify-center mt-6"` directly in JSX | No naming problem (there's nothing to name), and genuinely dead utility classes are structurally rare (you'd have to leave an unused `className` string sitting in dead JSX, not an unused rule in a stylesheet nobody reads) — the trade-off is JSX readability: markup gets visually denser, and consistency depends entirely on discipline (nothing stops two engineers from expressing "8px padding" as `p-2` in one file and an arbitrary `p-[8px]` in another). |
+| **CSS/SCSS viết tay** (trạng thái của chính dự án này trước khi tái cấu trúc) | `.wrap-movie { display: flex; ... }` trong một stylesheet riêng, được tham chiếu theo tên class | Toàn quyền kiểm soát, nhưng việc đặt tên là công việc thực sự tốn công, và các rule không dùng đến âm thầm tích tụ thành gánh nặng chết — điều này đã được xác minh trong chính lịch sử của repo này: một phiên bản dựa trên SCSS trước đây có các partial chứa những rule thực sự chết (ví dụ: một selector `.carousel-container` không khớp với bất kỳ className thực tế nào trong toàn bộ ứng dụng) mà không ai nhận ra cho đến khi có một đợt audit rõ ràng. |
+| **CSS-in-JS** (styled-components, Emotion) | Style được đặt cùng vị trí với component, tự động được giới hạn phạm vi (scoped) | Có chi phí runtime (việc inject style diễn ra trong JS), và không kết hợp tốt với một thư viện component tự thực hiện styling ở runtime của riêng nó (CSS-in-JS engine của antd v5) — có hai runtime CSS-in-JS trong cùng một ứng dụng là một anti-pattern thực sự cần tránh. |
+| **Utility-first (Tailwind)** — cách tiếp cận mà dự án này sử dụng | `className="flex justify-center mt-6"` trực tiếp trong JSX | Không có vấn đề đặt tên (vì không có gì để đặt tên), và các utility class thực sự chết là cực kỳ hiếm về mặt cấu trúc (bạn sẽ phải để sót một chuỗi `className` không dùng đến nằm trong JSX chết, chứ không phải một rule không dùng trong một stylesheet mà chẳng ai đọc) — sự đánh đổi nằm ở khả năng đọc của JSX: markup trở nên dày đặc hơn về mặt hình ảnh, và tính nhất quán phụ thuộc hoàn toàn vào kỷ luật (không có gì ngăn cản hai kỹ sư diễn đạt "8px padding" bằng `p-2` ở file này và bằng `p-[8px]` tùy ý ở file khác). |
 
-This codebase's own migration history is a live example of the first two rows: it started with hand-rolled SCSS, and one specific finding from an internal review before the Tailwind-only migration was completed is worth repeating here as a cautionary tale — the SCSS system had accumulated a dead rule, a stale breakpoint duplicated in two places, and a component (`Loading`) that had been fully replaced (`LoadingNew`) while its old stylesheet partial kept shipping under the old name. None of that is a Tailwind-specific problem, but it's exactly the failure mode utility classes structurally avoid (there's no separate stylesheet to fall out of sync with the component that uses it).
+Lịch sử di trú (migration) của chính codebase này là một ví dụ sống động cho hai hàng đầu tiên: nó bắt đầu với SCSS viết tay, và có một phát hiện cụ thể từ một buổi review nội bộ trước khi hoàn tất việc chuyển hẳn sang Tailwind, đáng được nhắc lại ở đây như một bài học cảnh báo — hệ thống SCSS đã tích tụ một rule chết, một breakpoint lỗi thời bị trùng lặp ở hai nơi, và một component (`Loading`) đã được thay thế hoàn toàn (`LoadingNew`) trong khi partial stylesheet cũ của nó vẫn tiếp tục được build dưới tên cũ. Không điều nào trong số đó là vấn đề riêng của Tailwind, nhưng đó chính xác là kiểu lỗi mà utility class tránh được nhờ cấu trúc của nó (không có stylesheet riêng nào để bị lệch đồng bộ với component sử dụng nó).
 
-## `tailwind.config.js`, in full
+## `tailwind.config.js`, đầy đủ nội dung
 
 ```javascript
 /** @type {import('tailwindcss').Config} */
@@ -38,20 +38,20 @@ module.exports = {
   plugins: [],
 };
 ```
-Two things worth understanding here specifically:
+Có hai điều đáng để hiểu rõ cụ thể ở đây:
 
-1. **`darkMode: "class"`** (not Tailwind's other option, `"media"`, which follows the OS-level `prefers-color-scheme`). This means dark/light mode is controlled by whether a `.dark` class is present on `<html>`, toggled explicitly by application code (see the theme section below) — not automatically inferred from the OS. This is the right choice whenever an app wants a user-controllable theme toggle rather than "always match your OS," which is the case here (`ThemeContext.tsx` reads/writes a cookie so the choice persists and can be set independent of the OS).
-2. **Most colors are `var(--*)` indirections, not literal hex values** — `background`, `surface`, `border`, `text-primary`, `text-secondary` all resolve through CSS custom properties defined elsewhere (`src/index.css`). This is *how* dark/light theming actually works with Tailwind's utility classes: the Tailwind class name (`bg-background`) never changes between themes, only the underlying CSS variable's value does, swapped by the presence/absence of the `.dark` class. **But `primary`, `primary-hover`, and `secondary` are hardcoded hex literals right here**, not `var(--*)` — an inconsistency worth noticing (see "the token duplication problem" below).
+1. **`darkMode: "class"`** (không phải tùy chọn còn lại của Tailwind là `"media"`, vốn theo `prefers-color-scheme` ở cấp hệ điều hành). Điều này có nghĩa là chế độ dark/light được kiểm soát bởi việc class `.dark` có xuất hiện trên `<html>` hay không, được bật/tắt một cách tường minh bởi mã ứng dụng (xem phần theme bên dưới) — chứ không được tự động suy ra từ hệ điều hành. Đây là lựa chọn đúng đắn bất cứ khi nào ứng dụng muốn có một nút chuyển theme do người dùng kiểm soát, thay vì "luôn theo hệ điều hành", và đó chính là trường hợp ở đây (`ThemeContext.tsx` đọc/ghi một cookie để lựa chọn được lưu lại và có thể được thiết lập độc lập với hệ điều hành).
+2. **Hầu hết các màu là các gián tiếp `var(--*)`, không phải giá trị hex cố định** — `background`, `surface`, `border`, `text-primary`, `text-secondary` đều được phân giải thông qua các CSS custom properties được định nghĩa ở nơi khác (`src/index.css`). Đây chính là *cách* mà theming dark/light thực sự hoạt động với utility classes của Tailwind: tên class của Tailwind (`bg-background`) không bao giờ thay đổi giữa các theme, chỉ có giá trị của CSS variable bên dưới là thay đổi, được hoán đổi tùy theo sự có mặt/vắng mặt của class `.dark`. **Nhưng `primary`, `primary-hover`, và `secondary` lại là các giá trị hex cố định (hardcoded) ngay tại đây**, chứ không phải `var(--*)` — một sự thiếu nhất quán đáng để ý (xem phần "vấn đề trùng lặp token" bên dưới).
 
-`content: ["./src/**/*.{js,jsx,ts,tsx}"]` is Tailwind's content-scanning glob — it statically scans these files for class-name-shaped strings to decide which utilities to actually generate, which is how Tailwind avoids shipping every possible utility class (tens of thousands of them) in the final CSS — only classes that literally appear as text somewhere in a scanned file make it into the output. This has a well-known implication worth knowing: **dynamically constructed class name strings** (e.g. `` `text-${color}-500` ``) won't be detected by this scan and won't be generated — Tailwind can only see literal, complete class-name strings in your source.
+`content: ["./src/**/*.{js,jsx,ts,tsx}"]` là glob content-scanning của Tailwind — nó quét tĩnh các file này để tìm các chuỗi có hình dạng giống tên class, nhằm quyết định utility nào thực sự sẽ được sinh ra, đây là cách Tailwind tránh việc phải đưa mọi utility class có thể có (hàng chục nghìn class) vào CSS cuối cùng — chỉ những class xuất hiện dưới dạng văn bản thực sự ở đâu đó trong một file được quét mới lọt vào output. Điều này kéo theo một hệ quả nổi tiếng đáng biết: **các chuỗi tên class được xây dựng động** (ví dụ: `` `text-${color}-500` ``) sẽ không được phát hiện bởi lần quét này và sẽ không được sinh ra — Tailwind chỉ có thể nhìn thấy các chuỗi tên class trọn vẹn, hiện diện theo nghĩa đen (literal) trong mã nguồn của bạn.
 
-## Design tokens: the plan vs. what actually shipped
+## Design tokens: kế hoạch so với những gì thực sự được triển khai
 
-`docs/refactor/design-plan.md` (an earlier planning document in this repo) stated an explicit intention: *"One token source. Colors, radii, and font scale are defined once and shared by both Tailwind and antd... pulling from the same constants object so they can never drift apart."*
+`docs/refactor/design-plan.md` (một tài liệu lập kế hoạch trước đây trong repo này) đã nêu rõ một ý định: *"Một nguồn token duy nhất. Colors, radii, và font scale được định nghĩa một lần và được dùng chung bởi cả Tailwind lẫn antd... lấy từ cùng một constants object để chúng không bao giờ có thể lệch nhau."*
 
-**The implementation diverged from that plan.** As shipped, there are **three** independently-maintained copies of the same palette:
+**Việc triển khai thực tế đã đi chệch khỏi kế hoạch đó.** Ở phiên bản đã triển khai, có **ba** bản sao của cùng một bảng màu (palette) được duy trì độc lập với nhau:
 
-1. **`src/shared/theme/tokens.ts`** — a plain TS object (dark-mode-shaped values only):
+1. **`src/shared/theme/tokens.ts`** — một object TS thuần (chỉ chứa các giá trị dành cho dark mode):
    ```typescript
    export const tokens = {
      background: "#0B0D12", surface: "#151822", surfaceHover: "#1D2130", border: "#262B3A",
@@ -61,14 +61,14 @@ Two things worth understanding here specifically:
      borderRadiusCard: 10, borderRadiusButton: 8,
    };
    ```
-2. **`src/index.css`'s CSS custom properties** — hand-copied hex values, defined separately for **both** light (`:root`) and dark (`.dark`) modes (light-mode values have no counterpart in `tokens.ts` at all, since that file only models the dark palette).
-3. **Hardcoded hex literals directly in `tailwind.config.js`** (`primary: "#F2545B"`, `"primary-hover": "#FF6B72"`, `secondary: "#FFC857"`) and again in `src/index.css` (e.g. an `.ant-tabs-tab-active` override and a slick-carousel dots-active-color rule) — both matching `tokens.ts`'s values by manual copy-paste, not by import.
+2. **Các CSS custom properties trong `src/index.css`** — các giá trị hex được sao chép thủ công, được định nghĩa riêng cho **cả hai** chế độ light (`:root`) và dark (`.dark`) (các giá trị của light mode hoàn toàn không có đối chiếu nào trong `tokens.ts`, vì file đó chỉ mô hình hóa bảng màu dark).
+3. **Các giá trị hex hardcode trực tiếp trong `tailwind.config.js`** (`primary: "#F2545B"`, `"primary-hover": "#FF6B72"`, `secondary: "#FFC857"`) và một lần nữa trong `src/index.css` (ví dụ: một override cho `.ant-tabs-tab-active` và một rule dots-active-color của slick-carousel) — cả hai đều khớp với các giá trị trong `tokens.ts` nhờ copy-paste thủ công, chứ không phải bằng import.
 
-Nothing currently *generates* (2) or (3) from (1) — they can, and already partially do, drift apart (light mode simply isn't represented in `tokens.ts` at all). **This is presented here as a real, concrete example of a documented intention not fully surviving implementation** — useful precisely because it's the kind of drift that's easy to introduce with good intentions and easy to miss in review, not because anyone did anything unreasonable. If you touch the color palette, the honest todo is: pick one of these three as the actual source, generate or import the others from it, and delete the duplicates.
+Hiện tại không có gì *sinh ra* (2) hoặc (3) từ (1) — chúng có thể, và trên thực tế đã một phần, bị lệch nhau (light mode hoàn toàn không được thể hiện trong `tokens.ts`). **Điều này được trình bày ở đây như một ví dụ thực tế, cụ thể về một ý định đã được ghi lại nhưng không được triển khai trọn vẹn** — hữu ích chính vì đây là kiểu lệch pha rất dễ phát sinh dù có ý định tốt, và rất dễ bị bỏ sót khi review, chứ không phải vì ai đó đã làm điều gì bất hợp lý. Nếu bạn đụng vào bảng màu, việc cần làm một cách trung thực là: chọn một trong ba nơi này làm nguồn thực sự, sinh ra hoặc import các nơi còn lại từ đó, và xóa bỏ các bản sao trùng lặp.
 
-## antd theming: `ConfigProvider` + `ThemeContext`
+## Theming của antd: `ConfigProvider` + `ThemeContext`
 
-antd v5 (unlike v4) styles itself primarily via a runtime CSS-in-JS engine driven by a `ConfigProvider theme` prop, not compiled Less variables — which is exactly what makes token-sharing with Tailwind possible in the first place (there's no separate Less build step to also keep in sync).
+antd v5 (khác với v4) tự style chính nó chủ yếu thông qua một CSS-in-JS engine chạy ở runtime, được điều khiển bởi prop `ConfigProvider theme`, chứ không phải bằng các biến Less được biên dịch sẵn — và chính điều này là thứ khiến việc chia sẻ token với Tailwind trở nên khả thi ngay từ đầu (không có bước build Less riêng biệt nào cần phải giữ đồng bộ thêm).
 
 ```tsx
 // src/shared/theme/ThemeContext.tsx (relevant excerpt)
@@ -86,11 +86,11 @@ antd v5 (unlike v4) styles itself primarily via a runtime CSS-in-JS engine drive
   }}
 >
 ```
-`algorithm: darkAlgorithm | defaultAlgorithm` is antd's own built-in mechanism for deriving an entire consistent color system (hover states, disabled states, shadows) from a small set of seed tokens — you don't hand-specify every antd component's dark-mode color, the algorithm derives sensible ones from `colorPrimary`/`colorBgContainer`/etc. Note the light-mode values here (`"#FFFFFF"`, `"#1F2937"`, `"#4B5563"`, `"#E5E7EB"`) are inline literals, not sourced from `tokens.ts` at all (reinforcing the point above — `tokens.ts` is really a dark-mode-only file today, despite its generic name).
+`algorithm: darkAlgorithm | defaultAlgorithm` là cơ chế tích hợp sẵn của riêng antd để suy ra toàn bộ một hệ thống màu nhất quán (hover state, disabled state, shadow) từ một tập nhỏ các seed token — bạn không cần tự tay chỉ định màu dark-mode cho từng antd component, thuật toán sẽ tự suy ra các giá trị hợp lý từ `colorPrimary`/`colorBgContainer`/v.v. Lưu ý rằng các giá trị light-mode ở đây (`"#FFFFFF"`, `"#1F2937"`, `"#4B5563"`, `"#E5E7EB"`) là các giá trị literal viết trực tiếp inline, hoàn toàn không lấy từ `tokens.ts` (củng cố thêm điểm đã nêu ở trên — `tokens.ts` ngày nay thực chất là một file chỉ dành cho dark-mode, dù tên gọi của nó mang tính tổng quát).
 
-### How the theme toggle avoids a flash of the wrong theme
+### Cách công tắc chuyển theme tránh được hiện tượng nhấp nháy sai theme
 
-`public/index.html` runs a small **synchronous, inline `<script>`** in `<head>`, before any CSS or the React bundle loads:
+`public/index.html` chạy một **`<script>` inline, đồng bộ (synchronous)** nhỏ trong `<head>`, trước khi bất kỳ CSS hay React bundle nào được tải:
 ```html
 <script>
   (function () {
@@ -102,10 +102,10 @@ antd v5 (unlike v4) styles itself primarily via a runtime CSS-in-JS engine drive
   })();
 </script>
 ```
-This is a well-known technique for avoiding FOUC/CLS (flash of unstyled content / cumulative layout shift) from theme switching: if the `.dark` class were only added after React mounts and `ThemeContext` initializes, a returning dark-mode user would see a flash of the light theme's colors first. Reading a plain cookie synchronously in a blocking inline script, before the stylesheet that depends on `.dark` even has a chance to paint, closes that gap. This is also *why* the theme preference is stored in a **cookie** rather than `localStorage` here — a cookie is readable synchronously in this position exactly the same way either storage would be, but the specific mechanism (a plain string match, not JSON parsing) is simple enough to be trivially safe to run this early, wrapped in a `try`/`catch` in case cookies are disabled.
+Đây là một kỹ thuật nổi tiếng để tránh FOUC/CLS (flash of unstyled content / cumulative layout shift) do việc chuyển theme gây ra: nếu class `.dark` chỉ được thêm vào sau khi React mount và `ThemeContext` khởi tạo xong, một người dùng quay lại ở dark mode sẽ thấy nhấp nháy màu của light theme trước tiên. Việc đọc một cookie thuần túy một cách đồng bộ trong một inline script chặn (blocking), trước cả khi stylesheet phụ thuộc vào `.dark` có cơ hội paint, sẽ khép lại khoảng hở đó. Đây cũng là *lý do* vì sao lựa chọn theme được lưu trong một **cookie** thay vì `localStorage` ở đây — một cookie có thể đọc được đồng bộ ở vị trí này theo đúng cách mà bất kỳ loại lưu trữ nào cũng có thể, nhưng cơ chế cụ thể (một phép so khớp chuỗi thuần túy, không phải parse JSON) đủ đơn giản để chạy an toàn ở giai đoạn sớm này, được bọc trong một `try`/`catch` phòng trường hợp cookie bị vô hiệu hóa.
 
-## Practical guidance for this codebase
+## Hướng dẫn thực tiễn cho codebase này
 
-- Prefer Tailwind utility classes for anything layout/spacing-related; reach for antd components (not raw HTML) for anything with real interactive behavior — see the project's own migration away from raw `<input>`/`<button>` elements in favor of antd `Form`/`Input`/`Button` (documented in [doc 08](./08-forms-react-hook-form-zod.md)).
-- If you add a new color to the palette, treat `tokens.ts` as the intended source of truth per the original design plan, and manually propagate it to `index.css`'s CSS variables and `tailwind.config.js` until someone actually wires a real single-source mechanism (e.g. generating the CSS variables file and part of `tailwind.config.js`'s `theme.extend.colors` from `tokens.ts` at build time) — don't add a fourth independent copy.
-- Remember Tailwind's content-scanning limitation: never build a class name via string concatenation/interpolation if you want Tailwind to actually generate it.
+- Ưu tiên dùng Tailwind utility classes cho bất cứ điều gì liên quan đến layout/spacing; dùng các antd component (không phải HTML thô) cho bất cứ điều gì có hành vi tương tác thực sự — xem chính việc dự án này đã chuyển từ các phần tử `<input>`/`<button>` thô sang dùng `Form`/`Input`/`Button` của antd (được ghi lại trong [doc 08](./08-forms-react-hook-form-zod.md)).
+- Nếu bạn thêm một màu mới vào bảng màu, hãy coi `tokens.ts` là nguồn chân lý (source of truth) dự kiến theo đúng kế hoạch thiết kế ban đầu, và lan truyền thủ công giá trị đó sang các CSS variable trong `index.css` cũng như `tailwind.config.js`, cho đến khi có ai đó thực sự thiết lập một cơ chế single-source thực thụ (ví dụ: sinh ra file CSS variable và một phần `theme.extend.colors` của `tailwind.config.js` từ `tokens.ts` tại thời điểm build) — đừng thêm một bản sao độc lập thứ tư.
+- Hãy nhớ giới hạn của cơ chế content-scanning của Tailwind: không bao giờ xây dựng tên class bằng cách nối chuỗi/nội suy (interpolation) nếu bạn muốn Tailwind thực sự sinh ra nó.

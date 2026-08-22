@@ -1,10 +1,10 @@
-# 08. Forms: `react-hook-form` + `zod`
+# 08. Biểu mẫu (Forms): `react-hook-form` + `zod`
 
-## What changed, and why it looks structurally different
+## Điều gì đã thay đổi, và tại sao nó trông khác biệt về mặt cấu trúc
 
-This codebase migrated its two forms (`Login`, `Register`) from `formik` + `yup` to `react-hook-form` + `zod`. `formik`/`yup` are now entirely absent from `package.json` — this wasn't a partial migration, it's a full swap.
+Codebase này đã di chuyển hai form (`Login`, `Register`) từ `formik` + `yup` sang `react-hook-form` + `zod`. `formik`/`yup` giờ đây hoàn toàn không còn xuất hiện trong `package.json` — đây không phải là một cuộc di chuyển từng phần, mà là một sự thay thế toàn diện.
 
-The **validation** side is a straightforward like-for-like swap — both `yup` and `zod` are schema-declaration libraries for describing "what a valid object looks like" and producing readable error messages when it doesn't:
+Phần **validation** là một sự thay thế trực tiếp, tương đương nhau — cả `yup` và `zod` đều là các thư viện khai báo schema (schema-declaration) dùng để mô tả "một đối tượng hợp lệ trông như thế nào" và tạo ra các thông báo lỗi dễ đọc khi đối tượng đó không hợp lệ:
 ```typescript
 // src/features/auth/schemas/auth.schema.ts
 import { z } from "zod";
@@ -25,11 +25,11 @@ export const registerSchema = z.object({
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;
 ```
-`z.infer<typeof schema>` is the detail worth calling out for anyone new to zod: it derives a TypeScript type *from* the runtime schema, so the validation rules and the TS type can never quietly drift apart the way a hand-written `interface` next to a hand-written `yup` schema could.
+`z.infer<typeof schema>` là chi tiết đáng chú ý đối với bất kỳ ai mới làm quen với zod: nó suy ra (derives) một kiểu TypeScript *từ* schema runtime, vì vậy các quy tắc validation và kiểu TS không bao giờ có thể âm thầm lệch nhau theo cách mà một `interface` viết tay đặt cạnh một schema `yup` viết tay có thể xảy ra.
 
-## The real structural change: `Controller`, not `register()`
+## Thay đổi cấu trúc thực sự: `Controller`, không phải `register()`
 
-`react-hook-form`'s simplest API, `register("fieldName")`, spreads `name`/`onChange`/`onBlur`/`ref` props directly onto a native uncontrolled `<input>`. That's *not* what this codebase does anywhere — every single field in `Login.tsx` and `Register.tsx` uses the `Controller` render-prop wrapper instead:
+API đơn giản nhất của `react-hook-form`, `register("fieldName")`, trải (spread) các prop `name`/`onChange`/`onBlur`/`ref` trực tiếp lên một `<input>` gốc (native) không được kiểm soát (uncontrolled). Đó *không* phải là cách codebase này làm ở bất kỳ đâu — mọi field trong `Login.tsx` và `Register.tsx` đều sử dụng wrapper render-prop `Controller` thay vào đó:
 
 ```tsx
 // src/features/auth/pages/Login.tsx
@@ -60,16 +60,16 @@ const {
 />
 {errors.taiKhoan && <p className="text-xs text-red-500 mt-1">{errors.taiKhoan.message}</p>}
 ```
-**Why `Controller` is required here, specifically**: the input being rendered is antd's `<Input>`, not a native `<input>`. antd's form controls are *controlled* components with their own internal value/onChange contract — `register()`'s uncontrolled-ref-spreading model doesn't compose with that. `Controller` is `react-hook-form`'s official bridge for exactly this situation: it hands you a `field` object (`{ value, onChange, onBlur, name, ref }`) shaped to spread onto any controlled third-party component, while RHF still tracks that field's state internally. **This is the actual structural delta from the old `formik` shape**, not just "different function names" — `formik.getFieldProps(name)` could spread directly onto a native `<input>` because formik's own model is closer to uncontrolled-prop-spreading; once the inputs became antd components, that direct-spread approach stopped being an option regardless of which form library was used.
+**Tại sao `Controller` lại cần thiết ở đây, cụ thể là**: input được render là `<Input>` của antd, không phải một `<input>` gốc. Các form control của antd là các component *controlled* (được kiểm soát) với hợp đồng value/onChange nội bộ riêng của chúng — mô hình trải ref không kiểm soát (uncontrolled-ref-spreading) của `register()` không thể kết hợp với điều đó. `Controller` chính là cầu nối chính thức của `react-hook-form` cho đúng tình huống này: nó cung cấp cho bạn một đối tượng `field` (`{ value, onChange, onBlur, name, ref }`) được thiết kế để trải lên bất kỳ component controlled bên thứ ba nào, trong khi RHF vẫn theo dõi trạng thái (state) của field đó ở bên trong. **Đây mới là sự khác biệt cấu trúc thực sự so với hình thái `formik` cũ**, chứ không chỉ đơn thuần là "tên hàm khác nhau" — `formik.getFieldProps(name)` có thể trải trực tiếp lên một `<input>` gốc vì bản thân mô hình của formik gần với cách trải prop không kiểm soát hơn; một khi các input trở thành component của antd, cách tiếp cận trải trực tiếp đó không còn là một lựa chọn nữa, bất kể sử dụng thư viện form nào.
 
-## `zodResolver` — bridging a schema library to RHF's validation contract
+## `zodResolver` — cầu nối giữa một thư viện schema và hợp đồng validation của RHF
 
 ```typescript
 resolver: zodResolver(loginSchema),
 ```
-`react-hook-form` doesn't know about zod (or yup, or any other schema library) natively — a `resolver` is RHF's plug-in point for validation, and `@hookform/resolvers` ships pre-built adapters for the popular schema libraries. `zodResolver(schema)` runs the zod schema against the form's current values on submit (and on blur/change depending on RHF's configured validation mode) and translates zod's error format into the shape RHF expects for `formState.errors`.
+`react-hook-form` vốn không biết gì về zod (hay yup, hay bất kỳ thư viện schema nào khác) — `resolver` là điểm cắm (plug-in point) của RHF dành cho validation, và `@hookform/resolvers` cung cấp sẵn các adapter dựng sẵn cho các thư viện schema phổ biến. `zodResolver(schema)` chạy schema zod đối chiếu với các giá trị hiện tại của form khi submit (và khi blur/change tùy theo chế độ validation mà RHF được cấu hình) rồi chuyển đổi định dạng lỗi của zod sang hình dạng mà RHF mong đợi cho `formState.errors`.
 
-## `Register.tsx`'s submit — assembling the API payload
+## Submit của `Register.tsx` — lắp ráp payload cho API
 
 ```tsx
 const formikBag = useForm<RegisterFormData>({ resolver: zodResolver(registerSchema), defaultValues: { /* 5 fields */ } });
@@ -78,18 +78,18 @@ const onSubmit = (data: RegisterFormData) => {
   dispatch({ type: USER_REGISTER_API, payload: { ...data, maNhom: GROUP_ID } });
 };
 ```
-`maNhom` (the Cybersoft "data group" code) is a fixed constant, not a form field — it's spread onto the validated form data right before dispatch, not part of the zod schema at all. This is a reasonable, common pattern: don't model a field in the validation schema (or expose it in the UI) if the user never actually chooses its value.
+`maNhom` (mã "nhóm dữ liệu" của Cybersoft) là một hằng số cố định, không phải một field của form — nó được trải lên dữ liệu form đã được validate ngay trước khi dispatch, hoàn toàn không phải là một phần của schema zod. Đây là một pattern hợp lý và phổ biến: đừng mô hình hóa một field trong schema validation (hoặc hiển thị nó trên UI) nếu người dùng không bao giờ thực sự chọn giá trị của field đó.
 
-## A real timing subtlety worth knowing
+## Một điểm tinh tế thực sự về thời điểm (timing) đáng lưu ý
 
 ```tsx
 formState: { errors, isSubmitting }
 ```
-`isSubmitting` drives the antd submit `Button`'s `loading` prop. **`isSubmitting` only reflects the synchronous duration of the `handleSubmit`-wrapped `onSubmit` callback** — and this codebase's `onSubmit` just does a synchronous `dispatch({...})` (the actual API call happens later, inside a saga, asynchronously). That means `isSubmitting` flips back to `false` almost immediately, *not* when the saga's async login/register flow actually completes. If you're looking at this code expecting the submit button to stay in a loading state until the API call resolves, it won't — that would require a separate loading flag (e.g. reading a loading boolean out of Redux state, the way [doc 04](./04-redux-saga-rtk-query-state-management.md) discusses for other flows) wired to the button explicitly, which isn't currently done for these two forms.
+`isSubmitting` điều khiển prop `loading` của `Button` submit trong antd. **`isSubmitting` chỉ phản ánh khoảng thời gian đồng bộ (synchronous) của callback `onSubmit` được `handleSubmit` bọc lại** — và `onSubmit` của codebase này chỉ thực hiện một `dispatch({...})` đồng bộ (lệnh gọi API thực sự diễn ra sau đó, bên trong một saga, một cách bất đồng bộ). Điều đó có nghĩa là `isSubmitting` chuyển trở lại `false` gần như ngay lập tức, *chứ không phải* khi luồng login/register bất đồng bộ của saga thực sự hoàn tất. Nếu bạn nhìn vào đoạn code này và kỳ vọng nút submit sẽ duy trì trạng thái loading cho đến khi lệnh gọi API hoàn tất, điều đó sẽ không xảy ra — việc đó đòi hỏi một cờ (flag) loading riêng biệt (ví dụ: đọc một boolean loading từ Redux state, theo cách mà [doc 04](./04-redux-saga-rtk-query-state-management.md) đã bàn đến cho các luồng khác) được gắn tường minh vào nút bấm, điều mà hiện tại chưa được thực hiện cho hai form này.
 
-## Summary: what to reach for building a new form in this codebase
+## Tóm tắt: nên dùng gì khi xây dựng một form mới trong codebase này
 
-1. Define a `zod` schema (colocated in a `schemas/` folder next to the feature, per `features/auth/schemas/auth.schema.ts`'s example) and derive its TS type with `z.infer`.
+1. Định nghĩa một schema `zod` (đặt cùng vị trí trong một thư mục `schemas/` cạnh feature, theo ví dụ của `features/auth/schemas/auth.schema.ts`) và suy ra kiểu TS của nó bằng `z.infer`.
 2. `useForm({ resolver: zodResolver(schema), defaultValues: {...} })`.
-3. If your fields are antd components (which they should be, per [doc 07](./07-styling-tailwindcss-and-design-tokens.md)'s "use antd for anything interactive" guidance): wrap each in `Controller`, not `register()`.
-4. Don't rely on `isSubmitting` as a proxy for "the actual async operation this form triggers is still in flight" unless your `onSubmit` itself awaits that operation — in a saga-driven flow, it doesn't.
+3. Nếu các field của bạn là component antd (và chúng nên là như vậy, theo hướng dẫn "dùng antd cho mọi thứ có tính tương tác" của [doc 07](./07-styling-tailwindcss-and-design-tokens.md)): hãy bọc mỗi field trong `Controller`, không phải `register()`.
+4. Đừng dựa vào `isSubmitting` như một đại diện cho "thao tác bất đồng bộ thực sự mà form này kích hoạt vẫn đang diễn ra" trừ khi chính `onSubmit` của bạn await thao tác đó — trong một luồng do saga điều khiển, nó không làm vậy.

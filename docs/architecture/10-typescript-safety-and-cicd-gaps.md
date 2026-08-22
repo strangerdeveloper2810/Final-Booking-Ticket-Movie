@@ -1,6 +1,6 @@
-# 10. TypeScript Configuration & the Type-Safety/CI Gap
+# 10. Cấu hình TypeScript & Khoảng trống Type-Safety/CI
 
-## `tsconfig.json`, in full, with what each option actually buys you
+## `tsconfig.json`, đầy đủ, cùng với những gì mỗi tùy chọn thực sự mang lại
 
 ```json
 {
@@ -26,44 +26,44 @@
 }
 ```
 
-| Option | What it does here |
+| Tùy chọn | Nó làm gì ở đây |
 |---|---|
-| `strict: true` | Turns on the full strict-mode bundle (`strictNullChecks`, `noImplicitAny`, `strictFunctionTypes`, etc. all at once) — the single most impactful flag for catching real bugs (like forgetting a value can be `null`/`undefined`) at the type level. |
-| `noEmit: true` | TypeScript's own compiler is used **only** for checking, never for emitting `.js` output — actual JS emission is Babel's job (`@babel/preset-typescript` in the webpack pipeline, see [doc 02](./02-webpack5-build-optimization.md)). This is the option that makes it correct to say "TypeScript here is a linter, not a compiler." |
-| `isolatedModules: true` | Requires every file to be safely transpilable in isolation, one file at a time, with no cross-file type information needed to emit correct JS. This is a **direct consequence** of the Babel-strips-types architecture: Babel processes one file at a time and has zero knowledge of your other files' types, so a handful of TS features that need whole-program knowledge to erase correctly (e.g. re-exporting a type without `export type`, in older TS versions) are disallowed outright. If you ever hit an `isolatedModules`-related error, it's telling you the code you wrote assumes a type-checking compiler is doing the emit — it isn't, here. |
-| `baseUrl: "src"` | Enables the `features/home/...`, `shared/components/...` absolute-import style used throughout the app. See [doc 06](./06-feature-based-architecture-and-index-barrels.md#how-the-absolute-imports-featureshome-sharedcomponentsheader-actually-resolve) for exactly how this coordinates (or rather, coincidentally agrees) with webpack's own separate resolution config — there's no `paths` map, and no shared mechanism enforcing the two stay in sync. |
-| `module: "ESNext"` + `moduleResolution: "node"` | Emit/resolve using native ES module syntax and Node-style resolution — appropriate since webpack (not `tsc`) does the actual bundling and understands ESM natively. |
-| `skipLibCheck: true` | Skip type-checking inside `.d.ts` files from `node_modules` — a near-universal pragmatic default; without it, a single poorly-typed dependency can produce unfixable-by-you type errors. |
+| `strict: true` | Bật toàn bộ gói strict mode (`strictNullChecks`, `noImplicitAny`, `strictFunctionTypes`, v.v. tất cả cùng lúc) — cờ có tác động lớn nhất để bắt các lỗi thực sự (như quên rằng một giá trị có thể là `null`/`undefined`) ở cấp độ type. |
+| `noEmit: true` | Trình biên dịch riêng của TypeScript chỉ được dùng để kiểm tra (checking), không bao giờ để phát ra (emit) output `.js` — việc phát ra JS thực tế là công việc của Babel (`@babel/preset-typescript` trong pipeline webpack, xem [tài liệu 02](./02-webpack5-build-optimization.md)). Đây là tùy chọn khiến việc nói rằng "TypeScript ở đây là một linter, không phải một compiler" trở nên chính xác. |
+| `isolatedModules: true` | Yêu cầu mọi file có thể được transpile một cách an toàn một cách độc lập, từng file một, mà không cần thông tin type xuyên file (cross-file) để phát ra JS đúng. Đây là **hệ quả trực tiếp** của kiến trúc Babel-strips-types (Babel loại bỏ type): Babel xử lý từng file một và hoàn toàn không biết gì về type của các file khác, vì vậy một số tính năng TS cần kiến thức toàn chương trình (whole-program) để loại bỏ đúng cách (ví dụ: re-export một type mà không dùng `export type`, ở các phiên bản TS cũ hơn) bị cấm hoàn toàn. Nếu bạn từng gặp lỗi liên quan đến `isolatedModules`, nó đang nói với bạn rằng đoạn code bạn viết giả định có một compiler kiểm tra type đang thực hiện việc emit — nhưng ở đây thì không phải vậy. |
+| `baseUrl: "src"` | Bật kiểu absolute-import `features/home/...`, `shared/components/...` được dùng xuyên suốt ứng dụng. Xem [tài liệu 06](./06-feature-based-architecture-and-index-barrels.md#how-the-absolute-imports-featureshome-sharedcomponentsheader-actually-resolve) để biết chính xác cách điều này phối hợp (hay đúng hơn là trùng hợp thống nhất) với cấu hình resolution riêng biệt của webpack — không có `paths` map, và cũng không có cơ chế chung nào đảm bảo hai bên luôn đồng bộ. |
+| `module: "ESNext"` + `moduleResolution: "node"` | Emit/resolve bằng cú pháp ES module gốc và resolution kiểu Node — phù hợp vì webpack (chứ không phải `tsc`) mới là bên thực sự thực hiện bundling và hiểu ESM một cách gốc (native). |
+| `skipLibCheck: true` | Bỏ qua việc type-checking bên trong các file `.d.ts` từ `node_modules` — một giá trị mặc định thực dụng gần như phổ biến; nếu không có nó, chỉ một dependency có type kém cũng có thể tạo ra các lỗi type mà bạn không thể tự sửa. |
 
-## The core trade-off: type-checking is not part of the build
+## Sự đánh đổi cốt lõi: type-checking không phải là một phần của build
 
-This is the single most important thing to understand about this project's relationship with TypeScript, and it's worth stating without hedging: **`pnpm build` does not check types.** `@babel/preset-typescript` — the thing actually responsible for turning your `.tsx` into JS the browser can run — works by *stripping* TypeScript syntax (annotations, interfaces, type-only imports) as a pure textual/syntactic transform. It does not, and architecturally *cannot*, verify that your types are internally consistent; it has no type-checker inside it at all. A file with a genuine type error (e.g. passing a `string` where a `number` is expected) will compile, bundle, and ship to production exactly as if it were correct.
+Đây là điều quan trọng nhất cần hiểu về mối quan hệ giữa dự án này với TypeScript, và điều này đáng được nói thẳng không cần rào đón: **`pnpm build` không kiểm tra type.** `@babel/preset-typescript` — thứ thực sự chịu trách nhiệm biến file `.tsx` của bạn thành JS mà trình duyệt có thể chạy — hoạt động bằng cách *loại bỏ* (stripping) cú pháp TypeScript (annotation, interface, type-only import) như một phép biến đổi văn bản/cú pháp thuần túy. Nó không, và về mặt kiến trúc *không thể*, xác minh rằng các type của bạn nhất quán nội bộ; bên trong nó hoàn toàn không có type-checker nào cả. Một file có lỗi type thực sự (ví dụ: truyền một `string` vào nơi cần một `number`) vẫn sẽ compile, bundle, và được đưa lên production y hệt như thể nó đúng.
 
-Real type-checking only happens via:
+Việc type-checking thực sự chỉ diễn ra thông qua:
 ```json
 "typecheck": "tsc --noEmit"
 ```
-— a separate script, invoked manually, that is **not** chained into `build`, `build:dev`, `dev`, or `analyze` anywhere in `package.json`. And there is no CI pipeline in this repository at all (no `.github/workflows` directory, no other CI config) that might otherwise run it automatically on every push or PR. Since `vercel.json`'s `buildCommand` is exactly `pnpm run build`, **Vercel deploys never type-check the code either.**
+— một script riêng biệt, được gọi thủ công, và **không** được nối vào `build`, `build:dev`, `dev`, hay `analyze` ở bất kỳ đâu trong `package.json`. Và repository này hoàn toàn không có CI pipeline nào (không có thư mục `.github/workflows`, không có cấu hình CI nào khác) để có thể tự động chạy nó trên mỗi lần push hay PR. Vì `buildCommand` trong `vercel.json` chính xác là `pnpm run build`, nên **các lần deploy trên Vercel cũng không bao giờ type-check code.**
 
-## Why this trade-off exists, and when it's the right call
+## Tại sao sự đánh đổi này tồn tại, và khi nào nó là lựa chọn đúng đắn
 
-This isn't an oversight to be embarrassed about — it's a deliberate, common trade-off for projects that value build speed: Babel's per-file, embarrassingly-parallel, cacheable transpilation model is significantly faster than running TypeScript's own type-checking compiler (`tsc`) as part of every build, especially incrementally. Many production React setups (this one included) accept "types are checked by the editor and by a separate manual/CI step, but never block a build" as the right speed/safety balance. **The problem here specifically is that the "separate CI step" half of that bargain doesn't exist yet** — there's a `typecheck` script, but nothing runs it automatically. That's the actual gap, not the Babel-strips-types architecture itself (which is fine, and used successfully by many large real-world codebases, e.g. this pattern is exactly what Next.js's SWC-based compiler and Vite's esbuild-based dev server both also do by default).
+Đây không phải là một sơ suất đáng xấu hổ — đó là một sự đánh đổi có chủ đích, phổ biến đối với các dự án coi trọng tốc độ build: mô hình transpilation theo từng file, song song gần như hoàn hảo (embarrassingly parallel) và có thể cache của Babel nhanh hơn đáng kể so với việc chạy trình biên dịch kiểm tra type riêng của TypeScript (`tsc`) như một phần của mỗi lần build, đặc biệt là khi build gia tăng (incremental). Nhiều thiết lập React production (bao gồm cả dự án này) chấp nhận nguyên tắc "type được kiểm tra bởi editor và bởi một bước thủ công/CI riêng biệt, nhưng không bao giờ chặn một lần build" như sự cân bằng đúng đắn giữa tốc độ và an toàn. **Vấn đề cụ thể ở đây là nửa "bước CI riêng biệt" của thỏa thuận đó chưa tồn tại** — có một script `typecheck`, nhưng không có gì chạy nó tự động cả. Đó mới là khoảng trống thực sự, chứ không phải bản thân kiến trúc Babel-strips-types (kiến trúc này vẫn ổn, và được nhiều codebase lớn trong thực tế sử dụng thành công, ví dụ đây chính xác là mẫu hình mà cả compiler dựa trên SWC của Next.js và dev server dựa trên esbuild của Vite đều mặc định áp dụng).
 
-## A related, concrete piece of evidence: a stale CRA reference that `tsc` never complained about
+## Một bằng chứng cụ thể liên quan: một tham chiếu CRA đã lỗi thời mà `tsc` chưa bao giờ phàn nàn
 
 ```typescript
 // src/react-app-env.d.ts
 /// <reference types="react-scripts" />
 ```
-`react-scripts` (the CRA package) is completely absent from `package.json` and `node_modules` — this file is a leftover from before the project ejected (see [doc 02](./02-webpack5-build-optimization.md#why-this-isnt-create-react-app-anymore)). Empirically, `tsc --noEmit` still exits cleanly with this reference in place (TypeScript treats an unresolvable triple-slash reference as a non-fatal issue in this configuration, rather than a hard error) — so it's not currently breaking anything, but it's a small, honest example of "the eject wasn't 100% swept for every leftover reference," and a reminder that a clean `tsc --noEmit` exit code doesn't mean *nothing* is stale, only that nothing type-level is currently broken.
+`react-scripts` (gói CRA) hoàn toàn không tồn tại trong `package.json` và `node_modules` — file này là một tàn dư từ trước khi dự án eject (xem [tài liệu 02](./02-webpack5-build-optimization.md#why-this-isnt-create-react-app-anymore)). Trên thực nghiệm, `tsc --noEmit` vẫn thoát ra sạch sẽ (exit cleanly) dù tham chiếu này còn tồn tại (TypeScript coi một tham chiếu triple-slash không thể resolve là một vấn đề không nghiêm trọng (non-fatal) trong cấu hình này, thay vì một lỗi cứng) — vì vậy nó hiện không phá vỡ bất cứ điều gì, nhưng đây là một ví dụ nhỏ, trung thực cho việc "quá trình eject không được rà soát 100% cho mọi tham chiếu còn sót lại," và là một lời nhắc nhở rằng một exit code sạch của `tsc --noEmit` không có nghĩa là *không có gì* lỗi thời, mà chỉ có nghĩa là hiện tại không có gì bị hỏng ở cấp độ type.
 
-## What running `pnpm typecheck` regularly would actually catch, concretely
+## Việc chạy `pnpm typecheck` thường xuyên thực sự sẽ bắt được những gì, một cách cụ thể
 
-Given the rest of this doc set, a few categories of real bug in this exact codebase that only a type-checker (not Babel, not ESLint's default rules, not the existing 7 tests) would reliably catch if introduced by a future change:
-- A saga worker's `action.payload` shape drifting out of sync with what the dispatching component actually sends (the string-constant + raw-`dispatch({type, payload})` pattern documented in [doc 04](./04-redux-saga-rtk-query-state-management.md) has no compile-time link between the dispatch site and the saga's expected payload type unless both sides are annotated and that annotation is actually checked).
-- A `zod`-inferred form type (`z.infer<typeof schema>`, [doc 08](./08-forms-react-hook-form-zod.md)) drifting from what a component actually reads off `formState.errors` if a field is renamed in the schema but not everywhere it's consumed.
-- Props passed to a component after a refactor that no longer match that component's actual prop interface (a bug class React itself won't complain about at runtime unless the missing prop happens to be used in a way that throws).
+Dựa trên phần còn lại của bộ tài liệu này, có một vài loại lỗi thực sự trong chính codebase này mà chỉ một type-checker (không phải Babel, không phải các rule mặc định của ESLint, không phải 7 test hiện có) mới có thể bắt được một cách đáng tin cậy nếu chúng được đưa vào bởi một thay đổi trong tương lai:
+- Hình dạng (shape) của `action.payload` trong một saga worker bị trôi (drift) không còn đồng bộ với những gì component dispatch thực sự gửi đi (mẫu string-constant + `dispatch({type, payload})` thô được ghi lại trong [tài liệu 04](./04-redux-saga-rtk-query-state-management.md) không có liên kết ở compile-time nào giữa nơi dispatch và type payload mà saga mong đợi, trừ khi cả hai phía đều được annotate và annotation đó thực sự được kiểm tra).
+- Một form type được suy ra (inferred) bởi `zod` (`z.infer<typeof schema>`, [tài liệu 08](./08-forms-react-hook-form-zod.md)) bị trôi khỏi những gì một component thực sự đọc từ `formState.errors` nếu một field bị đổi tên trong schema nhưng không được đổi ở mọi nơi sử dụng nó.
+- Các props được truyền vào một component sau một lần refactor mà không còn khớp với prop interface thực tế của component đó (một loại lỗi mà bản thân React sẽ không phàn nàn gì ở runtime, trừ khi prop bị thiếu vô tình được sử dụng theo cách gây ra lỗi throw).
 
-## Recommendation for this codebase, stated plainly
+## Khuyến nghị cho codebase này, nói thẳng
 
-If a CI pipeline is ever introduced (there is currently none), the single highest-leverage addition relative to effort is: run `pnpm typecheck` (and `pnpm test`) on every pull request before merge, and consider gating deploys on it. Until then, running `pnpm typecheck` manually before pushing is the only thing standing between a real type error and production.
+Nếu một CI pipeline từng được đưa vào (hiện tại thì chưa có), thì bổ sung có đòn bẩy cao nhất so với công sức bỏ ra là: chạy `pnpm typecheck` (và `pnpm test`) trên mỗi pull request trước khi merge, và cân nhắc việc gate các lần deploy dựa trên nó. Cho đến lúc đó, việc chạy `pnpm typecheck` thủ công trước khi push là điều duy nhất đứng giữa một lỗi type thực sự và production.

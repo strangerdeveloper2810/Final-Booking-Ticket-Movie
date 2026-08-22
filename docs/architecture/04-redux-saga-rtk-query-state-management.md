@@ -1,10 +1,10 @@
-# 04. State Management: Redux Toolkit, Redux-Saga & RTK Query
+# 04. Quản lý trạng thái (State Management): Redux Toolkit, Redux-Saga & RTK Query
 
-This is a hybrid state-management architecture: **Redux Toolkit** provides the store/slice mechanics, **Redux-Saga** handles complex async flows with side effects, and **RTK Query** handles simple cache-friendly server reads. All three coexist in the same store. This doc explains each technology on its own, then — more importantly — documents the *real*, verified dividing line between them in this specific codebase, which turns out to be messier and more interesting than the idealized "old API vs new API" story.
+Đây là một kiến trúc quản lý trạng thái lai (hybrid): **Redux Toolkit** cung cấp cơ chế store/slice, **Redux-Saga** xử lý các luồng bất đồng bộ (async) phức tạp có side effect, còn **RTK Query** xử lý các thao tác đọc dữ liệu từ server đơn giản, thân thiện với cache. Cả ba cùng tồn tại trong cùng một store. Tài liệu này giải thích từng công nghệ riêng lẻ, sau đó — quan trọng hơn — ghi lại ranh giới *thực tế*, đã được xác minh giữa chúng trong codebase cụ thể này, và hóa ra ranh giới đó lộn xộn và thú vị hơn nhiều so với câu chuyện lý tưởng hóa "API cũ so với API mới".
 
-## Part 1: Redux Toolkit (`createSlice`) — the state layer
+## Phần 1: Redux Toolkit (`createSlice`) — tầng trạng thái (state layer)
 
-Every single "reducer" file in this codebase, regardless of its filename (`BannerSaga.reducer.ts`, `UserSaga.reducer.ts`, `Loading.reducer.ts`, etc.), is a real RTK `createSlice` call. There is **zero** legacy hand-written switch-statement reducer code anywhere. A representative example, in full:
+Mọi tệp "reducer" trong codebase này, bất kể tên tệp là gì (`BannerSaga.reducer.ts`, `UserSaga.reducer.ts`, `Loading.reducer.ts`, v.v.), đều là một lệnh gọi `createSlice` thực sự của RTK. Không có **bất kỳ** đoạn mã reducer kiểu switch-statement viết tay kiểu cũ nào tồn tại ở bất cứ đâu. Dưới đây là một ví dụ tiêu biểu, đầy đủ:
 
 ```typescript
 // src/features/home/redux/banner/BannerSaga.reducer.ts
@@ -28,9 +28,9 @@ const BannerSagaReducer = createSlice({
 export const BannerSagaAction = BannerSagaReducer.actions;
 export default BannerSagaReducer.reducer;
 ```
-`createSlice` gives you Immer-powered "mutate the draft state directly" syntax (`state.arrBanner = action.payload` looks like a mutation but is safely translated into an immutable update under the hood) plus auto-generated action creators (`BannerSagaAction.getAllBanner(...)`) and a matching action-type string (`"Banner/getAllBanner"`), all from one declaration — this is the actual "toolkit" value proposition over hand-writing `switch (action.type) { case ... }` reducers and separate action-creator functions.
+`createSlice` cung cấp cú pháp "mutate trực tiếp draft state" được hỗ trợ bởi Immer (`state.arrBanner = action.payload` trông giống như một phép mutate nhưng thực chất được chuyển đổi an toàn thành một cập nhật bất biến (immutable) ở bên dưới), cùng với các action creator được tự động sinh ra (`BannerSagaAction.getAllBanner(...)`) và một chuỗi action-type tương ứng (`"Banner/getAllBanner"`), tất cả chỉ từ một khai báo duy nhất — đây chính là giá trị thực sự của "toolkit" so với việc tự viết tay các reducer kiểu `switch (action.type) { case ... }` và các hàm action-creator riêng biệt.
 
-### `src/app/store.ts` — how everything is wired together
+### `src/app/store.ts` — mọi thứ được kết nối với nhau như thế nào
 
 ```typescript
 const sagaMiddleware = createSagaMiddleware();
@@ -52,9 +52,9 @@ export const store = configureStore({
 
 sagaMiddleware.run(rootSaga);
 ```
-Eight reducer keys total — six hand-registered slices plus RTK Query's two auto-generated reducer paths (`movieApi`/`tmdbApi`, added via computed-property syntax off each API's own `reducerPath`). One call to `.concat()` appends all three non-default middlewares (saga + both RTK Query APIs) in one pass. Note `getDefaultMiddleware()` is called with no options — RTK's default serializable-state/action checks are left fully active, which only works safely here because no saga ever `put()`s a non-serializable value (generator objects, class instances, Promises) into the store; every dispatched action carries a plain-object payload.
+Tổng cộng có tám key reducer — sáu slice được đăng ký thủ công cộng với hai reducer path được RTK Query tự động sinh ra (`movieApi`/`tmdbApi`, được thêm vào thông qua cú pháp computed-property lấy từ `reducerPath` riêng của mỗi API). Một lệnh gọi `.concat()` duy nhất nối thêm cả ba middleware không mặc định (saga cùng cả hai API của RTK Query) trong một lần. Lưu ý `getDefaultMiddleware()` được gọi mà không có tùy chọn nào — các kiểm tra serializable-state/action mặc định của RTK vẫn được giữ nguyên hoạt động đầy đủ, điều này chỉ an toàn ở đây vì không có saga nào từng `put()` một giá trị không thể serialize (generator object, class instance, Promise) vào store; mọi action được dispatch đều mang theo một payload dạng plain object.
 
-### `src/app/rootSaga.ts` — registering every feature's watchers
+### `src/app/rootSaga.ts` — đăng ký watcher của từng feature
 
 ```typescript
 export function* rootSaga() {
@@ -68,13 +68,13 @@ export function* rootSaga() {
   ]);
 }
 ```
-`all([...])` runs every listed generator concurrently, forever (each one is a `takeLatest`-based watcher that just waits for its action type). This is the single place in the whole app that knows about every feature's saga module — see [doc 06](./06-feature-based-architecture-and-index-barrels.md) for why that composition-root pattern matters.
+`all([...])` chạy đồng thời mọi generator được liệt kê, mãi mãi (mỗi generator là một watcher dựa trên `takeLatest` chỉ đơn giản chờ action type của nó). Đây là nơi duy nhất trong toàn bộ ứng dụng biết về saga module của từng feature — xem [tài liệu 06](./06-feature-based-architecture-and-index-barrels.md) để hiểu tại sao mẫu composition-root này lại quan trọng.
 
-## Part 2: Redux-Saga — side-effect orchestration
+## Phần 2: Redux-Saga — điều phối side effect
 
-Redux-Saga uses generator functions and declarative "effects" (`call`, `put`, `takeLatest`, `all`, `delay`) to describe async flows in a way that's testable without mocking timers or promises — you can step through a generator in a unit test and assert on the plain-object effect descriptions it yields, without anything actually executing.
+Redux-Saga sử dụng các generator function và các "effect" khai báo (`call`, `put`, `takeLatest`, `all`, `delay`) để mô tả các luồng bất đồng bộ theo cách có thể kiểm thử (testable) mà không cần mock timer hay promise — bạn có thể bước qua từng bước của một generator trong unit test và assert trên các mô tả effect dạng plain object mà nó yield ra, mà không có gì thực sự được thực thi.
 
-**The trigger mechanism in this codebase is classic, pre-RTK Redux**, not `createAsyncThunk`: every side-effect-triggering action is a plain string constant, dispatched as a raw `{ type, payload }` object from a component, and picked up by `takeLatest(STRING_CONSTANT, worker)`:
+**Cơ chế kích hoạt (trigger) trong codebase này mang tính cổ điển, kiểu Redux tiền-RTK**, không phải `createAsyncThunk`: mọi action kích hoạt side effect đều là một hằng số chuỗi (string constant) thuần túy, được dispatch dưới dạng một object `{ type, payload }` thô từ component, và được `takeLatest(STRING_CONSTANT, worker)` bắt lấy:
 
 ```typescript
 // Component side (e.g. src/features/auth/pages/Login.tsx)
@@ -98,24 +98,24 @@ export function* actionLoginSaga() {
   yield takeLatest(USER_LOGIN_API, loginSaga);
 }
 ```
-So the real pattern is a **hybrid**: modern `createSlice` for the state shape and success-path reducers, but classic string-constant + raw-dispatch + `takeLatest` for triggering the saga worker in the first place — nobody's dispatching a slice-generated action to *start* a saga flow, only to record its *result*.
+Vì vậy mẫu thực tế là một **hình thức lai (hybrid)**: `createSlice` hiện đại cho hình dạng state và các reducer xử lý success-path, nhưng lại dùng string-constant cổ điển + raw-dispatch + `takeLatest` để kích hoạt saga worker ngay từ đầu — không ai dispatch một action do slice sinh ra để *bắt đầu* một luồng saga, mà chỉ để ghi lại *kết quả* của nó.
 
-### The real, live saga flows in this app
+### Các luồng saga thực sự, đang hoạt động trong ứng dụng này
 
-Two feature areas genuinely need saga's side-effect machinery, and both are still fully wired and actually used:
+Có hai khu vực tính năng thực sự cần đến cơ chế side-effect của saga, và cả hai vẫn được kết nối đầy đủ và đang thực sự được sử dụng:
 
-- **Auth** (`features/auth/redux/UserSaga.ts`) — login/register need to: call the API, on success set cookies (`settings.setCookieJson`/`setCookie` — the project migrated off `localStorage` to cookies for auth storage), show a toast, and navigate (`history.push`). None of that is a simple "fetch and cache" read — it's a genuine multi-step flow with real side effects, which is exactly saga's sweet spot.
-- **Booking** (`features/booking/redux/Booking.saga.ts`) — two watchers: `getTicketApi` (fetch the seat map for a showtime) and `bookTicketSaga` (submit selected seats). The submit flow, on success, shows a toast, clears the local selection, **and re-dispatches `GET_TICKET_API` to refetch the now-updated seat-occupancy state** — a hand-implemented "refetch after mutate" pattern. (This is precisely the kind of thing RTK Query's `invalidatesTags` automates for you — its presence here, done by hand, is a good real-world illustration of *why* that RTK Query feature exists.)
+- **Auth** (`features/auth/redux/UserSaga.ts`) — login/register cần phải: gọi API, khi thành công thì set cookie (`settings.setCookieJson`/`setCookie` — dự án đã di chuyển từ `localStorage` sang cookie để lưu trữ thông tin xác thực), hiển thị toast, và điều hướng (`history.push`). Không có điều nào trong số đó là một thao tác đọc "fetch and cache" đơn giản — đó là một luồng nhiều bước thực sự với các side effect thật sự, chính xác là điểm mạnh sở trường (sweet spot) của saga.
+- **Booking** (`features/booking/redux/Booking.saga.ts`) — hai watcher: `getTicketApi` (lấy sơ đồ ghế cho một suất chiếu) và `bookTicketSaga` (gửi các ghế đã chọn). Luồng submit, khi thành công, hiển thị toast, xóa lựa chọn cục bộ, **và dispatch lại `GET_TICKET_API` để refetch trạng thái occupancy (tình trạng ghế đã đặt) vừa được cập nhật** — một mẫu "refetch sau khi mutate" được cài đặt thủ công. (Đây chính xác là kiểu việc mà `invalidatesTags` của RTK Query tự động hóa cho bạn — sự hiện diện của nó ở đây, được làm thủ công, là một minh họa thực tế tốt cho lý do *tại sao* tính năng đó của RTK Query tồn tại.)
 
-### A real quirk worth knowing about, not fixing silently
+### Một điểm kỳ quặc thực sự đáng biết đến, không nên âm thầm sửa
 
-The `setUserInfo` reducer itself calls `history.push(APP_ROUTES.HOME)` as a side effect *inside a slice reducer* — which is already unusual (reducers are conventionally pure), and both `loginSaga` and `registerSaga` reuse this same reducer, then `registerSaga` immediately calls `history.push(APP_ROUTES.LOGIN)` right after. Net effect: on successful registration, the browser briefly navigates to `/` (from inside the reducer) and then immediately to `/login` (from the saga) in the same tick. This is exactly the kind of subtle, easy-to-miss bug that a straight code read reveals but that "the tests pass" won't catch — flagged here rather than fixed silently, since navigation-inside-a-reducer is itself worth a design conversation, not just a one-line patch.
+Bản thân reducer `setUserInfo` gọi `history.push(APP_ROUTES.HOME)` như một side effect *bên trong một slice reducer* — điều này vốn đã bất thường (theo quy ước, reducer phải thuần khiết/pure), và cả `loginSaga` lẫn `registerSaga` đều tái sử dụng cùng reducer này, sau đó `registerSaga` lập tức gọi `history.push(APP_ROUTES.LOGIN)` ngay sau đó. Kết quả cuối cùng: khi đăng ký thành công, trình duyệt sẽ điều hướng trong chốc lát đến `/` (từ bên trong reducer) rồi ngay lập tức đến `/login` (từ saga) trong cùng một tick. Đây chính xác là kiểu lỗi tinh vi, dễ bị bỏ sót mà việc đọc thẳng mã nguồn sẽ phát hiện ra nhưng việc "test pass" sẽ không bắt được — được nêu ra ở đây thay vì âm thầm sửa, vì bản thân việc điều hướng bên trong một reducer đã đáng để có một cuộc trao đổi về thiết kế, chứ không chỉ là một bản vá một dòng.
 
-## Part 3: RTK Query — declarative server-state caching
+## Phần 3: RTK Query — caching trạng thái server theo kiểu khai báo
 
-RTK Query (`@reduxjs/toolkit/query/react`) generates a reducer, middleware, and typed React hooks from a single `createApi` declaration — no manual loading/error state, no manual cache invalidation wiring, no manual re-fetch-on-mount logic. Two independent API slices exist in this codebase, and they're built differently on purpose:
+RTK Query (`@reduxjs/toolkit/query/react`) sinh ra một reducer, middleware, và các React hook có kiểu (typed) từ một khai báo `createApi` duy nhất — không cần tự quản lý loading/error state, không cần tự nối dây cache invalidation, không cần tự viết logic re-fetch-on-mount. Có hai API slice độc lập tồn tại trong codebase này, và chúng được xây dựng khác nhau một cách có chủ đích:
 
-### `tmdbApi.ts` — the "textbook" RTK Query case
+### `tmdbApi.ts` — trường hợp RTK Query "kiểu sách giáo khoa"
 
 ```typescript
 export const tmdbApi = createApi({
@@ -139,9 +139,9 @@ export const tmdbApi = createApi({
 });
 export const { useGetTrendingMoviesQuery, useGetPopularMoviesQuery, useGetTopRatedMoviesQuery, useGetUpcomingMoviesQuery } = tmdbApi;
 ```
-`fetchBaseQuery` (a thin `fetch` wrapper) is the standard choice for a genuinely external, read-only REST API with no existing client-side auth/interceptor infrastructure to reuse. `transformResponse` unwraps TMDB's `{results: [...]}` envelope so every consuming hook gets a plain `TMDBMovie[]` directly.
+`fetchBaseQuery` (một lớp bọc mỏng quanh `fetch`) là lựa chọn tiêu chuẩn cho một REST API thực sự bên ngoài (external), chỉ đọc (read-only), không có sẵn hạ tầng auth/interceptor phía client nào để tái sử dụng. `transformResponse` bóc lớp bọc `{results: [...]}` của TMDB để mỗi hook sử dụng nhận trực tiếp một `TMDBMovie[]` thuần túy.
 
-### `movieApi.ts` — RTK Query wrapping the *internal* Cybersoft API, via a custom `axiosBaseQuery`
+### `movieApi.ts` — RTK Query bọc API *nội bộ* của Cybersoft, thông qua một `axiosBaseQuery` tùy chỉnh
 
 ```typescript
 const axiosBaseQuery = () => async ({ url, method, data, params, headers }) => {
@@ -166,23 +166,23 @@ export const movieApi = createApi({
 });
 export const { useGetBannersQuery, useGetFilmListQuery, useGetCinemasQuery /* ...+7 more... */ } = movieApi;
 ```
-This is a genuinely useful pattern worth understanding on its own: **RTK Query doesn't require `fetch`.** `baseQuery` is a pluggable function — here it wraps the *same* shared `axios` instance (`http`, with its existing interceptors/base URL config) that the rest of the app already uses, so the internal API gets RTK Query's caching/loading-state ergonomics without needing a second, parallel HTTP client.
+Đây là một mẫu thực sự hữu ích, đáng để hiểu riêng: **RTK Query không bắt buộc phải dùng `fetch`.** `baseQuery` là một hàm có thể cắm thay thế (pluggable) — ở đây nó bọc *cùng* một instance `axios` dùng chung (`http`, với các interceptor/cấu hình base URL sẵn có) mà phần còn lại của ứng dụng đã đang sử dụng, nhờ đó API nội bộ có được sự tiện lợi về caching/loading-state của RTK Query mà không cần một HTTP client song song thứ hai.
 
-Ten endpoints are defined; only three are actually consumed by the live UI today (`useGetBannersQuery` in `CarouselHome.tsx`/`AuthShowcase.tsx`, `useGetFilmListQuery` in `Film.tsx`, `useGetCinemasQuery` in `ListCinema.tsx`). The other seven (`getFilmDetail`, `getTicketBookingDetail`, `getProfile`, `updateProfile`, `getUserTypes`, `getUserList`, `deleteUser`) have zero call sites anywhere else in the app — they read as forward-looking scaffolding for an admin/profile surface that doesn't exist in the UI yet, not dead code left over from something removed.
+Có mười endpoint được định nghĩa; chỉ ba trong số đó thực sự được sử dụng bởi UI đang chạy hiện nay (`useGetBannersQuery` trong `CarouselHome.tsx`/`AuthShowcase.tsx`, `useGetFilmListQuery` trong `Film.tsx`, `useGetCinemasQuery` trong `ListCinema.tsx`). Bảy endpoint còn lại (`getFilmDetail`, `getTicketBookingDetail`, `getProfile`, `updateProfile`, `getUserTypes`, `getUserList`, `deleteUser`) không có bất kỳ điểm gọi (call site) nào khác trong toàn bộ ứng dụng — chúng đọc giống như phần khung dựng sẵn (scaffolding) mang tính đón đầu cho một bề mặt admin/profile chưa tồn tại trong UI, chứ không phải mã chết (dead code) còn sót lại từ thứ gì đó đã bị gỡ bỏ.
 
-## Part 4: The real dividing line — and the honest state of an in-progress migration
+## Phần 4: Ranh giới thực sự — và tình trạng thực tế của một cuộc di trú (migration) đang dang dở
 
-The clean story you'd want to tell is: *"Redux-Saga for internal API + complex side effects; RTK Query for simple external reads."* **That story is only fully true for TMDB.** Tracing actual dispatch/selector wiring across the whole app reveals the Cybersoft-API side is **mid-migration**, not settled:
+Câu chuyện gọn gàng mà bạn muốn kể là: *"Redux-Saga cho API nội bộ + các side effect phức tạp; RTK Query cho các thao tác đọc đơn giản từ bên ngoài."* **Câu chuyện đó chỉ hoàn toàn đúng với TMDB.** Việc truy vết cách nối dây dispatch/selector thực tế trên toàn bộ ứng dụng cho thấy phía API Cybersoft đang **di trú dở dang**, chưa ổn định:
 
-- **Dead saga pipelines**, still registered in `store.ts` and still forked in `rootSaga.ts`, but never dispatched by any component and never read by any `useSelector` anywhere in the app: the `Banner`, `FlimList`, and `ListCinema` slices, and the `Loading` slice that only those dead sagas ever wrote to. The home page's real banner/film-list/cinema-list UI is wired to `movieApi`'s RTK Query hooks instead, hitting the *same* Cybersoft endpoints the dead sagas would have hit.
-- **A third pattern that's neither saga nor RTK Query**: `features/film-detail/pages/Detail.tsx` fetches its film-detail and showtime data via plain class-instance services called directly inside a component-local `useEffect`/`useState` — no Redux involvement at all.
-- **Live saga pipelines**: auth (login/register) and booking (get seat map / submit booking) — both genuinely need saga's side-effect ergonomics (cookies, navigation, toasts, refetch-after-mutate) and are not candidates for a simple RTK Query swap without re-implementing those side effects some other way.
+- **Các pipeline saga đã chết (dead)**, vẫn được đăng ký trong `store.ts` và vẫn được fork trong `rootSaga.ts`, nhưng chưa bao giờ được component nào dispatch và chưa bao giờ được `useSelector` nào đọc ở bất cứ đâu trong ứng dụng: các slice `Banner`, `FlimList`, và `ListCinema`, cùng slice `Loading` mà chỉ những saga đã chết đó từng ghi vào. UI banner/danh-sách-phim/danh-sách-rạp thực tế trên trang chủ lại được nối với các hook RTK Query của `movieApi` thay vào đó, gọi đến *cùng* các endpoint Cybersoft mà các saga đã chết lẽ ra sẽ gọi tới.
+- **Một mẫu thứ ba không phải saga cũng không phải RTK Query**: `features/film-detail/pages/Detail.tsx` lấy dữ liệu chi tiết phim và suất chiếu thông qua các service dạng class-instance thuần túy được gọi trực tiếp bên trong `useEffect`/`useState` cục bộ của component — hoàn toàn không có sự tham gia của Redux.
+- **Các pipeline saga đang hoạt động**: auth (login/register) và booking (lấy sơ đồ ghế / gửi đặt vé) — cả hai đều thực sự cần đến sự tiện lợi về side-effect của saga (cookie, điều hướng, toast, refetch-after-mutate) và không phải là ứng viên để chuyển đổi đơn giản sang RTK Query nếu không triển khai lại các side effect đó theo cách khác.
 
-**The most accurate framing for training purposes**: this is a partially-completed migration toward "RTK Query for reads, Redux-Saga for mutations-with-side-effects," not a finished, deliberate architecture. The end-state boundary is real and defensible (and TMDB already fully embodies it) — but the repo currently contains a live implementation of that end state (`movieApi`) coexisting with un-deleted saga leftovers that no longer do anything, plus one more one-off pattern (`Detail.tsx`'s local state) that fits neither bucket. If you're extending this codebase: prefer `movieApi`/RTK Query for any new *read*, prefer saga for anything needing cookies/navigation/toast-on-completion/refetch-on-mutate, and treat the `Banner`/`FlimList`/`ListCinema`/`Loading` slices as candidates for deletion rather than a pattern to imitate.
+**Cách diễn giải chính xác nhất cho mục đích huấn luyện (training)**: đây là một cuộc di trú hoàn thành một phần theo hướng "RTK Query cho các thao tác đọc, Redux-Saga cho các mutation có side effect," chứ không phải một kiến trúc đã hoàn chỉnh, có chủ đích. Ranh giới trạng thái cuối (end-state) là có thật và hợp lý (và TMDB đã hoàn toàn thể hiện điều đó) — nhưng repo hiện tại chứa một triển khai đang sống của trạng thái cuối đó (`movieApi`) cùng tồn tại với những tàn dư saga chưa bị xóa không còn làm gì cả, cộng thêm một mẫu đơn lẻ khác (`Detail.tsx`'s local state) mà mẫu này không thuộc về nhóm nào cả. Nếu bạn đang mở rộng codebase này: hãy ưu tiên `movieApi`/RTK Query cho bất kỳ thao tác *đọc* mới nào, ưu tiên saga cho bất cứ điều gì cần đến cookie/điều hướng/toast-khi-hoàn-tất/refetch-on-mutate, và xem các slice `Banner`/`FlimList`/`ListCinema`/`Loading` là ứng viên để xóa bỏ chứ không phải một mẫu để noi theo.
 
-## Booking feature: the one place with genuinely new business logic
+## Tính năng Booking: nơi duy nhất có logic nghiệp vụ thực sự mới
 
-`features/booking` is a fully built seat-selection-and-checkout flow, not a stub — worth calling out since an earlier planning document ([`docs/refactor/implementation-plan.md`](../refactor/implementation-plan.md)) flagged this page as needing real new work, and the shipped result went further than that plan's own hedge (it even wired the real submit-booking endpoint, not just a disabled placeholder button):
+`features/booking` là một luồng chọn-ghế-và-thanh-toán được xây dựng đầy đủ, không phải một bản stub — đáng được nêu ra vì một tài liệu lập kế hoạch trước đó ([`docs/refactor/implementation-plan.md`](../refactor/implementation-plan.md)) đã đánh dấu trang này là cần công việc mới thực sự, và kết quả được triển khai còn vượt xa cả dự phòng (hedge) của chính kế hoạch đó (nó thậm chí còn nối dây endpoint submit-booking thực sự, chứ không chỉ là một nút placeholder bị vô hiệu hóa):
 
 ```typescript
 // features/booking/redux/BookingTicket.reducer.ts
@@ -192,4 +192,4 @@ export type BookingState = {
   isBooking: boolean;
 };
 ```
-Reducers: `getDetailBookingTicket`, `removeDetailBookingTicket`, `toggleSelectSeat` (a real toggle — pushes or splices by seat ID), `clearSelectedSeats`, `setBookingLoading`. Total price is **not** stored in Redux — it's derived on every render in the component (`selectedSeats.reduce((sum, seat) => sum + (seat.giaVe || 0), 0)`), which is the right call for a value that's always trivially computable from state already held elsewhere (storing it separately would just be a second source of truth to keep in sync).
+Các reducer: `getDetailBookingTicket`, `removeDetailBookingTicket`, `toggleSelectSeat` (một toggle thực sự — push hoặc splice theo seat ID), `clearSelectedSeats`, `setBookingLoading`. Tổng giá tiền **không** được lưu trong Redux — nó được tính lại (derive) trên mỗi lần render trong component (`selectedSeats.reduce((sum, seat) => sum + (seat.giaVe || 0), 0)`), đây là quyết định đúng đắn cho một giá trị luôn có thể tính toán một cách tầm thường từ state đã được lưu giữ ở nơi khác (lưu nó riêng biệt sẽ chỉ tạo ra một nguồn sự thật thứ hai (second source of truth) cần phải đồng bộ).
