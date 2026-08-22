@@ -1,4 +1,4 @@
-import _ from "lodash";
+import get from "lodash/get";
 import React from 'react'
 import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom"
@@ -8,7 +8,7 @@ import { BookingTicketAction } from "../../Redux/reducer/BookingTicket.reducer"
 const BookingTicket: React.FC = () => {
     const dispatch: AppDispatch = useDispatch();
 
-    const bookingDetail = useSelector((state) => _.get(state, "Booking.bookingDetail", {}));
+    const bookingDetail = useSelector((state) => get(state, "Booking.bookingDetail", {}));
 
     console.log(bookingDetail);
 

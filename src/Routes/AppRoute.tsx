@@ -1,7 +1,7 @@
 import { FC, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
 import { LoadingNew } from "Components";
-import { map } from "lodash";
+import map from "lodash/map";
 import routes from "constants/initialRoute";
 import { ErrorTemplate } from "Template";
 import { ToastContainer } from "react-toastify";

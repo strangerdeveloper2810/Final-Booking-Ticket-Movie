@@ -1,4 +1,5 @@
-import _ from "lodash";
+import get from "lodash/get";
+import map from "lodash/map";
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { PlayCircleOutlined } from "@ant-design/icons";
@@ -34,14 +35,14 @@ const Detail: React.FC = () => {
         const detailRes = await filmDetailServiceInstance.getFilmDetail(
           param
         );
-        if (_.get(detailRes, "status", 400)) {
-          setDetailFilm(_.get(detailRes, "data.content", {}));
+        if (get(detailRes, "status", 400)) {
+          setDetailFilm(get(detailRes, "data.content", {}));
         }
 
         const calendarRes =
           await managementServiceInstance.getInfoCanlendarFilm(param);
-        if (_.get(calendarRes, "status", 400 || 500)) {
-          setCalendarMovieTheaterFilm(_.get(calendarRes, "data.content", []));
+        if (get(calendarRes, "status", 400 || 500)) {
+          setCalendarMovieTheaterFilm(get(calendarRes, "data.content", []));
         }
       }
     } catch (error) {
@@ -54,17 +55,17 @@ const Detail: React.FC = () => {
   }, [fetchData]);
 
   const renderFilmCalendar = () => {
-    const calendarSystem = _.get(
+    const calendarSystem = get(
       calendarMovieTheaterFilm,
       "heThongRapChieu",
       []
     );
-    return _.map(calendarSystem, (calendar: HeThongRapChieu) => {
+    return map(calendarSystem, (calendar: HeThongRapChieu) => {
       const tab = {
         label: (
           <img
-            src={_.get(calendar, "logo", "")}
-            alt={_.get(calendar, "maHeThongRap", "")}
+            src={get(calendar, "logo", "")}
+            alt={get(calendar, "maHeThongRap", "")}
             className="rounded-full"
             width={50}
           />
@@ -73,37 +74,37 @@ const Detail: React.FC = () => {
         children: (
           <Tabs
             tabPosition={tabPosition}
-            items={_.map(
-              _.get(calendar, "cumRapChieu", []),
+            items={map(
+              get(calendar, "cumRapChieu", []),
               (theaterComplex, index) => {
                 const clusterCinemaTab = {
                   label: (
                     <>
                       <img
-                        src={_.get(theaterComplex, "hinhAnh", "")}
-                        alt={_.get(theaterComplex, "tenCumRap", "")}
+                        src={get(theaterComplex, "hinhAnh", "")}
+                        alt={get(theaterComplex, "tenCumRap", "")}
                         className="rounded-full"
                         width={50}
                       />
                       <Tag color="green" className="mt-5">
-                        {_.get(theaterComplex, "tenCumRap", "")}
+                        {get(theaterComplex, "tenCumRap", "")}
                       </Tag>
                     </>
                   ),
                   key: `${index + 1}`,
                   children: (
                     <>
-                      {_.map(
-                        _.get(theaterComplex, "lichChieuPhim", []),
+                      {map(
+                        get(theaterComplex, "lichChieuPhim", []),
                         (theater) => (
                           <>
                             <Tag
                               color="magenta"
                               style={{ cursor: "pointer" }}
-                              key={_.get(theater, "")}
+                              key={get(theater, "")}
                               onClick={() =>
                                 navigate(
-                                  `/booking/${_.get(
+                                  `/booking/${get(
                                     theater,
                                     "maLichChieu",
                                     ""
@@ -111,11 +112,11 @@ const Detail: React.FC = () => {
                                 )
                               }
                             >
-                              {_.get(theater, "tenRap", "")}
+                              {get(theater, "tenRap", "")}
                             </Tag>
                             <Tag color="cyan">
                               {formatScheduleMovie(
-                                _.get(theater, "ngayChieuGioChieu", "")
+                                get(theater, "ngayChieuGioChieu", "")
                               )}
                             </Tag>
                           </>
@@ -159,7 +160,7 @@ const Detail: React.FC = () => {
           ]}
         >
           <Tag color="geekblue">
-            Tên Phim: {_.get(detailFilm, "tenPhim", "")}
+            Tên Phim: {get(detailFilm, "tenPhim", "")}
           </Tag>
         </Card>
         <div></div>

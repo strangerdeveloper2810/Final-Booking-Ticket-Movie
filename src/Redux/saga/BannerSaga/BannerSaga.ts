@@ -3,7 +3,7 @@ import { call, takeLatest, put } from "redux-saga/effects";
 import { BannerServices } from "../../../services"
 import { GET_ALL_BANNER } from "../../constant/BannerConstants";
 import { BannerSagaAction } from "../../reducer/BannerSaga.reducer";
-import { isEmpty } from "lodash";
+import isEmpty from "lodash/isEmpty";
 
 export function* getAllBannerApi(): SagaIterator {
   try {

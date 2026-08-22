@@ -54,6 +54,24 @@ module.exports = {
                         maxInitialRequests: 25,
                         maxAsyncRequests: 30,
                         cacheGroups: {
+                            // antd + moment are the largest individually-identifiable
+                            // node_modules packages in the bundle report (antd ~747KB,
+                            // moment ~164KB raw stat size). Isolating them into their own
+                            // named chunks doesn't shrink the initial payload, but it
+                            // means unrelated dependency bumps/app changes no longer
+                            // invalidate their cached chunk hash on every deploy.
+                            antd: {
+                                test: /[\\/]node_modules[\\/](antd)[\\/]/,
+                                name: "antd",
+                                chunks: "all",
+                                priority: 10,
+                            },
+                            moment: {
+                                test: /[\\/]node_modules[\\/](moment)[\\/]/,
+                                name: "moment",
+                                chunks: "all",
+                                priority: 10,
+                            },
                             vendors: {
                                 test: /[\\/]node_modules[\\/]/,
                                 name: "vendors",

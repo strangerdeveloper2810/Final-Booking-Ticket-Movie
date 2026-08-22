@@ -1,6 +1,7 @@
 import { FC, useState, useCallback, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { isEmpty, map } from "lodash";
+import isEmpty from "lodash/isEmpty";
+import map from "lodash/map";
 import { AppDispatch, RootState } from "Redux/store";
 import { Tabs } from "antd";
 import { GET_ALL_CINEMA } from "Redux/constant/CinemaConstants";

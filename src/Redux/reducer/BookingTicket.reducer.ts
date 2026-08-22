@@ -1,4 +1,4 @@
-import _ from "lodash";
+import get from "lodash/get";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { BookingTicket } from "../types/BookingTicketType";
 import { initialBookingTicket } from "constants/BookingTicket";
@@ -19,7 +19,7 @@ const BookingTicketReducer = createSlice({
       state: BookingState,
       action: PayloadAction<BookingTicket>
     ) => {
-      state.bookingDetail = _.get(action, "payload");
+      state.bookingDetail = get(action, "payload");
     },
     removeDetailBookingTicket: (state: BookingState) => {
       state.bookingDetail = {};

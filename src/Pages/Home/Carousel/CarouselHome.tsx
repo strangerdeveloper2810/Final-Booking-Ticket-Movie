@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useEffect, FC, JSX } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { isEmpty, map } from "lodash";
+import isEmpty from "lodash/isEmpty";
+import map from "lodash/map";
 import { Carousel } from "antd";
 import { RootState, AppDispatch } from "Redux/store";
 import { GET_ALL_BANNER } from "Redux/constant/BannerConstants";
