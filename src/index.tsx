@@ -2,6 +2,7 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+import ErrorBoundary from "shared/components/ErrorBoundary";
 import "react-toastify/dist/ReactToastify.css";
 import "antd/dist/reset.css";
 import { BrowserRouter } from "react-router-dom";
@@ -14,11 +15,13 @@ const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
-  <Provider store={store}>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </Provider>
+  <ErrorBoundary>
+    <Provider store={store}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </Provider>
+  </ErrorBoundary>
 );
 
 reportWebVitals();
