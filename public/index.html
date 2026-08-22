@@ -6,6 +6,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#0B0D12" />
 
+    <!-- DNS prefetch for API domains to reduce TTFB -->
+    <link rel="dns-prefetch" href="https://movienew.cybersoft.edu.vn" />
+    <link rel="dns-prefetch" href="https://api.themoviedb.org" />
+    <link rel="dns-prefetch" href="https://image.tmdb.org" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Google Fonts with font-display:swap to prevent render blocking (saves 120ms) -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    </noscript>
+
+    <!-- Preload LCP hero image for faster rendering -->
+    <link rel="preload" as="image" href="/img/cinefix-logo.png" fetchpriority="high" />
+
+
     <!-- Primary Meta Tags -->
     <title>Cinefix — Đặt Vé Xem Phim Rạp Trực Tuyến Hàng Đầu</title>
     <meta name="title" content="Cinefix — Đặt Vé Xem Phim Rạp Trực Tuyến Hàng Đầu" />

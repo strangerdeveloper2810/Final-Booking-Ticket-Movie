@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Font display: ensure Inter is used as primary font */
+@layer base {
+  @font-face {
+    font-family: 'Inter';
+    font-display: swap; /* Prevents render blocking */
+  }
+}
+
 :root {
   --bg-color: #F1F5F9;
   --surface-color: #FFFFFF;
@@ -24,10 +32,12 @@
   body {
     background-color: var(--bg-color);
     color: var(--text-primary-color);
-    transition: background-color 0.3s ease, color 0.3s ease;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    /* Use opacity-based fade overlay instead of background-color transition
+       to avoid non-composited animation warning from Lighthouse */
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   }
 }
+
 
 /* Ant Design Component Overrides for 100% Theme Consistency */
 .ant-tabs-tab-btn {

@@ -10,7 +10,7 @@ module.exports = (env) => {
 
   return {
     mode: "production",
-    devtool: "source-map",
+    devtool: false, // No source maps in production — saves ~200 KiB per chunk
     output: {
       path: path.resolve(__dirname, "../build"),
       filename: "static/js/[name].[contenthash:8].js",
@@ -99,6 +99,10 @@ module.exports = (env) => {
       runtimeChunk: {
         name: (entrypoint) => `runtime-${entrypoint.name}`,
       },
+      // Tree-shaking: mark modules with no side-effects for dead code elimination
+      usedExports: true,
+      sideEffects: true,
+      concatenateModules: true, // Scope hoisting
     },
   };
 };
