@@ -50,16 +50,35 @@ export const tmdbApi = createApi({
         }`,
       transformResponse: (response: TMDBResponse) => response.results || [],
     }),
+    getTopRatedMovies: builder.query<TMDBMovie[], void>({
+      query: () =>
+        `movie/top_rated?language=vi-VN&page=1${
+          API_CONFIG.TMDB_API_KEY ? `&api_key=${API_CONFIG.TMDB_API_KEY}` : ""
+        }`,
+      transformResponse: (response: TMDBResponse) => response.results || [],
+    }),
+    getUpcomingMovies: builder.query<TMDBMovie[], void>({
+      query: () =>
+        `movie/upcoming?language=vi-VN&page=1${
+          API_CONFIG.TMDB_API_KEY ? `&api_key=${API_CONFIG.TMDB_API_KEY}` : ""
+        }`,
+      transformResponse: (response: TMDBResponse) => response.results || [],
+    }),
   }),
 });
 
-export const { useGetTrendingMoviesQuery, useGetPopularMoviesQuery } = tmdbApi;
+export const {
+  useGetTrendingMoviesQuery,
+  useGetPopularMoviesQuery,
+  useGetTopRatedMoviesQuery,
+  useGetUpcomingMoviesQuery,
+} = tmdbApi;
 
 export const getTMDBImageUrl = (
   path?: string,
-  size: "original" | "w1280" | "w500" = "w1280"
+  size: "original" | "w1280" | "w500" = "w500"
 ) => {
-  if (!path) return "https://picsum.photos/1200/800";
+  if (!path) return "https://picsum.photos/300/450";
   if (path.startsWith("http")) return path;
   return `https://image.tmdb.org/t/p/${size}${path}`;
 };

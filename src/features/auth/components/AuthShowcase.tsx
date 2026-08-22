@@ -47,13 +47,13 @@ const AuthShowcase: FC = () => {
   const currentQuote = FALLBACK_QUOTES[activeIndex % FALLBACK_QUOTES.length];
 
   const backdropUrl = currentTMDB?.backdrop_path
-    ? getTMDBImageUrl(currentTMDB.backdrop_path, "w1280")
+    ? getTMDBImageUrl(currentTMDB.backdrop_path, "original")
     : currentBanner || "https://picsum.photos/1200/1600";
 
   const movieTitle = currentTMDB?.title || currentQuote.movie;
   const overviewText = currentTMDB?.overview
-    ? currentTMDB.overview.length > 140
-      ? currentTMDB.overview.substring(0, 140) + "..."
+    ? currentTMDB.overview.length > 150
+      ? currentTMDB.overview.substring(0, 150) + "..."
       : currentTMDB.overview
     : currentQuote.quote;
   const ratingValue = currentTMDB?.vote_average
@@ -61,27 +61,27 @@ const AuthShowcase: FC = () => {
     : "9.8";
 
   return (
-    <div className="relative hidden lg:flex flex-col justify-between p-12 overflow-hidden bg-black text-white min-h-[680px] rounded-3xl my-4 ml-4 shadow-2xl border border-white/10">
-      {/* Background Poster Image with Dynamic Blur & Fade */}
+    <div className="relative hidden lg:flex flex-col justify-between p-12 overflow-hidden bg-black text-white h-full w-full">
+      {/* Background Poster Image with Dynamic Edge Bleed */}
       <div
         className="absolute inset-0 bg-cover bg-center transition-all duration-1000 transform scale-105 filter brightness-75"
         style={{ backgroundImage: `url(${backdropUrl})` }}
       />
 
       {/* Glassmorphic Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-90" />
-      <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-black/30" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-95" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-black/40" />
 
       {/* Top Header Badge */}
       <div className="relative z-10 flex items-center justify-between">
-        <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-full shadow-lg">
+        <div className="flex items-center gap-2.5 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-full shadow-lg">
           <PlaySquareOutlined className="text-primary text-lg" />
           <span className="text-xs font-bold uppercase tracking-wider text-white">
             TMDB Trending Movie
           </span>
         </div>
 
-        <div className="flex items-center gap-1.5 bg-yellow-500/20 backdrop-blur-md border border-yellow-500/30 px-3 py-1.5 rounded-full">
+        <div className="flex items-center gap-1.5 bg-yellow-500/20 backdrop-blur-md border border-yellow-500/30 px-3.5 py-1.5 rounded-full">
           <StarFilled className="text-yellow-400 text-xs" />
           <span className="text-xs font-extrabold text-yellow-300">
             {ratingValue} / 10 IMDb
@@ -90,11 +90,11 @@ const AuthShowcase: FC = () => {
       </div>
 
       {/* Center Showcase Content */}
-      <div className="relative z-10 my-auto max-w-lg space-y-6">
-        <div className="inline-block px-3 py-1 rounded-md bg-primary/20 border border-primary/30 text-primary text-xs font-bold uppercase tracking-widest">
+      <div className="relative z-10 my-auto max-w-xl space-y-6">
+        <div className="inline-block px-3.5 py-1 rounded-md bg-primary/20 border border-primary/30 text-primary text-xs font-bold uppercase tracking-widest">
           Phim Hot Trong Tuần
         </div>
-        <h1 className="text-4xl xl:text-5xl font-black tracking-tight text-white leading-tight drop-shadow-lg line-clamp-2">
+        <h1 className="text-4xl xl:text-6xl font-black tracking-tight text-white leading-tight drop-shadow-2xl line-clamp-2">
           {movieTitle}
         </h1>
 
