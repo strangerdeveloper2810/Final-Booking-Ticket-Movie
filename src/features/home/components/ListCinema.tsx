@@ -1,32 +1,20 @@
-import React, { FC, useEffect, useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import isEmpty from "lodash/isEmpty";
-import map from "lodash/map";
+import React, { FC, useMemo } from "react";
 import { Tabs } from "antd";
 import { useTranslation } from "react-i18next";
-import { AppDispatch, RootState } from "app/store";
-import { GET_ALL_CINEMA } from "../redux/cinema/CinemaActionTypes";
 import ListMovie from "./ListMovie";
 import {
   ListCinema as ListCinemaType,
   LstCumRap,
 } from "../redux/cinema/ListCinemaType";
+import { useGetCinemasQuery } from "shared/services/movieApi";
 
 const ListCinema: FC = () => {
-  const dispatch: AppDispatch = useDispatch();
-  const listCinema = useSelector(
-    (state: RootState) => state.ListCinema.arrListCinema
-  );
+  const { data: listCinema = [] } = useGetCinemasQuery();
   const { t } = useTranslation(["home", "common"]);
 
-  useEffect(() => {
-    if (isEmpty(listCinema)) {
-      dispatch({ type: GET_ALL_CINEMA });
-    }
-  }, [listCinema, dispatch]);
-
-  const renderCinemaTabs = useCallback(() => {
-    return map(listCinema, (cinemaSystem: ListCinemaType) => ({
+  const tabItems = useMemo(() => {
+    if (!listCinema || !Array.isArray(listCinema)) return [];
+    return listCinema.map((cinemaSystem: ListCinemaType) => ({
       label: (
         <div className="flex items-center justify-center p-1">
           <img
@@ -41,7 +29,7 @@ const ListCinema: FC = () => {
         <Tabs
           tabPosition="left"
           className="cinema-cluster-tabs"
-          items={cinemaSystem.lstCumRap.map((clusterCinema: LstCumRap, index: number) => ({
+          items={(cinemaSystem.lstCumRap || []).map((clusterCinema: LstCumRap, index: number) => ({
             label: (
               <div className="text-left py-1 pr-2 max-w-[200px]">
                 <p className="font-bold text-text-primary text-sm line-clamp-1">
@@ -73,7 +61,7 @@ const ListCinema: FC = () => {
         <Tabs
           tabPosition="left"
           className="main-cinema-tabs"
-          items={renderCinemaTabs()}
+          items={tabItems}
         />
       </div>
     </section>

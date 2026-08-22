@@ -1,32 +1,18 @@
-import React, { useCallback, useMemo, useEffect, FC } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useMemo, FC } from "react";
 import isEmpty from "lodash/isEmpty";
 import map from "lodash/map";
 import { Carousel } from "antd";
-import { RootState, AppDispatch } from "app/store";
-import { GET_ALL_BANNER } from "../redux/banner/BannerActionTypes";
 import SkeletonCarousel from "shared/components/SkeletonCarousel/SkeletonCarousel";
+import { useGetBannersQuery } from "shared/services/movieApi";
 
 const CarouselHome: FC = () => {
-  const dispatch: AppDispatch = useDispatch();
-  const { arrBanner } = useSelector((state: RootState) => state.Banner);
-  const { isLoading } = useSelector((state: RootState) => state.Loading);
-
-  const getBannerSaga = useCallback(() => {
-    dispatch({ type: GET_ALL_BANNER });
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (isEmpty(arrBanner)) {
-      getBannerSaga();
-    }
-  }, [arrBanner, getBannerSaga]);
+  const { data: arrBanner, isLoading } = useGetBannersQuery();
 
   const renderCarousel = useMemo(() => {
     if (isLoading || isEmpty(arrBanner)) {
       return <SkeletonCarousel />;
     }
-    return map(arrBanner, (banner) => (
+    return map(arrBanner, (banner: any) => (
       <div key={banner.maBanner} className="relative h-[320px] sm:h-[440px] md:h-[540px] outline-none">
         <img
           src={banner.hinhAnh}

@@ -1,14 +1,11 @@
-import React, { FC, useEffect, useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import get from "lodash/get";
+import React, { FC } from "react";
 import isEmpty from "lodash/isEmpty";
 import SliderComponent from "react-slick";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
-import { RootState, AppDispatch } from "app/store";
-import { GET_ALL_FILM } from "../redux/filmList/FilmActionTypes";
 import FilmItem from "./FilmItem";
 import SkeletonCard from "shared/components/SkeletonCard/SkeletonCard";
+import { useGetFilmListQuery } from "shared/services/movieApi";
 
 const CustomNextArrow = (props: any) => {
   const { onClick } = props;
@@ -37,22 +34,8 @@ const CustomPrevArrow = (props: any) => {
 };
 
 const Film: FC = () => {
-  const filmList = useSelector((state: RootState) =>
-    get(state, "FlimList.arrFilm", [])
-  );
-  const { isLoading } = useSelector((state: RootState) => state.Loading);
-  const dispatch = useDispatch<AppDispatch>();
+  const { data: filmList = [], isLoading } = useGetFilmListQuery();
   const { t } = useTranslation(["home", "common"]);
-
-  const getFilmSaga = useCallback(() => {
-    dispatch({ type: GET_ALL_FILM });
-  }, [dispatch]);
-
-  useEffect(() => {
-    if (isEmpty(filmList)) {
-      getFilmSaga();
-    }
-  }, [filmList, getFilmSaga]);
 
   const sliderSettings = {
     dots: false,
@@ -101,7 +84,7 @@ const Film: FC = () => {
         <div className="relative px-2">
           {/* @ts-ignore */}
           <SliderComponent {...sliderSettings}>
-            {filmList.map((film) => (
+            {filmList.map((film: any) => (
               <div key={film.maPhim} className="px-2 py-2">
                 <FilmItem filmItem={film} />
               </div>
