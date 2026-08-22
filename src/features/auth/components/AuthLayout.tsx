@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import { type FC } from "react";
 import { AuthLayoutProps } from "../types/auth.types";
 import Logo from "shared/components/Logo/Logo";
 

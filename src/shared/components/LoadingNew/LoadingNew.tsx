@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import { type FC } from "react";
 import { Spin } from "antd";
 import { useTranslation } from "react-i18next";
 

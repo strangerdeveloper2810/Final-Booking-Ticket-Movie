@@ -1,4 +1,4 @@
-import React, { useMemo, FC } from "react";
+import { type FC, useMemo } from "react";
 import isEmpty from "lodash/isEmpty";
 import map from "lodash/map";
 import { Carousel } from "antd";

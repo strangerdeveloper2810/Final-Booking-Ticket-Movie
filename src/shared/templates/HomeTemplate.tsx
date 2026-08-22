@@ -1,4 +1,4 @@
-import React, { memo, FC } from "react";
+import { type FC, memo } from "react";
 import Header from "shared/components/Header/Header";
 import Footer from "shared/components/Footer/Footer";
 import { ITemplate } from "shared/types/ITemplate";

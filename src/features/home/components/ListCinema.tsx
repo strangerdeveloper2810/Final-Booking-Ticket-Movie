@@ -1,4 +1,4 @@
-import React, { FC, useMemo } from "react";
+import { type FC, useMemo } from "react";
 import { Tabs } from "antd";
 import { useTranslation } from "react-i18next";
 import ListMovie from "./ListMovie";

@@ -1,9 +1,9 @@
-import React from "react";
+import { type FC } from "react";
 import { Helmet } from "react-helmet-async";
 import { useTranslation } from "react-i18next";
 import { SEOProps } from "shared/types/seo.types";
 
-const SEO: React.FC<SEOProps> = ({
+const SEO: FC<SEOProps> = ({
   title,
   description,
   keywords,

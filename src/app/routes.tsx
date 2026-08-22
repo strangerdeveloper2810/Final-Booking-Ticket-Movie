@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from "react";
+import { type FC, lazy, Suspense } from "react";
 import { useRoutes, RouteObject } from "react-router-dom";
 import HomeTemplate from "shared/templates/HomeTemplate";
 import ErrorTemplate from "shared/templates/ErrorTemplate";
@@ -70,7 +70,7 @@ export const routesConfig: RouteObject[] = [
   },
 ];
 
-const AppRoutes: React.FC = () => {
+const AppRoutes: FC = () => {
   const element = useRoutes(routesConfig);
   return <Suspense fallback={<LoadingNew />}>{element}</Suspense>;
 };

@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import { type FC } from "react";
 import { useDispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
 import { Input, Button } from "antd";

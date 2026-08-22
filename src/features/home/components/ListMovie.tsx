@@ -1,4 +1,4 @@
-import React from "react";
+import { type FC, memo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Tag } from "antd";
 import { CalendarOutlined } from "@ant-design/icons";
@@ -8,7 +8,7 @@ import { parseScheduleMovie } from "shared/utils/common";
 import { APP_ROUTES } from "shared/constants/routes";
 import { ListMovieProps } from "../types/home.types";
 
-const ListMovie: React.FC<ListMovieProps> = ({ cinema }) => {
+const ListMovie: FC<ListMovieProps> = ({ cinema }) => {
   const navigate = useNavigate();
   const { t } = useTranslation(["home", "common"]);
 
@@ -83,4 +83,4 @@ const ListMovie: React.FC<ListMovieProps> = ({ cinema }) => {
   );
 };
 
-export default React.memo(ListMovie);
+export default memo(ListMovie);

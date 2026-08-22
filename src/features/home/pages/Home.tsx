@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, FC } from "react";
+import { type FC, Suspense, lazy } from "react";
 import { useTranslation } from "react-i18next";
 import LoadingNew from "shared/components/LoadingNew/LoadingNew";
 import SEO from "shared/components/SEO/SEO";

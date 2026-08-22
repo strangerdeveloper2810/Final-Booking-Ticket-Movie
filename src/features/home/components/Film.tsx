@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import { type FC } from "react";
 import isEmpty from "lodash/isEmpty";
 import SliderComponent from "react-slick";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";

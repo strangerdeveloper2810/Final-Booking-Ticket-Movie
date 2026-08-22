@@ -1,4 +1,4 @@
-import React, { FC, useState, useCallback } from "react";
+import { type FC, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Button, Drawer, Avatar, Dropdown } from "antd";

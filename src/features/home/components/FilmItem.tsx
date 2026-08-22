@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import { type FC, useCallback, memo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, Button, Tag } from "antd";
 import { useTranslation } from "react-i18next";
@@ -6,7 +6,7 @@ import Star from "shared/components/Star/Star";
 import { APP_ROUTES } from "shared/constants/routes";
 import { FilmItemProps } from "../types/home.types";
 
-const FilmItem: React.FC<FilmItemProps> = ({ filmItem }) => {
+const FilmItem: FC<FilmItemProps> = ({ filmItem }) => {
   const navigate = useNavigate();
   const { t } = useTranslation(["home", "common"]);
 
@@ -65,4 +65,4 @@ const FilmItem: React.FC<FilmItemProps> = ({ filmItem }) => {
   );
 };
 
-export default React.memo(FilmItem);
+export default memo(FilmItem);

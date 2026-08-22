@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useCallback } from "react";
+import { type FC, useEffect, useMemo, useCallback } from "react";
 import get from "lodash/get";
 import isEmpty from "lodash/isEmpty";
 import { useSelector, useDispatch } from "react-redux";
@@ -15,7 +15,7 @@ import { APP_ROUTES } from "shared/constants/routes";
 import { SeatType } from "shared/constants/appConstants";
 import SEO from "shared/components/SEO/SEO";
 
-const BookingTicket: React.FC = () => {
+const BookingTicket: FC = () => {
   const { maLichChieu } = useParams();
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();

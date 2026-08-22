@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { type FC, useState, useEffect, useCallback } from "react";
 import get from "lodash/get";
 import map from "lodash/map";
 import isEmpty from "lodash/isEmpty";
@@ -18,7 +18,7 @@ import { APP_ROUTES } from "shared/constants/routes";
 import { HTTP_STATUS } from "shared/constants/appConstants";
 import SEO from "shared/components/SEO/SEO";
 
-const Detail: React.FC = () => {
+const Detail: FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { t, i18n } = useTranslation(["detail", "common"]);
