@@ -62,7 +62,7 @@ const Register: FC = () => {
       />
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
-          <label className="block text-[#F5F6FA] dark:text-[#F5F6FA] text-gray-700 font-medium text-sm mb-1">
+          <label className="block text-text-primary font-medium text-sm mb-1">
             {t("auth:account")}
           </label>
           <Controller
@@ -72,10 +72,10 @@ const Register: FC = () => {
               <Input
                 {...field}
                 size="large"
-                prefix={<UserOutlined className="text-[#9AA0B4]" />}
+                prefix={<UserOutlined className="text-text-secondary" />}
                 placeholder={t("auth:accountPlaceholder")}
                 status={errors.taiKhoan ? "error" : ""}
-                className="bg-[#0B0D12] text-[#F5F6FA] border-[#262B3A] hover:border-[#F2545B] focus:border-[#F2545B]"
+                className="bg-background text-text-primary border-border hover:border-primary focus:border-primary"
               />
             )}
           />
@@ -85,7 +85,7 @@ const Register: FC = () => {
         </div>
 
         <div>
-          <label className="block text-[#F5F6FA] dark:text-[#F5F6FA] text-gray-700 font-medium text-sm mb-1">
+          <label className="block text-text-primary font-medium text-sm mb-1">
             {t("auth:password")}
           </label>
           <Controller
@@ -95,10 +95,10 @@ const Register: FC = () => {
               <Input.Password
                 {...field}
                 size="large"
-                prefix={<LockOutlined className="text-[#9AA0B4]" />}
+                prefix={<LockOutlined className="text-text-secondary" />}
                 placeholder={t("auth:passwordPlaceholder")}
                 status={errors.matKhau ? "error" : ""}
-                className="bg-[#0B0D12] text-[#F5F6FA] border-[#262B3A] hover:border-[#F2545B] focus:border-[#F2545B]"
+                className="bg-background text-text-primary border-border hover:border-primary focus:border-primary"
               />
             )}
           />
@@ -108,7 +108,7 @@ const Register: FC = () => {
         </div>
 
         <div>
-          <label className="block text-[#F5F6FA] dark:text-[#F5F6FA] text-gray-700 font-medium text-sm mb-1">
+          <label className="block text-text-primary font-medium text-sm mb-1">
             {t("auth:fullName")}
           </label>
           <Controller
@@ -118,10 +118,10 @@ const Register: FC = () => {
               <Input
                 {...field}
                 size="large"
-                prefix={<IdcardOutlined className="text-[#9AA0B4]" />}
+                prefix={<IdcardOutlined className="text-text-secondary" />}
                 placeholder="Nguyễn Văn A"
                 status={errors.hoTen ? "error" : ""}
-                className="bg-[#0B0D12] text-[#F5F6FA] border-[#262B3A] hover:border-[#F2545B] focus:border-[#F2545B]"
+                className="bg-background text-text-primary border-border hover:border-primary focus:border-primary"
               />
             )}
           />
@@ -131,7 +131,7 @@ const Register: FC = () => {
         </div>
 
         <div>
-          <label className="block text-[#F5F6FA] dark:text-[#F5F6FA] text-gray-700 font-medium text-sm mb-1">
+          <label className="block text-text-primary font-medium text-sm mb-1">
             {t("auth:email")}
           </label>
           <Controller
@@ -141,10 +141,10 @@ const Register: FC = () => {
               <Input
                 {...field}
                 size="large"
-                prefix={<MailOutlined className="text-[#9AA0B4]" />}
+                prefix={<MailOutlined className="text-text-secondary" />}
                 placeholder="example@gmail.com"
                 status={errors.email ? "error" : ""}
-                className="bg-[#0B0D12] text-[#F5F6FA] border-[#262B3A] hover:border-[#F2545B] focus:border-[#F2545B]"
+                className="bg-background text-text-primary border-border hover:border-primary focus:border-primary"
               />
             )}
           />
@@ -154,7 +154,7 @@ const Register: FC = () => {
         </div>
 
         <div>
-          <label className="block text-[#F5F6FA] dark:text-[#F5F6FA] text-gray-700 font-medium text-sm mb-1">
+          <label className="block text-text-primary font-medium text-sm mb-1">
             {t("auth:phone")}
           </label>
           <Controller
@@ -164,10 +164,10 @@ const Register: FC = () => {
               <Input
                 {...field}
                 size="large"
-                prefix={<PhoneOutlined className="text-[#9AA0B4]" />}
+                prefix={<PhoneOutlined className="text-text-secondary" />}
                 placeholder="0901234567"
                 status={errors.soDt ? "error" : ""}
-                className="bg-[#0B0D12] text-[#F5F6FA] border-[#262B3A] hover:border-[#F2545B] focus:border-[#F2545B]"
+                className="bg-background text-text-primary border-border hover:border-primary focus:border-primary"
               />
             )}
           />
@@ -182,17 +182,17 @@ const Register: FC = () => {
             htmlType="submit"
             block
             loading={isSubmitting}
-            className="bg-[#F2545B] hover:bg-[#FF6B72] font-semibold h-12 text-base shadow-lg shadow-[#F2545B]/30"
+            className="bg-primary hover:bg-primary-hover font-semibold h-12 text-base shadow-lg shadow-primary/30 border-none"
           >
             {t("auth:registerButton")}
           </Button>
         </div>
 
-        <div className="text-center text-sm text-[#9AA0B4] pt-2 border-t border-[#262B3A]">
+        <div className="text-center text-sm text-text-secondary pt-2 border-t border-border">
           {t("auth:alreadyHaveAccount")}{" "}
           <NavLink
             to={APP_ROUTES.LOGIN}
-            className="text-[#F2545B] hover:text-[#FF6B72] font-semibold ml-1"
+            className="text-primary hover:text-primary-hover font-semibold ml-1"
           >
             {t("auth:login")}
           </NavLink>

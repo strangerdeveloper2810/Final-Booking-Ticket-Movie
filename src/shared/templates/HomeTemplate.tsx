@@ -5,7 +5,7 @@ import { ITemplate } from "shared/types/ITemplate";
 
 const HomeTemplate: FC<ITemplate> = ({ children }) => {
   return (
-    <div className="min-h-screen flex flex-col bg-[#0B0D12] text-[#F5F6FA]">
+    <div className="min-h-screen flex flex-col bg-background text-text-primary transition-colors">
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />

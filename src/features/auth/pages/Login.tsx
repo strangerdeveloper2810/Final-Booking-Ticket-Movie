@@ -47,7 +47,7 @@ const Login: FC = () => {
       />
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
-          <label className="block text-[#F5F6FA] dark:text-[#F5F6FA] text-gray-700 font-medium text-sm mb-1">
+          <label className="block text-text-primary font-medium text-sm mb-1">
             {t("auth:account")}
           </label>
           <Controller
@@ -57,10 +57,10 @@ const Login: FC = () => {
               <Input
                 {...field}
                 size="large"
-                prefix={<UserOutlined className="text-[#9AA0B4]" />}
+                prefix={<UserOutlined className="text-text-secondary" />}
                 placeholder={t("auth:accountPlaceholder")}
                 status={errors.taiKhoan ? "error" : ""}
-                className="bg-[#0B0D12] text-[#F5F6FA] border-[#262B3A] hover:border-[#F2545B] focus:border-[#F2545B]"
+                className="bg-background text-text-primary border-border hover:border-primary focus:border-primary"
               />
             )}
           />
@@ -70,7 +70,7 @@ const Login: FC = () => {
         </div>
 
         <div>
-          <label className="block text-[#F5F6FA] dark:text-[#F5F6FA] text-gray-700 font-medium text-sm mb-1">
+          <label className="block text-text-primary font-medium text-sm mb-1">
             {t("auth:password")}
           </label>
           <Controller
@@ -80,10 +80,10 @@ const Login: FC = () => {
               <Input.Password
                 {...field}
                 size="large"
-                prefix={<LockOutlined className="text-[#9AA0B4]" />}
+                prefix={<LockOutlined className="text-text-secondary" />}
                 placeholder={t("auth:passwordPlaceholder")}
                 status={errors.matKhau ? "error" : ""}
-                className="bg-[#0B0D12] text-[#F5F6FA] border-[#262B3A] hover:border-[#F2545B] focus:border-[#F2545B]"
+                className="bg-background text-text-primary border-border hover:border-primary focus:border-primary"
               />
             )}
           />
@@ -98,17 +98,17 @@ const Login: FC = () => {
             htmlType="submit"
             block
             loading={isSubmitting}
-            className="bg-[#F2545B] hover:bg-[#FF6B72] font-semibold h-12 text-base shadow-lg shadow-[#F2545B]/30"
+            className="bg-primary hover:bg-primary-hover font-semibold h-12 text-base shadow-lg shadow-primary/30 border-none"
           >
             {t("auth:loginButton")}
           </Button>
         </div>
 
-        <div className="text-center text-sm text-[#9AA0B4] pt-2 border-t border-[#262B3A]">
+        <div className="text-center text-sm text-text-secondary pt-2 border-t border-border">
           {t("auth:noAccount")}{" "}
           <NavLink
             to={APP_ROUTES.REGISTER}
-            className="text-[#F2545B] hover:text-[#FF6B72] font-semibold ml-1"
+            className="text-primary hover:text-primary-hover font-semibold ml-1"
           >
             {t("auth:registerNow")}
           </NavLink>

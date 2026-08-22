@@ -28,3 +28,59 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   }
 }
+
+/* Ant Design Component Overrides for 100% Theme Consistency */
+.ant-tabs-tab-btn {
+  color: var(--text-secondary-color) !important;
+  transition: color 0.3s ease;
+}
+
+.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: #F2545B !important;
+}
+
+.ant-input,
+.ant-input-password,
+.ant-input-affix-wrapper {
+  background-color: var(--bg-color) !important;
+  color: var(--text-primary-color) !important;
+  border-color: var(--border-color) !important;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.ant-input-password input {
+  background-color: transparent !important;
+  color: var(--text-primary-color) !important;
+}
+
+.ant-card {
+  background-color: var(--surface-color) !important;
+  color: var(--text-primary-color) !important;
+  border-color: var(--border-color) !important;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.ant-modal-content,
+.ant-modal-header {
+  background-color: var(--surface-color) !important;
+  color: var(--text-primary-color) !important;
+}
+
+.ant-modal-title {
+  color: var(--text-primary-color) !important;
+}
+
+.ant-drawer-content {
+  background-color: var(--surface-color) !important;
+  color: var(--text-primary-color) !important;
+}
+
+.ant-drawer-header {
+  background-color: var(--surface-color) !important;
+  color: var(--text-primary-color) !important;
+  border-bottom-color: var(--border-color) !important;
+}
+
+.ant-drawer-title {
+  color: var(--text-primary-color) !important;
+}

@@ -4,9 +4,9 @@ import { Card, Skeleton } from "antd";
 const SkeletonCard: FC = () => {
   return (
     <Card
-      className="bg-[#151822] border-[#262B3A] overflow-hidden"
+      className="bg-surface border-border overflow-hidden transition-colors"
       cover={
-        <div className="h-72 bg-[#1D2130] flex items-center justify-center">
+        <div className="h-72 bg-surface-hover flex items-center justify-center">
           <Skeleton.Image active className="!w-full !h-full" />
         </div>
       }

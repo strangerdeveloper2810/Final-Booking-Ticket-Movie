@@ -3,7 +3,7 @@ import { Skeleton } from "antd";
 
 const SkeletonCarousel: FC = () => {
   return (
-    <div className="w-full h-[450px] bg-[#151822] flex items-center justify-center border-b border-[#262B3A]">
+    <div className="w-full h-[450px] bg-surface flex items-center justify-center border-b border-border transition-colors">
       <Skeleton.Image active className="!w-full !h-full" />
     </div>
   );

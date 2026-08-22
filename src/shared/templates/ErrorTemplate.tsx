@@ -1,19 +1,21 @@
 import React, { FC } from "react";
 import { Button, Result } from "antd";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { APP_ROUTES } from "shared/constants/routes";
 
 const ErrorTemplate: FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation(["common"]);
 
   return (
-    <div className="min-h-[70vh] flex items-center justify-center bg-[#0B0D12] px-4">
+    <div className="min-h-[70vh] flex items-center justify-center bg-background px-4 transition-colors">
       <Result
         status="404"
-        title={<span className="text-4xl font-extrabold text-[#F2545B]">404</span>}
+        title={<span className="text-4xl font-extrabold text-primary">404</span>}
         subTitle={
-          <span className="text-base text-[#9AA0B4]">
-            Rất tiếc, trang bạn tìm kiếm không tồn tại hoặc đã bị di chuyển.
+          <span className="text-base text-text-secondary">
+            {t("common:notFound")}
           </span>
         }
         extra={
@@ -21,9 +23,9 @@ const ErrorTemplate: FC = () => {
             type="primary"
             size="large"
             onClick={() => navigate(APP_ROUTES.HOME)}
-            className="bg-[#F2545B] hover:bg-[#FF6B72] border-none px-8 font-medium"
+            className="bg-primary hover:bg-primary-hover border-none px-8 font-medium"
           >
-            Quay về trang chủ
+            {t("common:backToHome")}
           </Button>
         }
       />
