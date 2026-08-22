@@ -1,0 +1,20 @@
+{
+  "screen": "SCREEN",
+  "standardSeat": "Standard Seat",
+  "vipSeat": "VIP Seat",
+  "selectedSeat": "Selecting",
+  "occupiedSeat": "Occupied",
+  "bookingInfo": "Booking Summary",
+  "movie": "Movie:",
+  "cinemaComplex": "Cinema:",
+  "theater": "Theater:",
+  "showtime": "Showtime:",
+  "selectedSeats": "Selected Seats:",
+  "noSeatsSelected": "No seats selected yet",
+  "totalPrice": "Total Price:",
+  "userAccount": "Booked by:",
+  "confirmBooking": "Checkout Now",
+  "selectSeatsFirst": "Please select seats first",
+  "loginRequired": "Login Required",
+  "loginRequiredMessage": "You need to log in to book movie tickets."
+}

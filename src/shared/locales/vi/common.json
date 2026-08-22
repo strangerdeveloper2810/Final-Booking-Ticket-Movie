@@ -1,0 +1,12 @@
+{
+  "appName": "Cinefix",
+  "appDescription": "Hệ thống đặt vé xem phim trực tuyến hàng đầu Việt Nam",
+  "loading": "Đang tải...",
+  "error": "Đã có lỗi xảy ra",
+  "notFound": "Rất tiếc, trang bạn tìm kiếm không tồn tại.",
+  "backToHome": "Quay về trang chủ",
+  "copyright": "© {{year}} Cinefix. Đặt vé xem phim nhanh chóng & dễ dàng.",
+  "hot": "HOT",
+  "nowShowing": "ĐANG CHIẾU",
+  "comingSoon": "SẮP CHIẾU"
+}

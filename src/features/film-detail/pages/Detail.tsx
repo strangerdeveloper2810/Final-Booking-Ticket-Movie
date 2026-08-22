@@ -15,6 +15,7 @@ import managementServiceInstance from "../services/ManagementMovieService";
 import { formatScheduleMovie } from "shared/utils/common";
 import { APP_ROUTES } from "shared/constants/routes";
 import { HTTP_STATUS } from "shared/constants/appConstants";
+import SEO from "shared/components/SEO/SEO";
 
 const Detail: React.FC = () => {
   const { id } = useParams();
@@ -107,8 +108,33 @@ const Detail: React.FC = () => {
     ),
   }));
 
+  const movieJsonLd = detailFilm
+    ? {
+        "@context": "https://schema.org",
+        "@type": "Movie",
+        name: detailFilm.tenPhim,
+        image: detailFilm.hinhAnh,
+        description: detailFilm.moTa,
+        aggregateRating: detailFilm.danhGia
+          ? {
+              "@type": "AggregateRating",
+              ratingValue: detailFilm.danhGia,
+              bestRating: "10",
+              ratingCount: "100",
+            }
+          : undefined,
+      }
+    : undefined;
+
   return (
     <div className="min-h-screen bg-[#0B0D12] pb-16">
+      <SEO
+        title={detailFilm?.tenPhim ? `Phim ${detailFilm.tenPhim} - Lịch Chiếu & Đặt Vé` : "Chi Tiết Phim"}
+        description={detailFilm?.moTa || "Xem lịch chiếu và đặt vé phim chiếu rạp tại Cinefix."}
+        image={detailFilm?.hinhAnh}
+        jsonLd={movieJsonLd}
+      />
+
       {/* Hero Backdrop Banner */}
       <div className="relative w-full h-[450px] md:h-[550px] overflow-hidden">
         <div

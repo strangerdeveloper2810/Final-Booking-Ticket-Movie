@@ -1,0 +1,20 @@
+{
+  "screen": "MÀN HÌNH",
+  "standardSeat": "Ghế thường",
+  "vipSeat": "Ghế VIP",
+  "selectedSeat": "Đang chọn",
+  "occupiedSeat": "Đã đặt",
+  "bookingInfo": "Thông Tin Đặt Vé",
+  "movie": "Phim:",
+  "cinemaComplex": "Cụm rạp:",
+  "theater": "Rạp:",
+  "showtime": "Suất chiếu:",
+  "selectedSeats": "Ghế đang chọn:",
+  "noSeatsSelected": "Chưa chọn ghế nào",
+  "totalPrice": "Tổng tiền:",
+  "userAccount": "Tài khoản đặt:",
+  "confirmBooking": "Thanh Toán Ngay",
+  "selectSeatsFirst": "Vui lòng chọn ghế",
+  "loginRequired": "Yêu cầu đăng nhập",
+  "loginRequiredMessage": "Bạn cần đăng nhập để thực hiện đặt vé xem phim."
+}
