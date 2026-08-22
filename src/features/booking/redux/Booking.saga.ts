@@ -7,6 +7,7 @@ import i18n from "shared/i18n";
 import { BookingTicketAction } from "./BookingTicket.reducer";
 import { GET_TICKET_API, BOOK_TICKET_API } from "./BookingTicketActionTypes";
 import BookingTicketService, { TicketBookingPayload } from "../services/BookingTicketService";
+import BookingHubService from "../services/BookingHubService";
 
 export function* getTicketApi(action: PayloadAction<string | number>): SagaIterator {
   const maLichChieu = action.payload;
@@ -38,8 +39,23 @@ export function* bookTicketSaga(action: PayloadAction<TicketBookingPayload>): Sa
     if (get(result, "status") === 200 || get(result, "data.statusCode") === 200) {
       toast.success(i18n.t("booking:bookingSuccess"));
       yield put(BookingTicketAction.clearSelectedSeats());
-      // Refresh ticket room state
+      // Refresh this client's own seat map via REST.
       yield put({ type: GET_TICKET_API, payload: payload.maLichChieu });
+
+      // DatVeHub only broadcasts loadDanhSachGheDaDat to a room when
+      // someone invokes loadDanhSachGhe — the REST DatVe endpoint does NOT
+      // trigger that broadcast on its own (the REST API and the hub are
+      // separate on this server). So the client that just booked has to
+      // re-invoke loadDanhSachGhe itself to make the server recompute and
+      // push the fresh seat map to every OTHER client in the room.
+      try {
+        yield call(BookingHubService.joinShowtimeRoom, payload.maLichChieu);
+      } catch (hubError) {
+        // A failed rebroadcast trigger must never surface as a booking
+        // failure — the REST booking already succeeded. Other clients will
+        // simply stay stale until their own next hub interaction.
+        console.error("Failed to trigger realtime seat rebroadcast", hubError);
+      }
     } else {
       toast.error(get(result, "data.content") || i18n.t("booking:bookingError"));
     }
