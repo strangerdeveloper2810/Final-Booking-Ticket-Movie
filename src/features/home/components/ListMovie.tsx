@@ -1,9 +1,10 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Tag } from "antd";
+import { Tag } from "antd";
+import { CalendarOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { DanhSachPhim, LstLichChieuTheoPhim } from "../redux/cinema/ListCinemaType";
-import { formatScheduleMovie } from "shared/utils/common";
+import { parseScheduleMovie } from "shared/utils/common";
 import { APP_ROUTES } from "shared/constants/routes";
 import { ListMovieProps } from "../types/home.types";
 
@@ -37,7 +38,7 @@ const ListMovie: React.FC<ListMovieProps> = ({ cinema }) => {
           <div className="flex-1 flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <Tag color="#F2545B">2D</Tag>
+                <Tag color="#F2545B" className="font-semibold">2D</Tag>
                 <h4
                   className="text-base font-bold text-text-primary hover:text-primary transition-colors cursor-pointer"
                   onClick={() => navigate(APP_ROUTES.DETAIL(movie.maPhim))}
@@ -54,18 +55,25 @@ const ListMovie: React.FC<ListMovieProps> = ({ cinema }) => {
               <span className="text-xs text-text-secondary font-medium block mb-2">
                 {t("home:availableSchedules")}
               </span>
-              <div className="flex flex-wrap gap-2 max-h-32 overflow-y-auto pr-1">
-                {movie.lstLichChieuTheoPhim.slice(0, 12).map((schedule: LstLichChieuTheoPhim, idx: number) => (
-                  <Button
-                    key={idx}
-                    size="small"
-                    type="dashed"
-                    onClick={() => navigate(APP_ROUTES.BOOKING(schedule.maLichChieu))}
-                    className="bg-background text-primary border-primary/40 hover:bg-primary hover:text-white font-mono text-xs rounded-md"
-                  >
-                    {formatScheduleMovie(schedule.ngayChieuGioChieu)}
-                  </Button>
-                ))}
+              <div className="flex flex-wrap gap-2 max-h-36 overflow-y-auto pr-1">
+                {movie.lstLichChieuTheoPhim.slice(0, 12).map((schedule: LstLichChieuTheoPhim, idx: number) => {
+                  const { date, time } = parseScheduleMovie(schedule.ngayChieuGioChieu);
+                  return (
+                    <button
+                      key={idx}
+                      onClick={() => navigate(APP_ROUTES.BOOKING(schedule.maLichChieu))}
+                      className="group flex items-center gap-2 bg-surface hover:bg-primary border border-border hover:border-primary px-3 py-1.5 rounded-lg shadow-sm hover:shadow-md transition-all text-xs cursor-pointer"
+                    >
+                      <span className="text-text-secondary group-hover:text-white font-medium flex items-center gap-1">
+                        <CalendarOutlined className="text-primary group-hover:text-white text-[11px]" />
+                        {date}
+                      </span>
+                      <span className="bg-primary/10 group-hover:bg-white/20 text-primary group-hover:text-white font-mono font-bold px-1.5 py-0.5 rounded text-[11px]">
+                        {time}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>

@@ -13,7 +13,7 @@ import {
 } from "../redux/types/CalendarFilmType";
 import filmDetailServiceInstance from "../services/FlimDetailService";
 import managementServiceInstance from "../services/ManagementMovieService";
-import { formatScheduleMovie } from "shared/utils/common";
+import { parseScheduleMovie } from "shared/utils/common";
 import { APP_ROUTES } from "shared/constants/routes";
 import { HTTP_STATUS } from "shared/constants/appConstants";
 import SEO from "shared/components/SEO/SEO";
@@ -92,17 +92,27 @@ const Detail: React.FC = () => {
           key: `${index + 1}`,
           children: (
             <div className="flex flex-wrap gap-3 py-4 max-h-[400px] overflow-y-auto">
-              {map(get(theaterComplex, "lichChieuPhim", []), (theater: any, idx: number) => (
-                <Button
-                  key={idx}
-                  type="dashed"
-                  onClick={() => navigate(APP_ROUTES.BOOKING(get(theater, "maLichChieu", "")))}
-                  className="bg-background text-primary border-primary/40 hover:bg-primary hover:text-white font-mono text-sm py-2 h-auto rounded-lg"
-                >
-                  <span className="font-bold mr-1">{get(theater, "tenRap", "")}:</span>
-                  {formatScheduleMovie(get(theater, "ngayChieuGioChieu", ""))}
-                </Button>
-              ))}
+              {map(get(theaterComplex, "lichChieuPhim", []), (theater: any, idx: number) => {
+                const { date, time } = parseScheduleMovie(get(theater, "ngayChieuGioChieu", ""));
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => navigate(APP_ROUTES.BOOKING(get(theater, "maLichChieu", "")))}
+                    className="group flex items-center gap-2 bg-surface hover:bg-primary border border-border hover:border-primary px-3 py-2 rounded-lg shadow-sm hover:shadow-md transition-all text-xs cursor-pointer"
+                  >
+                    <span className="font-bold text-primary group-hover:text-white mr-1">
+                      {get(theater, "tenRap", "")}:
+                    </span>
+                    <span className="text-text-secondary group-hover:text-white font-medium flex items-center gap-1">
+                      <CalendarOutlined className="text-primary group-hover:text-white text-[11px]" />
+                      {date}
+                    </span>
+                    <span className="bg-primary/10 group-hover:bg-white/20 text-primary group-hover:text-white font-mono font-bold px-1.5 py-0.5 rounded text-[11px]">
+                      {time}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
           ),
         }))}
@@ -143,7 +153,7 @@ const Detail: React.FC = () => {
           className="absolute inset-0 bg-cover bg-center filter blur-xl scale-110 opacity-30"
           style={{ backgroundImage: `url(${detailFilm?.hinhAnh})` }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
         <div className="relative max-w-screen-xl mx-auto px-4 md:px-6 py-12 w-full grid grid-cols-1 md:grid-cols-4 gap-8 items-center">
           <div className="flex justify-center md:justify-start">
