@@ -11,7 +11,7 @@ export function* getAllCinemaSaga(): SagaIterator {
     yield delay(200);
     let { data } = yield call(() => {
       return http.get(
-        `/api/QuanLyRap/LayThongTinLichChieuHeThongRap?maNhom=${GROUP_ID}`
+        `/QuanLyRap/LayThongTinLichChieuHeThongRap?maNhom=${GROUP_ID}`
       );
     });
     yield put(ListCinemaAction.getAllListCinema(data.content));

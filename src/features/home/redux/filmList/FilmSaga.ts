@@ -10,7 +10,7 @@ export function* getAllFilmSaga(): SagaIterator {
     yield put(LoadingSagaAction.setLoading(true));
     yield delay(200);
     let { data } = yield call(() => {
-      return http.get(`/api/QuanLyPhim/LayDanhSachPhim?maNhom=${GROUP_ID}`);
+      return http.get(`/QuanLyPhim/LayDanhSachPhim?maNhom=${GROUP_ID}`);
     });
     yield put(FilmListAction.getAllFlim(data.content));
   } catch (error) {

@@ -4,7 +4,7 @@ import get from "lodash/get";
 const BannerServices = {
   getAllBanner: async () => {
     try {
-      const response = await http.get(`/api/QuanLyPhim/LayDanhSachBanner`);
+      const response = await http.get(`/QuanLyPhim/LayDanhSachBanner`);
 
       if (get(response, "data.statusCode") === 200) {
         return get(response, "data.content", []);

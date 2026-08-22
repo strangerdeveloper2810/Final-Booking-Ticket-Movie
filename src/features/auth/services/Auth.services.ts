@@ -5,7 +5,7 @@ import { http } from "shared/utils/setting";
 const AuthServices = {
   login: async (values: UserLogin) => {
     try {
-      const response = await http.post(`/api/QuanLyNguoiDung/DangNhap`, values);
+      const response = await http.post(`/QuanLyNguoiDung/DangNhap`, values);
       if (get(response, "data.statusCode") === 200) {
         return get(response, "data.content");
       }
@@ -16,7 +16,7 @@ const AuthServices = {
 
   register: async (values: UserRegister) => {
     try {
-      const response = await http.post(`/api/QuanLyNguoiDung/DangKy`, values);
+      const response = await http.post(`/QuanLyNguoiDung/DangKy`, values);
       if (get(response, "data.statusCode") === 200) {
         return get(response, "data.content");
       }

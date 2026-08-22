@@ -3,7 +3,7 @@ import { http } from "shared/utils/setting";
 class ManagementMovieService {
   getInfoCanlendarFilm = async (params: any) => {
     try {
-      let res = await http.get(`/api/QuanLyRap/LayThongTinLichChieuPhim`, {
+      let res = await http.get(`/QuanLyRap/LayThongTinLichChieuPhim`, {
         params,
       });
       return res;

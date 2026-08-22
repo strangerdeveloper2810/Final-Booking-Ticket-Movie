@@ -10,13 +10,13 @@ export interface TicketBookingPayload {
 
 const BookingTicketService = {
   getDetailBookingTicket: async (maLichChieu: string | number) => {
-    return await http.get(`/api/QuanLyDatVe/LayDanhSachPhongVe`, {
+    return await http.get(`/QuanLyDatVe/LayDanhSachPhongVe`, {
       params: { maLichChieu },
     });
   },
 
   bookTicket: async (payload: TicketBookingPayload) => {
-    return await http.post(`/api/QuanLyDatVe/DatVe`, payload);
+    return await http.post(`/QuanLyDatVe/DatVe`, payload);
   },
 };
 
