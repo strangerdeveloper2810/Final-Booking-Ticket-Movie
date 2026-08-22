@@ -18,7 +18,7 @@ const FilmItem: React.FC<FilmItemProps> = ({ filmItem }) => {
     <Card
       hoverable
       className="bg-surface border-border overflow-hidden flex flex-col h-full rounded-xl transition-all duration-300 hover:border-primary/50 hover:-translate-y-1 shadow-md"
-      bodyStyle={{ padding: "16px", display: "flex", flexDirection: "column", flex: 1 }}
+      styles={{ body: { padding: "16px", display: "flex", flexDirection: "column", flex: 1 } }}
       cover={
         <div className="relative h-72 overflow-hidden group">
           <img
