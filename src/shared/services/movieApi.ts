@@ -39,8 +39,9 @@ const axiosBaseQuery =
 export const movieApi = createApi({
   reducerPath: "movieApi",
   baseQuery: axiosBaseQuery(),
-  tagTypes: ["Banners", "Films", "FilmDetail", "Cinemas", "Showtimes"],
+  tagTypes: ["Banners", "Films", "FilmDetail", "Cinemas", "Showtimes", "UserProfile", "UserList", "UserTypes"],
   endpoints: (builder) => ({
+    // Movies & Banners
     getBanners: builder.query<any[], void>({
       query: () => ({
         url: "/QuanLyPhim/LayDanhSachBanner",
@@ -80,6 +81,46 @@ export const movieApi = createApi({
       }),
       providesTags: (_result, _error, id) => [{ type: "Showtimes" as const, id }],
     }),
+
+    // QuanLyNguoiDung User APIs (Swagger)
+    getProfile: builder.query<any, void>({
+      query: () => ({
+        url: "/QuanLyNguoiDung/ThongTinTaiKhoan",
+        method: "POST",
+      }),
+      providesTags: ["UserProfile"],
+    }),
+    updateProfile: builder.mutation<any, any>({
+      query: (userPayload) => ({
+        url: "/QuanLyNguoiDung/CapNhatThongTinNguoiDung",
+        method: "PUT",
+        data: userPayload,
+      }),
+      invalidatesTags: ["UserProfile", "UserList"],
+    }),
+    getUserTypes: builder.query<any[], void>({
+      query: () => ({
+        url: "/QuanLyNguoiDung/LayDanhSachLoaiNguoiDung",
+        method: "GET",
+      }),
+      providesTags: ["UserTypes"],
+    }),
+    getUserList: builder.query<any[], { maNhom?: string; tuKhoa?: string } | void>({
+      query: (params) => ({
+        url: "/QuanLyNguoiDung/LayDanhSachNguoiDung",
+        method: "GET",
+        params: { maNhom: params?.maNhom || GROUP_ID, tuKhoa: params?.tuKhoa },
+      }),
+      providesTags: ["UserList"],
+    }),
+    deleteUser: builder.mutation<any, string>({
+      query: (taiKhoan: string) => ({
+        url: "/QuanLyNguoiDung/XoaNguoiDung",
+        method: "DELETE",
+        params: { TaiKhoan: taiKhoan },
+      }),
+      invalidatesTags: ["UserList"],
+    }),
   }),
 });
 
@@ -89,4 +130,9 @@ export const {
   useGetFilmDetailQuery,
   useGetCinemasQuery,
   useGetTicketBookingDetailQuery,
+  useGetProfileQuery,
+  useUpdateProfileMutation,
+  useGetUserTypesQuery,
+  useGetUserListQuery,
+  useDeleteUserMutation,
 } = movieApi;

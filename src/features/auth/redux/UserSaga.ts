@@ -4,6 +4,7 @@ import { takeLatest, put, call } from "redux-saga/effects";
 import isEmpty from "lodash/isEmpty";
 import { history } from "shared/utils/setting";
 import { toast } from "react-toastify";
+import i18n from "shared/i18n";
 import { UserRegister, UserLogin } from "./UserType";
 import {
   USER_REGISTER_API,
@@ -21,18 +22,18 @@ export function* registerSaga(
     const response = yield call(() => AuthServices.register(payload));
 
     if (isEmpty(response) || typeof response === "string") {
-      toast.error(response);
+      toast.error(response || i18n.t("auth:unknownError"));
       return;
     }
 
-    toast.success("Đăng ký thành công!");
+    toast.success(i18n.t("auth:registerSuccess"));
     yield put(UserSagaAction.setUserInfo(response));
     history.push(APP_ROUTES.LOGIN);
   } catch (error: unknown) {
     if (error instanceof Error) {
       toast.error(error.message);
     } else {
-      toast.error("Đã xảy ra lỗi không xác định!");
+      toast.error(i18n.t("auth:unknownError"));
     }
   }
 }
@@ -47,18 +48,18 @@ export function* loginSaga(action: PayloadAction<UserLogin>): SagaIterator {
     const response = yield call(() => AuthServices.login(payload));
 
     if (isEmpty(response) || typeof response === "string") {
-      toast.error(response);
+      toast.error(response || i18n.t("auth:unknownError"));
       return;
     }
 
-    toast.success("Đăng nhập thành công!");
+    toast.success(i18n.t("auth:loginSuccess"));
     yield put(UserSagaAction.setUserInfo(response));
     history.push(APP_ROUTES.HOME);
   } catch (error: unknown) {
     if (error instanceof Error) {
       toast.error(error.message);
     } else {
-      toast.error("Đã xảy ra lỗi không xác định!");
+      toast.error(i18n.t("auth:unknownError"));
     }
   }
 }

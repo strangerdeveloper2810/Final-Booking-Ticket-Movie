@@ -3,6 +3,7 @@ import { PayloadAction } from "@reduxjs/toolkit";
 import { SagaIterator } from "redux-saga";
 import { put, call, takeLatest } from "redux-saga/effects";
 import { toast } from "react-toastify";
+import i18n from "shared/i18n";
 import { BookingTicketAction } from "./BookingTicket.reducer";
 import { GET_TICKET_API, BOOK_TICKET_API } from "./BookingTicketActionTypes";
 import BookingTicketService, { TicketBookingPayload } from "../services/BookingTicketService";
@@ -35,15 +36,15 @@ export function* bookTicketSaga(action: PayloadAction<TicketBookingPayload>): Sa
     const result = yield call(() => BookingTicketService.bookTicket(payload));
 
     if (get(result, "status") === 200 || get(result, "data.statusCode") === 200) {
-      toast.success("Đặt vé thành công!");
+      toast.success(i18n.t("booking:bookingSuccess"));
       yield put(BookingTicketAction.clearSelectedSeats());
       // Refresh ticket room state
       yield put({ type: GET_TICKET_API, payload: payload.maLichChieu });
     } else {
-      toast.error(get(result, "data.content") || "Đặt vé thất bại!");
+      toast.error(get(result, "data.content") || i18n.t("booking:bookingError"));
     }
   } catch (error: any) {
-    toast.error(get(error, "response.data.content") || "Đặt vé không thành công. Vui lòng thử lại!");
+    toast.error(get(error, "response.data.content") || i18n.t("booking:bookingError"));
   } finally {
     yield put(BookingTicketAction.setBookingLoading(false));
   }
