@@ -1,8 +1,9 @@
 import React, { lazy, Suspense } from "react";
-import { Routes, Route } from "react-router-dom";
+import { useRoutes, RouteObject } from "react-router-dom";
 import HomeTemplate from "shared/templates/HomeTemplate";
 import ErrorTemplate from "shared/templates/ErrorTemplate";
 import LoadingNew from "shared/components/LoadingNew/LoadingNew";
+import { PATHS } from "shared/constants/routes";
 
 const Home = lazy(() => import("features/home/pages/Home"));
 const Detail = lazy(() => import("features/film-detail/pages/Detail"));
@@ -10,65 +11,68 @@ const BookingTicket = lazy(() => import("features/booking/pages/BookingTicket"))
 const Login = lazy(() => import("features/auth/pages/Login"));
 const Register = lazy(() => import("features/auth/pages/Register"));
 
-export const initialRoutes = [
+export const routesConfig: RouteObject[] = [
   {
-    path: "/",
-    Component: Home,
-    Layout: HomeTemplate,
+    path: PATHS.HOME,
+    element: (
+      <HomeTemplate>
+        <Home />
+      </HomeTemplate>
+    ),
   },
   {
-    path: "/home",
-    Component: Home,
-    Layout: HomeTemplate,
+    path: PATHS.HOME_ALIAS,
+    element: (
+      <HomeTemplate>
+        <Home />
+      </HomeTemplate>
+    ),
   },
   {
-    path: "/detail/:id",
-    Component: Detail,
-    Layout: HomeTemplate,
+    path: PATHS.DETAIL,
+    element: (
+      <HomeTemplate>
+        <Detail />
+      </HomeTemplate>
+    ),
   },
   {
-    path: "/booking/:maLichChieu",
-    Component: BookingTicket,
-    Layout: HomeTemplate,
+    path: PATHS.BOOKING,
+    element: (
+      <HomeTemplate>
+        <BookingTicket />
+      </HomeTemplate>
+    ),
   },
   {
-    path: "/login",
-    Component: Login,
-    Layout: HomeTemplate,
+    path: PATHS.LOGIN,
+    element: (
+      <HomeTemplate>
+        <Login />
+      </HomeTemplate>
+    ),
   },
   {
-    path: "/register",
-    Component: Register,
-    Layout: HomeTemplate,
+    path: PATHS.REGISTER,
+    element: (
+      <HomeTemplate>
+        <Register />
+      </HomeTemplate>
+    ),
   },
   {
-    path: "*",
-    Component: ErrorTemplate,
-    Layout: HomeTemplate,
+    path: PATHS.NOT_FOUND,
+    element: (
+      <HomeTemplate>
+        <ErrorTemplate />
+      </HomeTemplate>
+    ),
   },
 ];
 
 const AppRoutes: React.FC = () => {
-  return (
-    <Suspense fallback={<LoadingNew />}>
-      <Routes>
-        {initialRoutes.map((route, index) => {
-          const { Component, Layout, path } = route;
-          return (
-            <Route
-              key={index}
-              path={path}
-              element={
-                <Layout>
-                  <Component />
-                </Layout>
-              }
-            />
-          );
-        })}
-      </Routes>
-    </Suspense>
-  );
+  const element = useRoutes(routesConfig);
+  return <Suspense fallback={<LoadingNew />}>{element}</Suspense>;
 };
 
 export default AppRoutes;

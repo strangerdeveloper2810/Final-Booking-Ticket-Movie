@@ -11,6 +11,7 @@ import {
 } from "./UserConstants";
 import { UserSagaAction } from "./UserSaga.reducer";
 import AuthServices from "../services/Auth.services";
+import { APP_ROUTES } from "shared/constants/routes";
 
 export function* registerSaga(
   action: PayloadAction<UserRegister>
@@ -24,14 +25,14 @@ export function* registerSaga(
       return;
     }
 
-    toast.success("Register Success");
+    toast.success("Đăng ký thành công!");
     yield put(UserSagaAction.setUserInfo(response));
-    history.push("/login");
+    history.push(APP_ROUTES.LOGIN);
   } catch (error: unknown) {
     if (error instanceof Error) {
       toast.error(error.message);
     } else {
-      toast.error("An unknown error occurred");
+      toast.error("Đã xảy ra lỗi không xác định!");
     }
   }
 }
@@ -50,14 +51,14 @@ export function* loginSaga(action: PayloadAction<UserLogin>): SagaIterator {
       return;
     }
 
-    toast.success("Login Success");
+    toast.success("Đăng nhập thành công!");
     yield put(UserSagaAction.setUserInfo(response));
-    history.push("/");
+    history.push(APP_ROUTES.HOME);
   } catch (error: unknown) {
     if (error instanceof Error) {
       toast.error(error.message);
     } else {
-      toast.error("An unknown error occurred");
+      toast.error("Đã xảy ra lỗi không xác định!");
     }
   }
 }

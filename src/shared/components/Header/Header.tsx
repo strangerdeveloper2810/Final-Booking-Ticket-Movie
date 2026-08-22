@@ -5,6 +5,7 @@ import { Button, Drawer, Avatar } from "antd";
 import { MenuOutlined, UserOutlined, LogoutOutlined } from "@ant-design/icons";
 import { RootState } from "app/store";
 import { settings, ACCESS_TOKEN, USER_LOGIN } from "shared/utils/setting";
+import { APP_ROUTES } from "shared/constants/routes";
 
 const Header: FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -18,16 +19,16 @@ const Header: FC = () => {
   }, []);
 
   const navLinks = [
-    { label: "Trang chủ", path: "/" },
-    { label: "Lịch chiếu", path: "/#showtimes" },
-    { label: "Cụm rạp", path: "/#cinemas" },
+    { label: "Trang chủ", path: APP_ROUTES.HOME },
+    { label: "Lịch chiếu", path: `${APP_ROUTES.HOME}#showtimes` },
+    { label: "Cụm rạp", path: `${APP_ROUTES.HOME}#cinemas` },
   ];
 
   return (
     <header className="sticky top-0 z-50 bg-[#151822]/90 backdrop-blur-md border-b border-[#262B3A]">
       <div className="max-w-screen-xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
         {/* Brand Logo */}
-        <NavLink to="/" className="flex items-center gap-2 group">
+        <NavLink to={APP_ROUTES.HOME} className="flex items-center gap-2 group">
           <div className="w-9 h-9 rounded-lg bg-[#F2545B] flex items-center justify-center font-bold text-white text-xl shadow-md shadow-[#F2545B]/30 group-hover:scale-105 transition-transform">
             C
           </div>
@@ -80,14 +81,14 @@ const Header: FC = () => {
             <>
               <Button
                 type="default"
-                onClick={() => navigate("/login")}
+                onClick={() => navigate(APP_ROUTES.LOGIN)}
                 className="border-[#262B3A] text-[#F5F6FA] hover:text-[#F2545B] hover:border-[#F2545B]"
               >
                 Đăng nhập
               </Button>
               <Button
                 type="primary"
-                onClick={() => navigate("/register")}
+                onClick={() => navigate(APP_ROUTES.REGISTER)}
                 className="bg-[#F2545B] hover:bg-[#FF6B72]"
               >
                 Đăng ký
@@ -165,7 +166,7 @@ const Header: FC = () => {
                   block
                   onClick={() => {
                     setDrawerOpen(false);
-                    navigate("/login");
+                    navigate(APP_ROUTES.LOGIN);
                   }}
                 >
                   Đăng nhập
@@ -175,7 +176,7 @@ const Header: FC = () => {
                   block
                   onClick={() => {
                     setDrawerOpen(false);
-                    navigate("/register");
+                    navigate(APP_ROUTES.REGISTER);
                   }}
                   className="bg-[#F2545B] hover:bg-[#FF6B72]"
                 >

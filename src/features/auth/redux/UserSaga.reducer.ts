@@ -5,6 +5,7 @@ import {
   USER_LOGIN,
   ACCESS_TOKEN,
 } from "shared/utils/setting";
+import { APP_ROUTES } from "shared/constants/routes";
 
 export interface UserLoginResult {
   hoTen: string;
@@ -28,7 +29,7 @@ const UserSagaReducer = createSlice({
       state.userLogin = action.payload;
       settings.setCookieJson(USER_LOGIN, action.payload, 30);
       settings.setCookie(ACCESS_TOKEN, action.payload.accessToken, 30);
-      history.push("/");
+      history.push(APP_ROUTES.HOME);
     },
   },
 });

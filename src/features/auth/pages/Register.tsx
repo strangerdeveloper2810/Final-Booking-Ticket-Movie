@@ -14,6 +14,7 @@ import { USER_REGISTER_API } from "../redux/UserConstants";
 import { UserRegister } from "../redux/UserType";
 import AuthLayout from "../components/AuthLayout";
 import { GROUP_ID } from "shared/utils/setting";
+import { APP_ROUTES } from "shared/constants/routes";
 
 const Register: FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -22,7 +23,7 @@ const Register: FC = () => {
     (values: Omit<UserRegister, "maNhom">) => {
       const payload: UserRegister = {
         ...values,
-        maNhom: GROUP_ID || "GP01",
+        maNhom: GROUP_ID,
       };
       dispatch({
         type: USER_REGISTER_API,
@@ -124,7 +125,7 @@ const Register: FC = () => {
         <div className="text-center text-sm text-[#9AA0B4] pt-2 border-t border-[#262B3A]">
           Đã có tài khoản?{" "}
           <NavLink
-            to="/login"
+            to={APP_ROUTES.LOGIN}
             className="text-[#F2545B] hover:text-[#FF6B72] font-semibold ml-1"
           >
             Đăng nhập

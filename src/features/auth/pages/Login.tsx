@@ -7,6 +7,7 @@ import { AppDispatch } from "app/store";
 import { USER_LOGIN_API } from "../redux/UserConstants";
 import { UserLogin } from "../redux/UserType";
 import AuthLayout from "../components/AuthLayout";
+import { APP_ROUTES } from "shared/constants/routes";
 
 const Login: FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -71,7 +72,7 @@ const Login: FC = () => {
         <div className="text-center text-sm text-[#9AA0B4] pt-2 border-t border-[#262B3A]">
           Chưa có tài khoản?{" "}
           <NavLink
-            to="/register"
+            to={APP_ROUTES.REGISTER}
             className="text-[#F2545B] hover:text-[#FF6B72] font-semibold ml-1"
           >
             Đăng ký ngay

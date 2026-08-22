@@ -1,15 +1,13 @@
 import axios from "axios";
 import { createBrowserHistory } from "history";
+import { API_CONFIG, STORAGE_KEYS, HTTP_STATUS } from "shared/constants/appConstants";
+import { APP_ROUTES } from "shared/constants/routes";
 
-export const DOMAIN: string =
-  process.env.REACT_APP_DOMAIN || "https://movienew.cybersoft.edu.vn";
-export const TokenCybersoft: string =
-  process.env.REACT_APP_TOKEN_CYBERSOFT ||
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZW5Mb3AiOiJCb290Y2FtcCA1OCIsIkhldEhhblN0cmluZyI6IjExLzA2LzIwMzAiLCJIZXRIYW5UaW1lIjoiMTkwNzQ1Mjc5OSIsIm5iZiI6MTkwNzQ1Mjc5OSwiZXhwIjoxOTA3NDUyNzk5fQ.631rl3EwTQfz6CuufNTJlys36XLVmoxo29kP-F_PDKU";
-
-export const ACCESS_TOKEN: string = "accessToken";
-export const USER_LOGIN: string = "userLogin";
-export const GROUP_ID: string = process.env.REACT_APP_GROUP_ID || "GP01";
+export const DOMAIN: string = API_CONFIG.DOMAIN;
+export const TokenCybersoft: string = API_CONFIG.TOKEN_CYBERSOFT;
+export const ACCESS_TOKEN: string = STORAGE_KEYS.ACCESS_TOKEN;
+export const USER_LOGIN: string = STORAGE_KEYS.USER_LOGIN;
+export const GROUP_ID: string = API_CONFIG.GROUP_ID;
 
 export const history = createBrowserHistory();
 
@@ -82,11 +80,14 @@ http.interceptors.request.use(
 http.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401 || error.response?.status === 403) {
+    if (
+      error.response?.status === HTTP_STATUS.UNAUTHORIZED ||
+      error.response?.status === HTTP_STATUS.FORBIDDEN
+    ) {
       settings.eraseCookie(ACCESS_TOKEN);
       settings.eraseCookie(USER_LOGIN);
-      if (window.location.pathname !== "/login") {
-        history.push("/login");
+      if (window.location.pathname !== APP_ROUTES.LOGIN) {
+        history.push(APP_ROUTES.LOGIN);
       }
     }
     return Promise.reject(error);

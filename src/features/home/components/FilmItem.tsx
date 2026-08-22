@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Card, Button, Tag } from "antd";
 import { Film } from "../redux/filmList/FilmType";
 import Star from "shared/components/Star/Star";
+import { APP_ROUTES } from "shared/constants/routes";
 
 interface FilmItemProps {
   filmItem: Film;
@@ -12,7 +13,7 @@ const FilmItem: React.FC<FilmItemProps> = ({ filmItem }) => {
   const navigate = useNavigate();
 
   const handleBooking = useCallback(() => {
-    navigate(`/detail/${filmItem.maPhim}`);
+    navigate(APP_ROUTES.DETAIL(filmItem.maPhim));
   }, [navigate, filmItem.maPhim]);
 
   return (

@@ -5,7 +5,6 @@ import isEmpty from "lodash/isEmpty";
 import { useParams, useNavigate } from "react-router-dom";
 import { PlayCircleOutlined, CalendarOutlined } from "@ant-design/icons";
 import { Image, Button, Modal, Tabs, Tag, Rate, Empty } from "antd";
-import { toast } from "react-toastify";
 import { FilmDetail } from "../redux/types/FilmDetail";
 import {
   CalendarMovieTheaterFilm,
@@ -14,6 +13,8 @@ import {
 import filmDetailServiceInstance from "../services/FlimDetailService";
 import managementServiceInstance from "../services/ManagementMovieService";
 import { formatScheduleMovie } from "shared/utils/common";
+import { APP_ROUTES } from "shared/constants/routes";
+import { HTTP_STATUS } from "shared/constants/appConstants";
 
 const Detail: React.FC = () => {
   const { id } = useParams();
@@ -29,12 +30,12 @@ const Detail: React.FC = () => {
         const param = { maPhim: id };
 
         const detailRes = await filmDetailServiceInstance.getFilmDetail(param);
-        if (get(detailRes, "status") === 200) {
+        if (get(detailRes, "status") === HTTP_STATUS.OK) {
           setDetailFilm(get(detailRes, "data.content"));
         }
 
         const calendarRes = await managementServiceInstance.getInfoCanlendarFilm(param);
-        if (get(calendarRes, "status") === 200) {
+        if (get(calendarRes, "status") === HTTP_STATUS.OK) {
           setCalendarMovieTheaterFilm(get(calendarRes, "data.content"));
         }
       }
@@ -92,7 +93,7 @@ const Detail: React.FC = () => {
                 <Button
                   key={idx}
                   type="dashed"
-                  onClick={() => navigate(`/booking/${get(theater, "maLichChieu", "")}`)}
+                  onClick={() => navigate(APP_ROUTES.BOOKING(get(theater, "maLichChieu", "")))}
                   className="bg-[#0B0D12] text-[#F2545B] border-[#F2545B]/40 hover:bg-[#F2545B] hover:text-white font-mono text-sm py-2 h-auto rounded-lg"
                 >
                   <span className="font-bold mr-1">{get(theater, "tenRap", "")}:</span>
@@ -107,15 +108,13 @@ const Detail: React.FC = () => {
   }));
 
   return (
-    <div className="w-full pb-16">
-      {/* Backdrop Hero Header */}
-      <div className="relative w-full min-h-[450px] bg-[#151822] flex items-center overflow-hidden">
-        {detailFilm?.hinhAnh && (
-          <div
-            className="absolute inset-0 bg-cover bg-center filter blur-xl opacity-30 scale-110"
-            style={{ backgroundImage: `url(${detailFilm.hinhAnh})` }}
-          />
-        )}
+    <div className="min-h-screen bg-[#0B0D12] pb-16">
+      {/* Hero Backdrop Banner */}
+      <div className="relative w-full h-[450px] md:h-[550px] overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center filter blur-xl scale-110 opacity-30"
+          style={{ backgroundImage: `url(${detailFilm?.hinhAnh})` }}
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12] via-[#0B0D12]/70 to-transparent" />
 
         <div className="relative max-w-screen-xl mx-auto px-4 md:px-6 py-12 w-full grid grid-cols-1 md:grid-cols-4 gap-8 items-center">
@@ -153,28 +152,24 @@ const Detail: React.FC = () => {
               {detailFilm?.danhGia && (
                 <div className="flex items-center gap-2">
                   <Rate disabled defaultValue={detailFilm.danhGia / 2} allowHalf />
-                  <span className="text-[#FFC857] font-bold">{detailFilm.danhGia}/10</span>
+                  <span className="text-[#FFC857] font-bold">
+                    {detailFilm.danhGia}/10
+                  </span>
                 </div>
               )}
             </div>
 
-            <p className="text-sm md:text-base text-[#9AA0B4] leading-relaxed max-w-2xl">
-              {detailFilm?.moTa || "Chưa có mô tả chi tiết cho bộ phim này."}
+            <p className="text-sm md:text-base text-[#9AA0B4] line-clamp-4 leading-relaxed max-w-3xl">
+              {detailFilm?.moTa || "Mô tả phim đang được cập nhật..."}
             </p>
 
-            <div className="pt-2 flex flex-wrap gap-4 justify-center md:justify-start">
+            <div className="pt-2 flex flex-wrap justify-center md:justify-start gap-4">
               <Button
                 type="primary"
                 size="large"
                 icon={<PlayCircleOutlined />}
-                onClick={() => {
-                  if (detailFilm?.trailer) {
-                    setIsTrailerOpen(true);
-                  } else {
-                    toast.error("Phim chưa cập nhật trailer!");
-                  }
-                }}
-                className="bg-[#F2545B] hover:bg-[#FF6B72] font-semibold flex items-center"
+                onClick={() => setIsTrailerOpen(true)}
+                className="bg-[#F2545B] hover:bg-[#FF6B72] font-semibold h-12 px-6 rounded-lg shadow-lg shadow-[#F2545B]/20"
               >
                 Xem Trailer
               </Button>

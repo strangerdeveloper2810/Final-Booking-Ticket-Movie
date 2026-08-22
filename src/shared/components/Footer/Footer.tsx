@@ -1,5 +1,6 @@
 import React, { FC } from "react";
 import { NavLink } from "react-router-dom";
+import { APP_ROUTES } from "shared/constants/routes";
 
 const Footer: FC = () => {
   return (
@@ -24,13 +25,13 @@ const Footer: FC = () => {
             <h4 className="text-sm font-semibold text-[#F5F6FA] uppercase tracking-wider mb-2">
               Điều hướng
             </h4>
-            <NavLink to="/" className="text-sm hover:text-[#F2545B] transition-colors">
+            <NavLink to={APP_ROUTES.HOME} className="text-sm hover:text-[#F2545B] transition-colors">
               Trang chủ
             </NavLink>
-            <NavLink to="/#showtimes" className="text-sm hover:text-[#F2545B] transition-colors">
+            <NavLink to={`${APP_ROUTES.HOME}#showtimes`} className="text-sm hover:text-[#F2545B] transition-colors">
               Lịch chiếu phim
             </NavLink>
-            <NavLink to="/#cinemas" className="text-sm hover:text-[#F2545B] transition-colors">
+            <NavLink to={`${APP_ROUTES.HOME}#cinemas`} className="text-sm hover:text-[#F2545B] transition-colors">
               Hệ thống cụm rạp
             </NavLink>
           </div>
