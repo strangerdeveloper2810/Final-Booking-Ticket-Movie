@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import get from "lodash/get";
 import isEmpty from "lodash/isEmpty";
 import SliderComponent from "react-slick";
+import { useTranslation } from "react-i18next";
 import { RootState, AppDispatch } from "app/store";
 import { GET_ALL_FILM } from "../redux/filmList/FilmActionTypes";
 import FilmItem from "./FilmItem";
@@ -14,6 +15,7 @@ const Film: FC = () => {
   );
   const { isLoading } = useSelector((state: RootState) => state.Loading);
   const dispatch = useDispatch<AppDispatch>();
+  const { t } = useTranslation(["home", "common"]);
 
   const getFilmSaga = useCallback(() => {
     dispatch({ type: GET_ALL_FILM });
@@ -53,10 +55,10 @@ const Film: FC = () => {
     <section id="now-showing" className="py-10">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-2xl md:text-3xl font-extrabold text-[#F5F6FA] tracking-tight">
-            Phim Đang Chiếu
+          <h2 className="text-2xl md:text-3xl font-extrabold text-text-primary tracking-tight">
+            {t("home:nowShowingTitle")}
           </h2>
-          <div className="h-1 w-16 bg-[#F2545B] rounded-full mt-2" />
+          <div className="h-1 w-16 bg-primary rounded-full mt-2" />
         </div>
       </div>
 

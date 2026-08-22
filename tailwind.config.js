@@ -5,15 +5,15 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        background: "#0B0D12",
-        surface: "#151822",
-        "surface-hover": "#1D2130",
-        border: "#262B3A",
+        background: "var(--bg-color)",
+        surface: "var(--surface-color)",
+        "surface-hover": "var(--surface-hover-color)",
+        border: "var(--border-color)",
         primary: "#F2545B",
         "primary-hover": "#FF6B72",
         secondary: "#FFC857",
-        "text-primary": "#F5F6FA",
-        "text-secondary": "#9AA0B4",
+        "text-primary": "var(--text-primary-color)",
+        "text-secondary": "var(--text-secondary-color)",
       },
       borderRadius: {
         xl: "10px",

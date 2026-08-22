@@ -5,6 +5,7 @@ import isEmpty from "lodash/isEmpty";
 import { useParams, useNavigate } from "react-router-dom";
 import { PlayCircleOutlined, CalendarOutlined } from "@ant-design/icons";
 import { Image, Button, Modal, Tabs, Tag, Rate, Empty } from "antd";
+import { useTranslation } from "react-i18next";
 import { FilmDetail } from "../redux/types/FilmDetail";
 import {
   CalendarMovieTheaterFilm,
@@ -20,6 +21,7 @@ import SEO from "shared/components/SEO/SEO";
 const Detail: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { t } = useTranslation(["detail", "common"]);
 
   const [detailFilm, setDetailFilm] = useState<FilmDetail>();
   const [calendarMovieTheaterFilm, setCalendarMovieTheaterFilm] = useState<CalendarMovieTheaterFilm>();
@@ -79,10 +81,10 @@ const Detail: React.FC = () => {
         items={map(get(calendar, "cumRapChieu", []), (theaterComplex, index) => ({
           label: (
             <div className="text-left py-1 pr-2 max-w-[220px]">
-              <p className="font-bold text-[#F5F6FA] text-sm line-clamp-1">
+              <p className="font-bold text-text-primary text-sm line-clamp-1">
                 {get(theaterComplex, "tenCumRap", "")}
               </p>
-              <p className="text-xs text-[#9AA0B4] line-clamp-1">
+              <p className="text-xs text-text-secondary line-clamp-1">
                 {get(theaterComplex, "diaChi", "")}
               </p>
             </div>
@@ -95,7 +97,7 @@ const Detail: React.FC = () => {
                   key={idx}
                   type="dashed"
                   onClick={() => navigate(APP_ROUTES.BOOKING(get(theater, "maLichChieu", "")))}
-                  className="bg-[#0B0D12] text-[#F2545B] border-[#F2545B]/40 hover:bg-[#F2545B] hover:text-white font-mono text-sm py-2 h-auto rounded-lg"
+                  className="bg-background text-primary border-primary/40 hover:bg-primary hover:text-white font-mono text-sm py-2 h-auto rounded-lg"
                 >
                   <span className="font-bold mr-1">{get(theater, "tenRap", "")}:</span>
                   {formatScheduleMovie(get(theater, "ngayChieuGioChieu", ""))}
@@ -127,10 +129,10 @@ const Detail: React.FC = () => {
     : undefined;
 
   return (
-    <div className="min-h-screen bg-[#0B0D12] pb-16">
+    <div className="min-h-screen bg-background pb-16 transition-colors">
       <SEO
-        title={detailFilm?.tenPhim ? `Phim ${detailFilm.tenPhim} - Lịch Chiếu & Đặt Vé` : "Chi Tiết Phim"}
-        description={detailFilm?.moTa || "Xem lịch chiếu và đặt vé phim chiếu rạp tại Cinefix."}
+        title={detailFilm?.tenPhim ? `${detailFilm.tenPhim} - ${t("detail:showtimesTitle")}` : t("detail:showtimesTitle")}
+        description={detailFilm?.moTa || t("detail:descriptionPlaceholder")}
         image={detailFilm?.hinhAnh}
         jsonLd={movieJsonLd}
       />
@@ -141,11 +143,11 @@ const Detail: React.FC = () => {
           className="absolute inset-0 bg-cover bg-center filter blur-xl scale-110 opacity-30"
           style={{ backgroundImage: `url(${detailFilm?.hinhAnh})` }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12] via-[#0B0D12]/70 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent" />
 
         <div className="relative max-w-screen-xl mx-auto px-4 md:px-6 py-12 w-full grid grid-cols-1 md:grid-cols-4 gap-8 items-center">
           <div className="flex justify-center md:justify-start">
-            <div className="w-64 h-96 rounded-xl overflow-hidden shadow-2xl border-2 border-[#262B3A] group">
+            <div className="w-64 h-96 rounded-xl overflow-hidden shadow-2xl border-2 border-border group">
               <Image
                 src={detailFilm?.hinhAnh}
                 alt={detailFilm?.tenPhim}
@@ -157,19 +159,19 @@ const Detail: React.FC = () => {
 
           <div className="md:col-span-3 space-y-4 text-center md:text-left">
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
-              {detailFilm?.hot && <Tag color="#F2545B" className="font-semibold">HOT</Tag>}
-              {detailFilm?.dangChieu && <Tag color="#FFC857" className="font-semibold text-black">ĐANG CHIẾU</Tag>}
-              {detailFilm?.sapChieu && <Tag color="#52c41a" className="font-semibold">SẮP CHIẾU</Tag>}
+              {detailFilm?.hot && <Tag color="#F2545B" className="font-semibold">{t("common:hot")}</Tag>}
+              {detailFilm?.dangChieu && <Tag color="#FFC857" className="font-semibold text-black">{t("common:nowShowing")}</Tag>}
+              {detailFilm?.sapChieu && <Tag color="#52c41a" className="font-semibold">{t("common:comingSoon")}</Tag>}
             </div>
 
-            <h1 className="text-3xl md:text-5xl font-extrabold text-[#F5F6FA] tracking-tight">
+            <h1 className="text-3xl md:text-5xl font-extrabold text-text-primary tracking-tight">
               {detailFilm?.tenPhim}
             </h1>
 
-            <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-sm text-[#9AA0B4]">
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 text-sm text-text-secondary">
               {detailFilm?.ngayKhoiChieu && (
                 <div className="flex items-center gap-1">
-                  <CalendarOutlined className="text-[#F2545B]" />
+                  <CalendarOutlined className="text-primary" />
                   <span>
                     {new Date(detailFilm.ngayKhoiChieu).toLocaleDateString("vi-VN")}
                   </span>
@@ -178,15 +180,15 @@ const Detail: React.FC = () => {
               {detailFilm?.danhGia && (
                 <div className="flex items-center gap-2">
                   <Rate disabled defaultValue={detailFilm.danhGia / 2} allowHalf />
-                  <span className="text-[#FFC857] font-bold">
+                  <span className="text-secondary font-bold">
                     {detailFilm.danhGia}/10
                   </span>
                 </div>
               )}
             </div>
 
-            <p className="text-sm md:text-base text-[#9AA0B4] line-clamp-4 leading-relaxed max-w-3xl">
-              {detailFilm?.moTa || "Mô tả phim đang được cập nhật..."}
+            <p className="text-sm md:text-base text-text-secondary line-clamp-4 leading-relaxed max-w-3xl">
+              {detailFilm?.moTa || t("detail:descriptionPlaceholder")}
             </p>
 
             <div className="pt-2 flex flex-wrap justify-center md:justify-start gap-4">
@@ -195,9 +197,9 @@ const Detail: React.FC = () => {
                 size="large"
                 icon={<PlayCircleOutlined />}
                 onClick={() => setIsTrailerOpen(true)}
-                className="bg-[#F2545B] hover:bg-[#FF6B72] font-semibold h-12 px-6 rounded-lg shadow-lg shadow-[#F2545B]/20"
+                className="bg-primary hover:bg-primary-hover font-semibold h-12 px-6 rounded-lg shadow-lg shadow-primary/20 border-none"
               >
-                Xem Trailer
+                {t("detail:watchTrailer")}
               </Button>
             </div>
           </div>
@@ -207,13 +209,13 @@ const Detail: React.FC = () => {
       {/* Showtimes Section */}
       <div className="max-w-screen-xl mx-auto px-4 md:px-6 mt-10">
         <div className="mb-6">
-          <h2 className="text-2xl font-extrabold text-[#F5F6FA]">Lịch Chiếu Phim</h2>
-          <div className="h-1 w-16 bg-[#F2545B] rounded-full mt-2" />
+          <h2 className="text-2xl font-extrabold text-text-primary">{t("detail:showtimesTitle")}</h2>
+          <div className="h-1 w-16 bg-primary rounded-full mt-2" />
         </div>
 
-        <div className="bg-[#151822] border border-[#262B3A] rounded-xl p-4 md:p-6 shadow-xl">
+        <div className="bg-surface border border-border rounded-xl p-4 md:p-6 shadow-xl transition-colors">
           {isEmpty(calendarSystem) ? (
-            <Empty description={<span className="text-[#9AA0B4]">Hiện chưa có lịch chiếu cho phim này.</span>} />
+            <Empty description={<span className="text-text-secondary">{t("detail:noShowtimes")}</span>} />
           ) : (
             <Tabs tabPosition="left" items={tabItems} />
           )}

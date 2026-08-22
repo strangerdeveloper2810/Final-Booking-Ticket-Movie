@@ -1,0 +1,12 @@
+{
+  "aboutText": "Premier movie ticket booking system. Experience ultimate cinema with Cinefix.",
+  "navigation": "Navigation",
+  "home": "Home",
+  "showtimes": "Showtimes",
+  "cinemas": "Cinemas",
+  "information": "Information",
+  "terms": "Terms of Use",
+  "privacy": "Privacy Policy",
+  "support": "Customer Support",
+  "copyright": "© {{year}} Cinefix. Built with React, Tailwind & Ant Design."
+}

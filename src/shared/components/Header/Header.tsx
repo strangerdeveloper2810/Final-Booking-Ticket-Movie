@@ -15,6 +15,7 @@ import { RootState } from "app/store";
 import { settings, ACCESS_TOKEN, USER_LOGIN } from "shared/utils/setting";
 import { APP_ROUTES } from "shared/constants/routes";
 import { useTheme } from "shared/theme/ThemeContext";
+import { SUPPORTED_LANGUAGES, LanguageCode } from "shared/constants/languages";
 
 const Header: FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -33,28 +34,16 @@ const Header: FC = () => {
     i18n.changeLanguage(lng);
   };
 
-  const languageMenuItems = [
-    {
-      key: "vi",
-      label: (
-        <span className="flex items-center gap-2">
-          <span>🇻🇳</span>
-          <span>Tiếng Việt</span>
-        </span>
-      ),
-      onClick: () => changeLanguage("vi"),
-    },
-    {
-      key: "en",
-      label: (
-        <span className="flex items-center gap-2">
-          <span>🇬🇧</span>
-          <span>English</span>
-        </span>
-      ),
-      onClick: () => changeLanguage("en"),
-    },
-  ];
+  const languageMenuItems = SUPPORTED_LANGUAGES.map((lang) => ({
+    key: lang.code,
+    label: (
+      <span className="flex items-center gap-2">
+        <span>{lang.flag}</span>
+        <span>{lang.label}</span>
+      </span>
+    ),
+    onClick: () => changeLanguage(lang.code),
+  }));
 
   const navLinks = [
     { label: t("header:home"), path: APP_ROUTES.HOME },
@@ -63,16 +52,19 @@ const Header: FC = () => {
   ];
 
   const isDark = themeMode === "dark";
+  const currentLang = SUPPORTED_LANGUAGES.find(
+    (l) => l.code === (i18n.language || LanguageCode.VI)
+  ) || SUPPORTED_LANGUAGES[0];
 
   return (
-    <header className="sticky top-0 z-50 bg-[#151822]/90 dark:bg-[#151822]/90 bg-white/90 backdrop-blur-md border-b border-[#262B3A] dark:border-[#262B3A] border-gray-200 transition-colors">
+    <header className="sticky top-0 z-50 bg-surface/90 backdrop-blur-md border-b border-border transition-colors">
       <div className="max-w-screen-xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
         {/* Brand Logo */}
         <NavLink to={APP_ROUTES.HOME} className="flex items-center gap-2 group">
-          <div className="w-9 h-9 rounded-lg bg-[#F2545B] flex items-center justify-center font-bold text-white text-xl shadow-md shadow-[#F2545B]/30 group-hover:scale-105 transition-transform">
+          <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center font-bold text-white text-xl shadow-md shadow-primary/30 group-hover:scale-105 transition-transform">
             C
           </div>
-          <span className="text-xl font-bold text-[#F5F6FA] dark:text-[#F5F6FA] text-gray-900 tracking-wide">
+          <span className="text-xl font-bold text-text-primary tracking-wide">
             Cinefix
           </span>
         </NavLink>
@@ -84,8 +76,8 @@ const Header: FC = () => {
               key={link.label}
               to={link.path}
               className={({ isActive }) =>
-                `text-sm font-medium transition-colors hover:text-[#F2545B] ${
-                  isActive ? "text-[#F2545B]" : "text-[#9AA0B4] dark:text-[#9AA0B4] text-gray-600"
+                `text-sm font-medium transition-colors hover:text-primary ${
+                  isActive ? "text-primary font-semibold" : "text-text-secondary"
                 }`
               }
             >
@@ -99,32 +91,33 @@ const Header: FC = () => {
           {/* Theme Switcher */}
           <Button
             type="text"
-            icon={isDark ? <SunOutlined className="text-[#FFC857]" /> : <MoonOutlined className="text-gray-700" />}
+            icon={isDark ? <SunOutlined className="text-secondary" /> : <MoonOutlined className="text-text-primary" />}
             onClick={toggleTheme}
-            className="hover:bg-white/10 dark:hover:bg-white/10 rounded-lg"
-            title={isDark ? "Chuyển sang Giao diện Sáng" : "Chuyển sang Giao diện Tối"}
+            className="hover:bg-surface-hover rounded-lg"
+            title={isDark ? "Light Mode" : "Dark Mode"}
           />
 
-          {/* Language Switcher Dropdown with Country Flags */}
+          {/* Language Switcher Dropdown */}
           <Dropdown menu={{ items: languageMenuItems }} placement="bottomRight">
             <Button
               type="text"
-              icon={<GlobalOutlined className="text-[#9AA0B4] dark:text-[#9AA0B4] text-gray-700" />}
-              className="hover:bg-white/10 font-medium uppercase text-xs text-[#F5F6FA] dark:text-[#F5F6FA] text-gray-800 flex items-center gap-1"
+              icon={<GlobalOutlined className="text-text-secondary" />}
+              className="hover:bg-surface-hover font-medium text-xs text-text-primary flex items-center gap-1.5"
             >
-              <span>{i18n.language === "en" ? "🇬🇧 EN" : "🇻🇳 VI"}</span>
+              <span>{currentLang.flag}</span>
+              <span>{currentLang.code.toUpperCase()}</span>
             </Button>
           </Dropdown>
 
           {/* User Auth Info */}
           {userLogin ? (
-            <div className="flex items-center gap-3 bg-[#0B0D12]/60 dark:bg-[#0B0D12]/60 bg-gray-100 px-3 py-1.5 rounded-lg border border-[#262B3A] dark:border-[#262B3A] border-gray-300">
+            <div className="flex items-center gap-3 bg-background px-3 py-1.5 rounded-lg border border-border">
               <Avatar
                 size="small"
                 icon={<UserOutlined />}
-                className="bg-[#F2545B]"
+                className="bg-primary"
               />
-              <span className="text-sm font-medium text-[#F5F6FA] dark:text-[#F5F6FA] text-gray-800">
+              <span className="text-sm font-medium text-text-primary">
                 {userLogin.hoTen}
               </span>
               <Button
@@ -143,14 +136,14 @@ const Header: FC = () => {
               <Button
                 type="default"
                 onClick={() => navigate(APP_ROUTES.LOGIN)}
-                className="border-[#262B3A] dark:border-[#262B3A] border-gray-300 text-[#F5F6FA] dark:text-[#F5F6FA] text-gray-800 hover:text-[#F2545B] hover:border-[#F2545B]"
+                className="border-border text-text-primary hover:text-primary hover:border-primary"
               >
                 {t("header:login")}
               </Button>
               <Button
                 type="primary"
                 onClick={() => navigate(APP_ROUTES.REGISTER)}
-                className="bg-[#F2545B] hover:bg-[#FF6B72]"
+                className="bg-primary hover:bg-primary-hover"
               >
                 {t("header:register")}
               </Button>
@@ -162,12 +155,12 @@ const Header: FC = () => {
         <div className="flex items-center gap-2 md:hidden">
           <Button
             type="text"
-            icon={isDark ? <SunOutlined className="text-[#FFC857]" /> : <MoonOutlined className="text-gray-700" />}
+            icon={isDark ? <SunOutlined className="text-secondary" /> : <MoonOutlined className="text-text-primary" />}
             onClick={toggleTheme}
           />
           <Button
             type="text"
-            icon={<MenuOutlined className="text-xl text-[#F5F6FA] dark:text-[#F5F6FA] text-gray-800" />}
+            icon={<MenuOutlined className="text-xl text-text-primary" />}
             onClick={() => setDrawerOpen(true)}
           />
         </div>
@@ -178,33 +171,29 @@ const Header: FC = () => {
         title={
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-md bg-[#F2545B] flex items-center justify-center font-bold text-white">
+              <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center font-bold text-white">
                 C
               </div>
-              <span className="font-bold text-[#F5F6FA] dark:text-[#F5F6FA]">Cinefix</span>
+              <span className="font-bold text-text-primary">Cinefix</span>
             </div>
             <div className="flex items-center gap-2">
-              <Button
-                size="small"
-                onClick={() => changeLanguage("vi")}
-                type={i18n.language === "vi" ? "primary" : "default"}
-              >
-                🇻🇳 VI
-              </Button>
-              <Button
-                size="small"
-                onClick={() => changeLanguage("en")}
-                type={i18n.language === "en" ? "primary" : "default"}
-              >
-                🇬🇧 EN
-              </Button>
+              {SUPPORTED_LANGUAGES.map((lang) => (
+                <Button
+                  key={lang.code}
+                  size="small"
+                  onClick={() => changeLanguage(lang.code)}
+                  type={i18n.language === lang.code ? "primary" : "default"}
+                >
+                  {lang.flag} {lang.code.toUpperCase()}
+                </Button>
+              ))}
             </div>
           </div>
         }
         placement="right"
         onClose={() => setDrawerOpen(false)}
         open={drawerOpen}
-        className="bg-[#151822] dark:bg-[#151822] text-[#F5F6FA]"
+        className="bg-surface text-text-primary"
       >
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-4">
@@ -213,23 +202,23 @@ const Header: FC = () => {
                 key={link.label}
                 to={link.path}
                 onClick={() => setDrawerOpen(false)}
-                className="text-base font-medium text-[#9AA0B4] hover:text-[#F2545B] py-2 border-b border-[#262B3A]"
+                className="text-base font-medium text-text-secondary hover:text-primary py-2 border-b border-border"
               >
                 {link.label}
               </NavLink>
             ))}
           </div>
 
-          <div className="pt-4 border-t border-[#262B3A]">
+          <div className="pt-4 border-t border-border">
             {userLogin ? (
               <div className="flex flex-col gap-3">
                 <div className="flex items-center gap-3">
-                  <Avatar icon={<UserOutlined />} className="bg-[#F2545B]" />
+                  <Avatar icon={<UserOutlined />} className="bg-primary" />
                   <div>
-                    <p className="font-medium text-[#F5F6FA]">
+                    <p className="font-medium text-text-primary">
                       {userLogin.hoTen}
                     </p>
-                    <p className="text-xs text-[#9AA0B4]">{userLogin.email}</p>
+                    <p className="text-xs text-text-secondary">{userLogin.email}</p>
                   </div>
                 </div>
                 <Button
@@ -263,7 +252,7 @@ const Header: FC = () => {
                     setDrawerOpen(false);
                     navigate(APP_ROUTES.REGISTER);
                   }}
-                  className="bg-[#F2545B] hover:bg-[#FF6B72]"
+                  className="bg-primary hover:bg-primary-hover"
                 >
                   {t("header:register")}
                 </Button>
