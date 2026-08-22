@@ -5,21 +5,20 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "react-toastify/dist/ReactToastify.css";
 import "antd/dist/reset.css";
-import { unstable_HistoryRouter as HistoryBrowser } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { Provider } from "react-redux";
 import { store } from "app/store";
-import { history } from "shared/utils/setting";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
   <Provider store={store}>
-    <HistoryBrowser history={history}>
+    <BrowserRouter>
       <App />
-    </HistoryBrowser>
+    </BrowserRouter>
   </Provider>
 );
 

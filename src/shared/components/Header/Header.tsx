@@ -14,8 +14,6 @@ const Header: FC = () => {
   const handleLogOut = useCallback(() => {
     settings.eraseCookie(ACCESS_TOKEN);
     settings.eraseCookie(USER_LOGIN);
-    settings.clearStorage(ACCESS_TOKEN);
-    settings.clearStorage(USER_LOGIN);
     window.location.reload();
   }, []);
 

@@ -1,92 +1,61 @@
 import axios from "axios";
 import { createBrowserHistory } from "history";
-// export const DOMAIN = "https://movieapi.cyberlearn.vn";
+
 export const DOMAIN: string = "https://movienew.cybersoft.edu.vn";
 export const TokenCybersoft: string =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZW5Mb3AiOiJCb290Y2FtcCA1OCIsIkhldEhhblN0cmluZyI6IjExLzA2LzIwMzAiLCJIZXRIYW5UaW1lIjoiMTkwNzQ1Mjc5OSIsIm5iZiI6MTkwNzQ1Mjc5OSwiZXhwIjoxOTA3NDUyNzk5fQ.631rl3EwTQfz6CuufNTJlys36XLVmoxo29kP-F_PDKU";
+
 export const ACCESS_TOKEN: string = "accessToken";
 export const USER_LOGIN: string = "userLogin";
-export const GROUP_ID = "GP01";
-export const history: any = createBrowserHistory();
+export const GROUP_ID: string = "GP01";
 
-//Cấu hình các hàm get set storage cũng như cookie
+export const history = createBrowserHistory();
 
 export const settings = {
-  setStorageJson: (name: string, data: any): void => {
-    data = JSON.stringify(data);
-    localStorage.setItem(name, data);
-  },
-  setStorage: (name: string, data: string): void => {
-    localStorage.setItem(name, data);
-  },
-  getStorageJson: (name: string): any | undefined => {
-    if (localStorage.getItem(name)) {
-      const dataStore: string | undefined | null = localStorage.getItem(name);
-      if (typeof dataStore == "string") {
-        const data = JSON.parse(dataStore);
-        return data;
-      }
-      return undefined;
-    }
-    return; //undefined
-  },
-  getStore: (name: string): string | null | undefined | boolean | any => {
-    if (localStorage.getItem(name)) {
-      const data: string | null | undefined = localStorage.getItem(name);
-      return data;
-    }
-    return; //undefined
-  },
-  setCookieJson: (name: string, value: any, days: number): void => {
+  setCookie: (name: string, value: string, days: number = 30): void => {
     let expires = "";
     if (days) {
-      let date = new Date();
+      const date = new Date();
       date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-      expires = "; expires=" + date.toUTCString();
+      expires = `; expires=${date.toUTCString()}`;
     }
-    value = JSON.stringify(value);
-    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    document.cookie = `${name}=${value || ""}${expires}; path=/; SameSite=Lax`;
   },
-  getCookieJson: (name: string): any => {
-    let nameEQ = name + "=";
-    let ca = document.cookie.split(";");
-    for (let i = 0; i < ca.length; i++) {
-      let c = ca[i];
-      // eslint-disable-next-line eqeqeq
-      while (c.charAt(0) == " ") c = c.substring(1, c.length);
-      // eslint-disable-next-line eqeqeq
-      if (c.indexOf(nameEQ) == 0)
-        return JSON.parse(c.substring(nameEQ.length, c.length));
-    }
-    return null;
-  },
-  setCookie: (name: string, value: string, days: number): void => {
-    let expires = "";
-    if (days) {
-      let date = new Date();
-      date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-      expires = "; expires=" + date.toUTCString();
-    }
-    document.cookie = name + "=" + (value || "") + expires + "; path=/";
-  },
+
   getCookie: (name: string): string | null => {
-    let nameEQ = name + "=";
-    let ca = document.cookie.split(";");
+    const nameEQ = `${name}=`;
+    const ca = document.cookie.split(";");
     for (let i = 0; i < ca.length; i++) {
       let c = ca[i];
-      // eslint-disable-next-line eqeqeq
-      while (c.charAt(0) == " ") c = c.substring(1, c.length);
-      // eslint-disable-next-line eqeqeq
-      if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+      while (c.charAt(0) === " ") c = c.substring(1, c.length);
+      if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
     }
     return null;
   },
-  eraseCookie: (name: string): void => {
-    document.cookie =
-      name + "=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+
+  setCookieJson: (name: string, value: any, days: number = 30): void => {
+    try {
+      const jsonValue = JSON.stringify(value);
+      settings.setCookie(name, encodeURIComponent(jsonValue), days);
+    } catch (error) {
+      console.error("Error setting cookie JSON:", error);
+    }
   },
-  clearStorage: (name: string) => {
-    localStorage.removeItem(name);
+
+  getCookieJson: (name: string): any => {
+    try {
+      const cookieValue = settings.getCookie(name);
+      if (cookieValue) {
+        return JSON.parse(decodeURIComponent(cookieValue));
+      }
+    } catch (error) {
+      console.error("Error getting cookie JSON:", error);
+    }
+    return null;
+  },
+
+  eraseCookie: (name: string): void => {
+    document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;`;
   },
 };
 
@@ -95,53 +64,29 @@ export const http = axios.create({
   timeout: 20000,
 });
 
-//Cấu hình cho tất cả request gửi đi
-// http.interceptors.request
 http.interceptors.request.use(
   (config: any) => {
-    //Cấu hình tất cả header gửi đi đều có bearer token (token authorization đăng nhập)
+    const token = settings.getCookie(ACCESS_TOKEN);
     config.headers = {
       ...config.headers,
-      Authorization: "Bearer " + settings.getStore(ACCESS_TOKEN),
+      Authorization: token ? `Bearer ${token}` : "",
       TokenCybersoft,
     };
-
     return config;
   },
-  (err) => {
-    return Promise.reject(err);
-  }
+  (error) => Promise.reject(error)
 );
 
-//Cấu hình cho tất cả kết quả trả về (cấu hình cho response)
 http.interceptors.response.use(
-  (response) => {
-    // Any status code that lie within the range of 2xx cause this function to trigger
-    // Do something with response data
-    return response;
-  },
+  (response) => response,
   (error) => {
-    // //Hàm cấu hình cho tất cả lỗi nhận về
-    // if (error.response?.status === 400 || error.response?.status === 404) {
-    //   //Chuyển hướng trang về trang chủ
-    //   console.log({ error })
-    //   return;
-    // }
-
-    // if (error.response?.status === 401 || error.response?.status === 403) {
-    //   history.push("/login");
-    // }
-
+    if (error.response?.status === 401 || error.response?.status === 403) {
+      settings.eraseCookie(ACCESS_TOKEN);
+      settings.eraseCookie(USER_LOGIN);
+      if (window.location.pathname !== "/login") {
+        history.push("/login");
+      }
+    }
     return Promise.reject(error);
   }
 );
-/* Các status code thường gặp
-    200: Request gửi đi và nhận về kết quả thành
-    201: request gửi đi thành công và đã được khởi tạo 
-    400: bad request => request gửi đi thành công tuy nhiên không tìm thấy dữ liệu từ tham số gửi đi
-    404: Not found (Không tìm thấy api đó), hoặc tương tự 400
-    401: Unauthorize token không hợp lệ không có quyền truy cập vào api đó
-    403: Forbinden token hợp lệ tuy nhiên chưa đủ quyền để truy cập vào api đó
-    500: Error server (Lỗi xảy ra trên server có khả năng là frontend gửi dữ liệu chưa hợp lệ dẫn đến backend xử lý bị lỗi). Backend code lỗi trên server ! => Test bằng post man hoặc swagger nếu api không lỗi => front code sai, ngược lại tail fail trên post man và swagger thì báo backend fix.
-
-*/

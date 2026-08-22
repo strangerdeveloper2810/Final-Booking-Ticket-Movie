@@ -12,7 +12,7 @@ module.exports = (env, argv) => {
 
   return {
     mode: isProduction ? "production" : "development",
-    devtool: isProduction ? "source-map" : "cheap-module-source-map",
+    devtool: isProduction ? "source-map" : "eval-cheap-module-source-map",
     entry: "./src/index.tsx",
     output: {
       path: path.resolve(__dirname, "build"),
@@ -27,7 +27,10 @@ module.exports = (env, argv) => {
     },
     resolve: {
       extensions: [".tsx", ".ts", ".jsx", ".js", ".json"],
-      modules: ["node_modules", path.resolve(__dirname, "src")],
+      modules: [path.resolve(__dirname, "src"), "node_modules"],
+      alias: {
+        src: path.resolve(__dirname, "src"),
+      },
     },
     module: {
       rules: [
@@ -42,13 +45,24 @@ module.exports = (env, argv) => {
                   syntax: "typescript",
                   tsx: true,
                   decorators: true,
+                  dynamicImport: true,
                 },
                 transform: {
                   react: {
                     runtime: "automatic",
+                    development: !isProduction,
                   },
                 },
                 target: "es2022",
+                minify: isProduction
+                  ? {
+                      compress: {
+                        unused: true,
+                        drop_console: true,
+                      },
+                      mangle: true,
+                    }
+                  : undefined,
               },
             },
           },
@@ -57,13 +71,23 @@ module.exports = (env, argv) => {
           test: /\.css$/,
           use: [
             isProduction ? MiniCssExtractPlugin.loader : "style-loader",
-            "css-loader",
+            {
+              loader: "css-loader",
+              options: {
+                sourceMap: !isProduction,
+              },
+            },
             "postcss-loader",
           ],
         },
         {
           test: /\.(png|jpe?g|gif|svg|webp|ico)$/i,
-          type: "asset/resource",
+          type: "asset",
+          parser: {
+            dataUrlCondition: {
+              maxSize: 8 * 1024, // Inline images smaller than 8KB as base64 DataURLs
+            },
+          },
           generator: {
             filename: "static/media/[name].[hash:8][ext]",
           },
@@ -131,8 +155,10 @@ module.exports = (env, argv) => {
         new TerserPlugin({
           parallel: true,
           terserOptions: {
-            compress: true,
-            mangle: true,
+            compress: {
+              drop_console: isProduction,
+              drop_debugger: isProduction,
+            },
             output: {
               comments: false,
             },
@@ -143,7 +169,15 @@ module.exports = (env, argv) => {
       ],
       splitChunks: {
         chunks: "all",
+        maxInitialRequests: 25,
+        maxAsyncRequests: 30,
         cacheGroups: {
+          react: {
+            test: /[\\/]node_modules[\\/](react|react-dom|react-router|react-router-dom)[\\/]/,
+            name: "react-core",
+            priority: 30,
+            chunks: "all",
+          },
           antd: {
             test: /[\\/]node_modules[\\/](antd|@ant-design)[\\/]/,
             name: "antd",
