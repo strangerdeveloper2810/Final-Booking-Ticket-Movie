@@ -1,12 +1,9 @@
 import _ from "lodash";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { SagaIterator } from "redux-saga";
-import { delay, put, call, takeLatest } from "redux-saga/effects";
+import { put, call, takeLatest } from "redux-saga/effects";
 import { BookingTicketAction } from "../../reducer/BookingTicket.reducer";
-import {
-  GET_TICKET_API,
-  GET_TICKET,
-} from "../../constant/BookingTicketConstants";
+import { GET_TICKET_API } from "../../constant/BookingTicketConstants";
 import { http } from "util/setting";
 
 function* getTicketApi(action: PayloadAction): SagaIterator {

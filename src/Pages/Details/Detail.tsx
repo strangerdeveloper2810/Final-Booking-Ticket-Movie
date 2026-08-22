@@ -26,19 +26,20 @@ const Detail: React.FC = () => {
 
   const [tabPosition] = React.useState<TabPosition>("left");
 
-  React.useEffect(() => {
-    fetchData();
-  }, [id]);
-
-  const fetchData = async () => {
+  const fetchData = React.useCallback(async () => {
     try {
       if (id) {
-        const detailRes = await fetchDetailFilm();
+        const param = { maPhim: id };
+
+        const detailRes = await filmDetailServiceInstance.getFilmDetail(
+          param
+        );
         if (_.get(detailRes, "status", 400)) {
           setDetailFilm(_.get(detailRes, "data.content", {}));
         }
 
-        const calendarRes = await fetchCalendarFilm();
+        const calendarRes =
+          await managementServiceInstance.getInfoCanlendarFilm(param);
         if (_.get(calendarRes, "status", 400 || 500)) {
           setCalendarMovieTheaterFilm(_.get(calendarRes, "data.content", []));
         }
@@ -46,23 +47,11 @@ const Detail: React.FC = () => {
     } catch (error) {
       console.error(error);
     }
-  };
+  }, [id]);
 
-  const fetchDetailFilm = async () => {
-    const param = {
-      maPhim: id,
-    };
-
-    return await filmDetailServiceInstance.getFilmDetail(param);
-  };
-
-  const fetchCalendarFilm = async () => {
-    const param = {
-      maPhim: id,
-    };
-
-    return await managementServiceInstance.getInfoCanlendarFilm(param);
-  };
+  React.useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const renderFilmCalendar = () => {
     const calendarSystem = _.get(

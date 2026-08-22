@@ -31,7 +31,7 @@ const ListMovie: React.FC<ListMovieType> = ({ cinema }) => {
         </div>
       </div>
     ))
-  }, [_.isEmpty(cinema)]);  
+  }, [cinema]);
   return (
     <div className="wrap-list-movie">
       {renderDanhSachPhim}

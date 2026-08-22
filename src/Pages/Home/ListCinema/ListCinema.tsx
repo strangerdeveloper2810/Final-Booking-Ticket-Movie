@@ -25,7 +25,7 @@ const ListCinema: FC = () => {
         type: GET_ALL_CINEMA,
       });
     }
-  }, [isEmpty(listCinema), dispatch]);
+  }, [listCinema, dispatch]);
 
   const renderMovieByCinema = useCallback((cinema: LstCumRap) => {
     return <ListMovie cinema={cinema} />;
