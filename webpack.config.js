@@ -1,11 +1,15 @@
 const path = require("path");
 const webpack = require("webpack");
+const dotenv = require("dotenv");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
+
+// Load environment variables from .env
+dotenv.config();
 
 module.exports = (env, argv) => {
   const isProduction = argv.mode === "production";
@@ -85,7 +89,7 @@ module.exports = (env, argv) => {
           type: "asset",
           parser: {
             dataUrlCondition: {
-              maxSize: 8 * 1024, // Inline images smaller than 8KB as base64 DataURLs
+              maxSize: 8 * 1024,
             },
           },
           generator: {
@@ -136,6 +140,15 @@ module.exports = (env, argv) => {
           isProduction ? "production" : "development"
         ),
         "process.env.PUBLIC_URL": JSON.stringify(""),
+        "process.env.REACT_APP_DOMAIN": JSON.stringify(
+          process.env.REACT_APP_DOMAIN || "https://movienew.cybersoft.edu.vn"
+        ),
+        "process.env.REACT_APP_TOKEN_CYBERSOFT": JSON.stringify(
+          process.env.REACT_APP_TOKEN_CYBERSOFT || ""
+        ),
+        "process.env.REACT_APP_GROUP_ID": JSON.stringify(
+          process.env.REACT_APP_GROUP_ID || "GP01"
+        ),
       }),
       isProduction &&
         new MiniCssExtractPlugin({
@@ -204,7 +217,7 @@ module.exports = (env, argv) => {
       },
     },
     devServer: {
-      port: 3000,
+      port: process.env.PORT || 3000,
       historyApiFallback: true,
       hot: true,
       open: false,

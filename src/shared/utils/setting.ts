@@ -1,13 +1,15 @@
 import axios from "axios";
 import { createBrowserHistory } from "history";
 
-export const DOMAIN: string = "https://movienew.cybersoft.edu.vn";
+export const DOMAIN: string =
+  process.env.REACT_APP_DOMAIN || "https://movienew.cybersoft.edu.vn";
 export const TokenCybersoft: string =
+  process.env.REACT_APP_TOKEN_CYBERSOFT ||
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZW5Mb3AiOiJCb290Y2FtcCA1OCIsIkhldEhhblN0cmluZyI6IjExLzA2LzIwMzAiLCJIZXRIYW5UaW1lIjoiMTkwNzQ1Mjc5OSIsIm5iZiI6MTkwNzQ1Mjc5OSwiZXhwIjoxOTA3NDUyNzk5fQ.631rl3EwTQfz6CuufNTJlys36XLVmoxo29kP-F_PDKU";
 
 export const ACCESS_TOKEN: string = "accessToken";
 export const USER_LOGIN: string = "userLogin";
-export const GROUP_ID: string = "GP01";
+export const GROUP_ID: string = process.env.REACT_APP_GROUP_ID || "GP01";
 
 export const history = createBrowserHistory();
 
