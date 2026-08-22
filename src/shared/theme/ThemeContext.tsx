@@ -1,14 +1,8 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { ConfigProvider, theme as antdTheme } from "antd";
 import { tokens } from "./tokens";
 import { settings } from "shared/utils/setting";
-
-export type ThemeMode = "dark" | "light";
-
-interface ThemeContextType {
-  themeMode: ThemeMode;
-  toggleTheme: () => void;
-}
+import { ThemeMode, ThemeContextType, CustomThemeProviderProps } from "shared/types/theme.types";
 
 const ThemeContext = createContext<ThemeContextType>({
   themeMode: "dark",
@@ -19,7 +13,7 @@ export const useTheme = () => useContext(ThemeContext);
 
 const THEME_COOKIE_KEY = "app_theme_mode";
 
-export const CustomThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const CustomThemeProvider: React.FC<CustomThemeProviderProps> = ({ children }) => {
   const [themeMode, setThemeMode] = useState<ThemeMode>(() => {
     const savedTheme = settings.getCookie(THEME_COOKIE_KEY);
     return savedTheme === "light" ? "light" : "dark";

@@ -1,13 +1,9 @@
 import React, { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, Button, Tag } from "antd";
-import { Film } from "../redux/filmList/FilmType";
 import Star from "shared/components/Star/Star";
 import { APP_ROUTES } from "shared/constants/routes";
-
-interface FilmItemProps {
-  filmItem: Film;
-}
+import { FilmItemProps } from "../types/home.types";
 
 const FilmItem: React.FC<FilmItemProps> = ({ filmItem }) => {
   const navigate = useNavigate();

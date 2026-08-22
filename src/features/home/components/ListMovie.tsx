@@ -1,13 +1,10 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Tag } from "antd";
-import { DanhSachPhim, LstLichChieuTheoPhim, LstCumRap } from "../redux/cinema/ListCinemaType";
+import { DanhSachPhim, LstLichChieuTheoPhim } from "../redux/cinema/ListCinemaType";
 import { formatScheduleMovie } from "shared/utils/common";
 import { APP_ROUTES } from "shared/constants/routes";
-
-interface ListMovieProps {
-  cinema: LstCumRap;
-}
+import { ListMovieProps } from "../types/home.types";
 
 const ListMovie: React.FC<ListMovieProps> = ({ cinema }) => {
   const navigate = useNavigate();

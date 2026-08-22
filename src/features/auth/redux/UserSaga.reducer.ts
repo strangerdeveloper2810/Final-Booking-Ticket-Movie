@@ -6,16 +6,7 @@ import {
   ACCESS_TOKEN,
 } from "shared/utils/setting";
 import { APP_ROUTES } from "shared/constants/routes";
-
-export interface UserLoginResult {
-  hoTen: string;
-  accessToken: string;
-  email?: string;
-}
-
-export interface UserState {
-  userLogin: UserLoginResult | null;
-}
+import { UserLoginResult, UserState } from "../types/auth.types";
 
 const initialState: UserState = {
   userLogin: settings?.getCookieJson(USER_LOGIN) || null,

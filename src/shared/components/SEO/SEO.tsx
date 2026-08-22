@@ -1,15 +1,6 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
-
-interface SEOProps {
-  title?: string;
-  description?: string;
-  keywords?: string;
-  image?: string;
-  url?: string;
-  type?: string;
-  jsonLd?: object;
-}
+import { SEOProps } from "shared/types/seo.types";
 
 const SEO: React.FC<SEOProps> = ({
   title = "Cinefix - Đặt Vé Xem Phim Rạp Trực Tuyến",

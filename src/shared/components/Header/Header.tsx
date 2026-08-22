@@ -36,12 +36,22 @@ const Header: FC = () => {
   const languageMenuItems = [
     {
       key: "vi",
-      label: "Tiếng Việt (VI)",
+      label: (
+        <span className="flex items-center gap-2">
+          <span>🇻🇳</span>
+          <span>Tiếng Việt</span>
+        </span>
+      ),
       onClick: () => changeLanguage("vi"),
     },
     {
       key: "en",
-      label: "English (EN)",
+      label: (
+        <span className="flex items-center gap-2">
+          <span>🇬🇧</span>
+          <span>English</span>
+        </span>
+      ),
       onClick: () => changeLanguage("en"),
     },
   ];
@@ -95,14 +105,14 @@ const Header: FC = () => {
             title={isDark ? "Chuyển sang Giao diện Sáng" : "Chuyển sang Giao diện Tối"}
           />
 
-          {/* Language Switcher */}
+          {/* Language Switcher Dropdown with Country Flags */}
           <Dropdown menu={{ items: languageMenuItems }} placement="bottomRight">
             <Button
               type="text"
               icon={<GlobalOutlined className="text-[#9AA0B4] dark:text-[#9AA0B4] text-gray-700" />}
-              className="hover:bg-white/10 font-medium uppercase text-xs text-[#F5F6FA] dark:text-[#F5F6FA] text-gray-800"
+              className="hover:bg-white/10 font-medium uppercase text-xs text-[#F5F6FA] dark:text-[#F5F6FA] text-gray-800 flex items-center gap-1"
             >
-              {i18n.language?.toUpperCase() || "VI"}
+              <span>{i18n.language === "en" ? "🇬🇧 EN" : "🇻🇳 VI"}</span>
             </Button>
           </Dropdown>
 
@@ -179,14 +189,14 @@ const Header: FC = () => {
                 onClick={() => changeLanguage("vi")}
                 type={i18n.language === "vi" ? "primary" : "default"}
               >
-                VI
+                🇻🇳 VI
               </Button>
               <Button
                 size="small"
                 onClick={() => changeLanguage("en")}
                 type={i18n.language === "en" ? "primary" : "default"}
               >
-                EN
+                🇬🇧 EN
               </Button>
             </div>
           </div>

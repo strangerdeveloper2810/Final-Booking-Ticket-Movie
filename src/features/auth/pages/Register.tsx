@@ -1,7 +1,7 @@
-import React, { FC, useCallback } from "react";
+import React, { FC } from "react";
 import { useDispatch } from "react-redux";
 import { NavLink } from "react-router-dom";
-import { Form, Input, Button } from "antd";
+import { Input, Button } from "antd";
 import {
   UserOutlined,
   LockOutlined,
@@ -9,129 +9,195 @@ import {
   PhoneOutlined,
   IdcardOutlined,
 } from "@ant-design/icons";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslation } from "react-i18next";
 import { AppDispatch } from "app/store";
 import { USER_REGISTER_API } from "../redux/UserConstants";
 import { UserRegister } from "../redux/UserType";
 import AuthLayout from "../components/AuthLayout";
 import { GROUP_ID } from "shared/utils/setting";
 import { APP_ROUTES } from "shared/constants/routes";
+import { registerSchema, RegisterFormData } from "../schemas/auth.schema";
+import SEO from "shared/components/SEO/SEO";
 
 const Register: FC = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const { t } = useTranslation(["auth", "common"]);
 
-  const handleSubmit = useCallback(
-    (values: Omit<UserRegister, "maNhom">) => {
-      const payload: UserRegister = {
-        ...values,
-        maNhom: GROUP_ID,
-      };
-      dispatch({
-        type: USER_REGISTER_API,
-        payload,
-      });
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      taiKhoan: "",
+      matKhau: "",
+      hoTen: "",
+      email: "",
+      soDt: "",
     },
-    [dispatch]
-  );
+  });
+
+  const onSubmit = (data: RegisterFormData) => {
+    const payload: UserRegister = {
+      ...data,
+      maNhom: GROUP_ID,
+    };
+    dispatch({
+      type: USER_REGISTER_API,
+      payload,
+    });
+  };
 
   return (
     <AuthLayout
-      title="Đăng Ký Tài Khoản"
-      subtitle="Tạo tài khoản mới để trải nghiệm đầy đủ tính năng của Cinefix."
+      title={t("auth:registerTitle")}
+      subtitle={t("auth:registerSubtitle")}
     >
-      <Form
-        name="register_form"
-        layout="vertical"
-        onFinish={handleSubmit}
-        autoComplete="off"
-        size="large"
-      >
-        <Form.Item
-          name="taiKhoan"
-          label={<span className="text-[#F5F6FA] font-medium">Tài khoản</span>}
-          rules={[{ required: true, message: "Vui lòng nhập tài khoản!" }]}
-        >
-          <Input
-            prefix={<UserOutlined className="text-[#9AA0B4]" />}
-            placeholder="Tài khoản đăng nhập"
-            className="bg-[#0B0D12] text-[#F5F6FA] border-[#262B3A] hover:border-[#F2545B] focus:border-[#F2545B]"
+      <SEO
+        title="Đăng Ký Tài Khoản - Cinefix"
+        description="Đăng ký tài khoản Cinefix để đặt vé xem phim chiếu rạp với nhiều ưu đãi hấp dẫn."
+      />
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div>
+          <label className="block text-[#F5F6FA] dark:text-[#F5F6FA] text-gray-700 font-medium text-sm mb-1">
+            {t("auth:account")}
+          </label>
+          <Controller
+            name="taiKhoan"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                size="large"
+                prefix={<UserOutlined className="text-[#9AA0B4]" />}
+                placeholder={t("auth:accountPlaceholder")}
+                status={errors.taiKhoan ? "error" : ""}
+                className="bg-[#0B0D12] text-[#F5F6FA] border-[#262B3A] hover:border-[#F2545B] focus:border-[#F2545B]"
+              />
+            )}
           />
-        </Form.Item>
+          {errors.taiKhoan && (
+            <p className="text-xs text-red-500 mt-1">{errors.taiKhoan.message}</p>
+          )}
+        </div>
 
-        <Form.Item
-          name="matKhau"
-          label={<span className="text-[#F5F6FA] font-medium">Mật khẩu</span>}
-          rules={[
-            { required: true, message: "Vui lòng nhập mật khẩu!" },
-            { min: 6, message: "Mật khẩu tối thiểu 6 ký tự!" },
-          ]}
-        >
-          <Input.Password
-            prefix={<LockOutlined className="text-[#9AA0B4]" />}
-            placeholder="Mật khẩu bảo mật"
-            className="bg-[#0B0D12] text-[#F5F6FA] border-[#262B3A] hover:border-[#F2545B] focus:border-[#F2545B]"
+        <div>
+          <label className="block text-[#F5F6FA] dark:text-[#F5F6FA] text-gray-700 font-medium text-sm mb-1">
+            {t("auth:password")}
+          </label>
+          <Controller
+            name="matKhau"
+            control={control}
+            render={({ field }) => (
+              <Input.Password
+                {...field}
+                size="large"
+                prefix={<LockOutlined className="text-[#9AA0B4]" />}
+                placeholder={t("auth:passwordPlaceholder")}
+                status={errors.matKhau ? "error" : ""}
+                className="bg-[#0B0D12] text-[#F5F6FA] border-[#262B3A] hover:border-[#F2545B] focus:border-[#F2545B]"
+              />
+            )}
           />
-        </Form.Item>
+          {errors.matKhau && (
+            <p className="text-xs text-red-500 mt-1">{errors.matKhau.message}</p>
+          )}
+        </div>
 
-        <Form.Item
-          name="hoTen"
-          label={<span className="text-[#F5F6FA] font-medium">Họ và tên</span>}
-          rules={[{ required: true, message: "Vui lòng nhập họ và tên!" }]}
-        >
-          <Input
-            prefix={<IdcardOutlined className="text-[#9AA0B4]" />}
-            placeholder="Nguyễn Văn A"
-            className="bg-[#0B0D12] text-[#F5F6FA] border-[#262B3A] hover:border-[#F2545B] focus:border-[#F2545B]"
+        <div>
+          <label className="block text-[#F5F6FA] dark:text-[#F5F6FA] text-gray-700 font-medium text-sm mb-1">
+            {t("auth:fullName")}
+          </label>
+          <Controller
+            name="hoTen"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                size="large"
+                prefix={<IdcardOutlined className="text-[#9AA0B4]" />}
+                placeholder="Nguyễn Văn A"
+                status={errors.hoTen ? "error" : ""}
+                className="bg-[#0B0D12] text-[#F5F6FA] border-[#262B3A] hover:border-[#F2545B] focus:border-[#F2545B]"
+              />
+            )}
           />
-        </Form.Item>
+          {errors.hoTen && (
+            <p className="text-xs text-red-500 mt-1">{errors.hoTen.message}</p>
+          )}
+        </div>
 
-        <Form.Item
-          name="email"
-          label={<span className="text-[#F5F6FA] font-medium">Email</span>}
-          rules={[
-            { required: true, message: "Vui lòng nhập email!" },
-            { type: "email", message: "Email không đúng định dạng!" },
-          ]}
-        >
-          <Input
-            prefix={<MailOutlined className="text-[#9AA0B4]" />}
-            placeholder="example@gmail.com"
-            className="bg-[#0B0D12] text-[#F5F6FA] border-[#262B3A] hover:border-[#F2545B] focus:border-[#F2545B]"
+        <div>
+          <label className="block text-[#F5F6FA] dark:text-[#F5F6FA] text-gray-700 font-medium text-sm mb-1">
+            {t("auth:email")}
+          </label>
+          <Controller
+            name="email"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                size="large"
+                prefix={<MailOutlined className="text-[#9AA0B4]" />}
+                placeholder="example@gmail.com"
+                status={errors.email ? "error" : ""}
+                className="bg-[#0B0D12] text-[#F5F6FA] border-[#262B3A] hover:border-[#F2545B] focus:border-[#F2545B]"
+              />
+            )}
           />
-        </Form.Item>
+          {errors.email && (
+            <p className="text-xs text-red-500 mt-1">{errors.email.message}</p>
+          )}
+        </div>
 
-        <Form.Item
-          name="soDt"
-          label={<span className="text-[#F5F6FA] font-medium">Số điện thoại</span>}
-          rules={[{ required: true, message: "Vui lòng nhập số điện thoại!" }]}
-        >
-          <Input
-            prefix={<PhoneOutlined className="text-[#9AA0B4]" />}
-            placeholder="0901234567"
-            className="bg-[#0B0D12] text-[#F5F6FA] border-[#262B3A] hover:border-[#F2545B] focus:border-[#F2545B]"
+        <div>
+          <label className="block text-[#F5F6FA] dark:text-[#F5F6FA] text-gray-700 font-medium text-sm mb-1">
+            {t("auth:phone")}
+          </label>
+          <Controller
+            name="soDt"
+            control={control}
+            render={({ field }) => (
+              <Input
+                {...field}
+                size="large"
+                prefix={<PhoneOutlined className="text-[#9AA0B4]" />}
+                placeholder="0901234567"
+                status={errors.soDt ? "error" : ""}
+                className="bg-[#0B0D12] text-[#F5F6FA] border-[#262B3A] hover:border-[#F2545B] focus:border-[#F2545B]"
+              />
+            )}
           />
-        </Form.Item>
+          {errors.soDt && (
+            <p className="text-xs text-red-500 mt-1">{errors.soDt.message}</p>
+          )}
+        </div>
 
-        <Form.Item className="mt-6 mb-4">
+        <div className="pt-2">
           <Button
             type="primary"
             htmlType="submit"
             block
+            loading={isSubmitting}
             className="bg-[#F2545B] hover:bg-[#FF6B72] font-semibold h-12 text-base shadow-lg shadow-[#F2545B]/30"
           >
-            Tạo Tài Khoản
+            {t("auth:registerButton")}
           </Button>
-        </Form.Item>
+        </div>
 
         <div className="text-center text-sm text-[#9AA0B4] pt-2 border-t border-[#262B3A]">
-          Đã có tài khoản?{" "}
+          {t("auth:alreadyHaveAccount")}{" "}
           <NavLink
             to={APP_ROUTES.LOGIN}
             className="text-[#F2545B] hover:text-[#FF6B72] font-semibold ml-1"
           >
-            Đăng nhập
+            {t("auth:login")}
           </NavLink>
         </div>
-      </Form>
+      </form>
     </AuthLayout>
   );
 };
