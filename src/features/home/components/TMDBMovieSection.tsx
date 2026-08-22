@@ -5,6 +5,7 @@ import { Modal, Tag, Button } from "antd";
 import { useTranslation } from "react-i18next";
 import SkeletonCard from "shared/components/SkeletonCard/SkeletonCard";
 import { TMDBMovie, getTMDBImageUrl } from "shared/services/tmdbApi";
+import { formatLocalizedDate } from "shared/utils/common";
 
 interface TMDBMovieSectionProps {
   title: string;
@@ -45,7 +46,7 @@ const TMDBMovieSection: FC<TMDBMovieSectionProps> = ({
   movies,
   isLoading,
 }) => {
-  const { t } = useTranslation(["home", "common"]);
+  const { t, i18n } = useTranslation(["home", "common"]);
   const [selectedMovie, setSelectedMovie] = useState<TMDBMovie | null>(null);
 
   const sliderSettings = {
@@ -100,7 +101,7 @@ const TMDBMovieSection: FC<TMDBMovieSectionProps> = ({
           <SliderComponent {...sliderSettings}>
             {movies.map((movie) => (
               <div key={movie.id} className="px-2 py-2">
-                <div
+                <article
                   onClick={() => setSelectedMovie(movie)}
                   className="group relative bg-surface border border-border rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:scale-105 hover:border-primary/50 cursor-pointer h-full flex flex-col justify-between"
                 >
@@ -142,12 +143,12 @@ const TMDBMovieSection: FC<TMDBMovieSectionProps> = ({
                       </p>
                     </div>
                     {movie.release_date && (
-                      <span className="text-[11px] text-secondary font-medium mt-3 block">
-                        📅 {movie.release_date}
+                      <span className="text-xs text-secondary font-medium mt-3 block">
+                        📅 {formatLocalizedDate(movie.release_date, i18n.language)}
                       </span>
                     )}
                   </div>
-                </div>
+                </article>
               </div>
             ))}
           </SliderComponent>
@@ -183,7 +184,7 @@ const TMDBMovieSection: FC<TMDBMovieSectionProps> = ({
                 ⭐ {selectedMovie.vote_average.toFixed(1)} / 10
               </Tag>
               <span className="text-xs text-text-secondary font-semibold">
-                📅 Khởi chiếu: {selectedMovie.release_date}
+                📅 Khởi chiếu: {formatLocalizedDate(selectedMovie.release_date, i18n.language)}
               </span>
             </div>
 
