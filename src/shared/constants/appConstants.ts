@@ -19,7 +19,7 @@ export const STORAGE_KEYS = {
 } as const;
 
 export const API_CONFIG = {
-  DOMAIN: process.env.REACT_APP_DOMAIN || "https://movienew.cybersoft.edu.vn",
+  DOMAIN: process.env.REACT_APP_DOMAIN || "https://movienew.cybersoft.edu.vn/api",
   TOKEN_CYBERSOFT:
     process.env.REACT_APP_TOKEN_CYBERSOFT ||
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZW5Mb3AiOiJCb290Y2FtcCA1OCIsIkhldEhhblN0cmluZyI6IjExLzA2LzIwMzAiLCJIZXRIYW5UaW1lIjoiMTkwNzQ1Mjc5OSIsIm5iZiI6MTkwNzQ1Mjc5OSwiZXhwIjoxOTA3NDUyNzk5fQ.631rl3EwTQfz6CuufNTJlys36XLVmoxo29kP-F_PDKU",

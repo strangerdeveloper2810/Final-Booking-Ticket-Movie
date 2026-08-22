@@ -3,7 +3,9 @@ import { createBrowserHistory } from "history";
 import { API_CONFIG, STORAGE_KEYS, HTTP_STATUS } from "shared/constants/appConstants";
 import { APP_ROUTES } from "shared/constants/routes";
 
-export const DOMAIN: string = API_CONFIG.DOMAIN;
+export const DOMAIN: string = API_CONFIG.DOMAIN.endsWith("/api")
+  ? API_CONFIG.DOMAIN
+  : `${API_CONFIG.DOMAIN}/api`;
 export const TokenCybersoft: string = API_CONFIG.TOKEN_CYBERSOFT;
 export const ACCESS_TOKEN: string = STORAGE_KEYS.ACCESS_TOKEN;
 export const USER_LOGIN: string = STORAGE_KEYS.USER_LOGIN;
@@ -35,8 +37,8 @@ export const settings = {
 
   setCookieJson: (name: string, value: any, days: number = 30): void => {
     try {
-      const jsonValue = JSON.stringify(value);
-      settings.setCookie(name, encodeURIComponent(jsonValue), days);
+      const jsonString = JSON.stringify(value);
+      settings.setCookie(name, encodeURIComponent(jsonString), days);
     } catch (error) {
       console.error("Error setting cookie JSON:", error);
     }
@@ -69,26 +71,26 @@ http.interceptors.request.use(
     const token = settings.getCookie(ACCESS_TOKEN);
     config.headers = {
       ...config.headers,
+      TokenCybersoft: TokenCybersoft,
       Authorization: token ? `Bearer ${token}` : "",
-      TokenCybersoft,
     };
     return config;
   },
-  (error) => Promise.reject(error)
+  (error: any) => {
+    return Promise.reject(error);
+  }
 );
 
 http.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (
-      error.response?.status === HTTP_STATUS.UNAUTHORIZED ||
-      error.response?.status === HTTP_STATUS.FORBIDDEN
-    ) {
+  (response: any) => {
+    return response;
+  },
+  (error: any) => {
+    const status = error.response?.status;
+    if (status === HTTP_STATUS.UNAUTHORIZED || status === HTTP_STATUS.FORBIDDEN) {
       settings.eraseCookie(ACCESS_TOKEN);
       settings.eraseCookie(USER_LOGIN);
-      if (window.location.pathname !== APP_ROUTES.LOGIN) {
-        history.push(APP_ROUTES.LOGIN);
-      }
+      history.push(APP_ROUTES.LOGIN);
     }
     return Promise.reject(error);
   }
