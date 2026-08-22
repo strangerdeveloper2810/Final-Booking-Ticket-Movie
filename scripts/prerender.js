@@ -6,13 +6,8 @@ require("dotenv").config();
 const buildIndexPath = path.resolve(__dirname, "../build/index.html");
 const publicIndexPath = path.resolve(__dirname, "../public/index.html");
 
-const CYBERSOFT_TOKEN =
-  process.env.REACT_APP_TOKEN_CYBERSOFT ||
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZW5Mb3AiOiJCb290Y2FtcCA1OCIsIkhldEhhblN0cmluZyI6IjExLzA2LzIwMzAiLCJIZXRIYW5UaW1lIjoiMTkwNzQ1Mjc5OSIsIm5iZiI6MTkwNzQ1Mjc5OSwiZXhwIjoxOTA3NDUyNzk5fQ.631rl3EwTQfz6CuufNTJlys36XLVmoxo29kP-F_PDKU";
-
-const TMDB_TOKEN =
-  process.env.REACT_APP_TMDB_TOKEN ||
-  "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2MjNlYjllNWYyODY1YjJjZjNWU1YzVjZlVbM2l5ZjZiMTYzNTc3NzlyOC4xMjk5OTk5LCJzdWIiOiI2MTdmZmFjM2YzYnNDAWOTM4ZWY5ZjEiLCJzY29wZXMiOlsiYXBpX3JlYWQiXSwidmVyc2lvbiI6MX0.7BgVAZAH7zatioQHeG81Pey2tVrflVUZBEoqc___dpo";
+const CYBERSOFT_TOKEN = process.env.REACT_APP_TOKEN_CYBERSOFT || "";
+const TMDB_TOKEN = process.env.REACT_APP_TMDB_TOKEN || "";
 
 function fetchData(url, headers = {}) {
   return new Promise((resolve) => {
