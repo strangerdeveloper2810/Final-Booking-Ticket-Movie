@@ -1,14 +1,15 @@
-// base
+// abstracts (variables, no CSS output on their own)
+@import "abstracts/variables";
 
+// base
 @import "base/base";
 
-// component
+// components
 @import "./components/header";
 @import "./components/home";
-@import "./components/loading";
+@import "./components/loadingNew";
 @import "./components/slickCarousel";
 @import "./components/filmItem";
 @import "./components/movies";
-@import "./components/detail";
 @import "./components/register";
 @import "./components/footer";

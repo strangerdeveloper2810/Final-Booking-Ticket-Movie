@@ -1,4 +1,4 @@
-import { get } from 'lodash'
+import get from 'lodash/get'
 import { UserLogin, UserRegister } from 'Redux/types/UserType'
 import { http } from '../util/setting'
 

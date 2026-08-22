@@ -8,7 +8,8 @@ import {
   ComponentType,
 } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { get, isEmpty } from "lodash";
+import get from "lodash/get";
+import isEmpty from "lodash/isEmpty";
 import Slider from "react-slick";
 import { useMediaQuery } from "react-responsive";
 import { RootState, AppDispatch } from "Redux/store";

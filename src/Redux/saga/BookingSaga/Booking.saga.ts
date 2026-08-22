@@ -1,4 +1,4 @@
-import _ from "lodash";
+import get from "lodash/get";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { SagaIterator } from "redux-saga";
 import { put, call, takeLatest } from "redux-saga/effects";
@@ -8,7 +8,7 @@ import { http } from "util/setting";
 
 function* getTicketApi(action: PayloadAction): SagaIterator {
   const params = {
-    maLichChieu: _.get(action, "payload", ""),
+    maLichChieu: get(action, "payload", ""),
   };
 
   try {
@@ -16,10 +16,10 @@ function* getTicketApi(action: PayloadAction): SagaIterator {
       http.get(`/api/QuanLyDatVe/LayDanhSachPhongVe`, { params })
     );
 
-    if (_.get(result, "status", 200)) {
+    if (get(result, "status", 200)) {
       yield put(
         BookingTicketAction.getDetailBookingTicket(
-          _.get(result, "data.content", {})
+          get(result, "data.content", {})
         )
       );
     }

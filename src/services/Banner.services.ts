@@ -1,5 +1,5 @@
 import { http } from '../util/setting'
-import { get } from 'lodash'
+import get from 'lodash/get'
 
 const BannerServices = {
     getAllBanner: async () => {

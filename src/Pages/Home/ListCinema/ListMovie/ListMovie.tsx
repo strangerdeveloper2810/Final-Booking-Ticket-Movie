@@ -1,5 +1,6 @@
 import React from "react";
-import _ from "lodash"
+import get from "lodash/get";
+import map from "lodash/map";
 import {
   DanhSachPhim,
   LstCumRap,
@@ -13,8 +14,8 @@ type ListMovieType = {
 
 const ListMovie: React.FC<ListMovieType> = ({ cinema }) => {
   const renderDanhSachPhim = React.useMemo(()=> {
-    const danhSachPhim = _.get(cinema, "danhSachPhim", [])
-    return _.map(danhSachPhim,(movie: DanhSachPhim, index: number) => (
+    const danhSachPhim = get(cinema, "danhSachPhim", [])
+    return map(danhSachPhim,(movie: DanhSachPhim, index: number) => (
       <div className="wrap-movie" key={movie.maPhim}>
         <img src={movie.hinhAnh} alt={movie.tenPhim} />
         <div className="movie-info">

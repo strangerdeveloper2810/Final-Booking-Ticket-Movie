@@ -17,10 +17,9 @@ const FilmItem: React.FC<FilmItemType> = ({ filmItem }: FilmItemType) => {
   return (
     <div className="w-10/12 ml-5 mt-10 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
       <img
-        className="rounded-t-lg"
+        className="rounded-t-lg w-[350px] h-[350px] object-cover"
         src={filmItem.hinhAnh}
         alt={filmItem.biDanh}
-        style={{ width: "350px", height: "350px", objectFit: "cover" }}
       />
 
       <div className="px-5 pb-5">

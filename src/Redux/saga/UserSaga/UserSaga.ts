@@ -1,7 +1,7 @@
 import { PayloadAction } from "@reduxjs/toolkit";
 import { SagaIterator } from "redux-saga";
 import { takeLatest, put, call } from "redux-saga/effects";
-import { isEmpty } from "lodash";
+import isEmpty from "lodash/isEmpty";
 import { history } from "../../../util/setting";
 import { toast } from "react-toastify";
 import { UserRegister, UserLogin } from "../../types/UserType";
