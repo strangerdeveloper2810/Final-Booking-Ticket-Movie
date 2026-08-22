@@ -1,4 +1,4 @@
-import { type FC, useEffect, useMemo, useCallback } from "react";
+import { type FC, useEffect } from "react";
 import get from "lodash/get";
 import isEmpty from "lodash/isEmpty";
 import { useSelector, useDispatch } from "react-redux";
@@ -45,28 +45,17 @@ const BookingTicket: FC = () => {
     };
   }, [maLichChieu, dispatch]);
 
-  const thongTinPhim: ThongTinPhim | undefined = useMemo(
-    () => get(bookingDetail, "thongTinPhim"),
-    [bookingDetail]
-  );
-  const danhSachGhe: DanhSachGhe[] = useMemo(
-    () => get(bookingDetail, "danhSachGhe", []),
-    [bookingDetail]
-  );
+  const thongTinPhim: ThongTinPhim | undefined = get(bookingDetail, "thongTinPhim");
+  const danhSachGhe: DanhSachGhe[] = get(bookingDetail, "danhSachGhe", []);
 
-  const totalPrice = useMemo(() => {
-    return selectedSeats.reduce((sum: number, seat: DanhSachGhe) => sum + (seat.giaVe || 0), 0);
-  }, [selectedSeats]);
+  const totalPrice = selectedSeats.reduce((sum: number, seat: DanhSachGhe) => sum + (seat.giaVe || 0), 0);
 
-  const handleSelectSeat = useCallback(
-    (seat: DanhSachGhe) => {
-      if (seat.daDat) return;
-      dispatch(BookingTicketAction.toggleSelectSeat(seat));
-    },
-    [dispatch]
-  );
+  const handleSelectSeat = (seat: DanhSachGhe) => {
+    if (seat.daDat) return;
+    dispatch(BookingTicketAction.toggleSelectSeat(seat));
+  };
 
-  const handleBookTicket = useCallback(() => {
+  const handleBookTicket = () => {
     if (isEmpty(userLogin)) {
       Modal.confirm({
         title: t("booking:loginRequired"),
@@ -97,7 +86,7 @@ const BookingTicket: FC = () => {
       type: BOOK_TICKET_API,
       payload,
     });
-  }, [userLogin, selectedSeats, maLichChieu, dispatch, navigate, t]);
+  };
 
   if (isEmpty(thongTinPhim)) {
     return <LoadingNew />;

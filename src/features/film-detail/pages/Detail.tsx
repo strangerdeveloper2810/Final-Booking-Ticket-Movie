@@ -1,4 +1,4 @@
-import { type FC, useState, useEffect, useCallback } from "react";
+import { type FC, useState, useEffect } from "react";
 import get from "lodash/get";
 import map from "lodash/map";
 import isEmpty from "lodash/isEmpty";
@@ -27,36 +27,32 @@ const Detail: FC = () => {
   const [calendarMovieTheaterFilm, setCalendarMovieTheaterFilm] = useState<CalendarMovieTheaterFilm>();
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
 
-  const fetchData = useCallback(async () => {
-    try {
-      if (id) {
-        const param = { maPhim: id };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (id) {
+          const param = { maPhim: id };
 
-        const detailRes = await filmDetailServiceInstance.getFilmDetail(param);
-        if (get(detailRes, "status") === HTTP_STATUS.OK) {
-          setDetailFilm(get(detailRes, "data.content"));
-        }
+          const detailRes = await filmDetailServiceInstance.getFilmDetail(param);
+          if (get(detailRes, "status") === HTTP_STATUS.OK) {
+            setDetailFilm(get(detailRes, "data.content"));
+          }
 
-        const calendarRes = await managementServiceInstance.getInfoCanlendarFilm(param);
-        if (get(calendarRes, "status") === HTTP_STATUS.OK) {
-          setCalendarMovieTheaterFilm(get(calendarRes, "data.content"));
+          const calendarRes = await managementServiceInstance.getInfoCanlendarFilm(param);
+          if (get(calendarRes, "status") === HTTP_STATUS.OK) {
+            setCalendarMovieTheaterFilm(get(calendarRes, "data.content"));
+          }
         }
+      } catch (error) {
+        console.error("Error fetching film detail:", error);
       }
-    } catch (error) {
-      console.error("Error fetching film detail:", error);
-    }
+    };
+    fetchData();
   }, [id]);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  const handleBookingTicket = useCallback(
-    (maLichChieu: number | string) => {
-      navigate(APP_ROUTES.BOOKING(maLichChieu));
-    },
-    [navigate]
-  );
+  const handleBookingTicket = (maLichChieu: number | string) => {
+    navigate(APP_ROUTES.BOOKING(maLichChieu));
+  };
 
   const movieJsonLd = detailFilm
     ? {
@@ -75,7 +71,7 @@ const Detail: FC = () => {
       }
     : undefined;
 
-  const renderScheduleTabItems = useCallback(() => {
+  const renderScheduleTabItems = () => {
     const listCinemas = get(calendarMovieTheaterFilm, "heThongRapChieu", []);
     if (isEmpty(listCinemas)) return [];
 
@@ -145,7 +141,7 @@ const Detail: FC = () => {
         </div>
       ),
     }));
-  }, [calendarMovieTheaterFilm, handleBookingTicket, t]);
+  };
 
   return (
     <div className="min-h-screen bg-background pb-16 transition-colors">

@@ -21,22 +21,16 @@ module.exports = {
         test: /\.(ts|tsx|js|jsx)$/,
         exclude: /node_modules/,
         use: {
-          loader: "swc-loader",
+          loader: "babel-loader",
           options: {
-            jsc: {
-              parser: {
-                syntax: "typescript",
-                tsx: true,
-                decorators: true,
-                dynamicImport: true,
-              },
-              transform: {
-                react: {
-                  runtime: "automatic",
-                },
-              },
-              target: "es2022",
-            },
+            presets: [
+              "@babel/preset-env",
+              ["@babel/preset-react", { runtime: "automatic" }],
+              "@babel/preset-typescript",
+            ],
+            plugins: [
+              ["babel-plugin-react-compiler", { target: "19" }],
+            ],
           },
         },
       },

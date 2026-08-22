@@ -1,0 +1,134 @@
+import { type FC, useState, useEffect } from "react";
+import { StarFilled, SafetyCertificateOutlined, PlaySquareOutlined } from "@ant-design/icons";
+import { useGetTrendingMoviesQuery, getTMDBImageUrl } from "shared/services/tmdbApi";
+import { useGetBannersQuery } from "shared/services/movieApi";
+
+interface MovieQuote {
+  quote: string;
+  movie: string;
+  year: string;
+}
+
+const FALLBACK_QUOTES: MovieQuote[] = [
+  {
+    quote: "Trải nghiệm điện ảnh đỉnh cao — Nơi lưu giữ những khoảnh khắc cảm xúc vô giá.",
+    movie: "Cinefix Cinema",
+    year: "2026",
+  },
+  {
+    quote: "Mỗi bộ phim là một cuộc hành trình. Hãy chọn chỗ ngồi đẹp nhất và tận hưởng!",
+    movie: "Premiere Showcase",
+    year: "2026",
+  },
+  {
+    quote: "Đặt vé nhanh chóng trong 30 giây — Trải nghiệm âm thanh Dolby Atmos vượt trội.",
+    movie: "IMAX Experience",
+    year: "2026",
+  },
+];
+
+const AuthShowcase: FC = () => {
+  const { data: tmdbMovies = [] } = useGetTrendingMoviesQuery();
+  const { data: banners = [] } = useGetBannersQuery();
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  const totalItems = Math.max(tmdbMovies.length, banners.length, FALLBACK_QUOTES.length);
+
+  useEffect(() => {
+    if (totalItems === 0) return;
+    const timer = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % totalItems);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [totalItems]);
+
+  const currentTMDB = tmdbMovies[activeIndex % Math.max(tmdbMovies.length, 1)];
+  const currentBanner = banners[activeIndex % Math.max(banners.length, 1)]?.hinhAnh;
+  const currentQuote = FALLBACK_QUOTES[activeIndex % FALLBACK_QUOTES.length];
+
+  const backdropUrl = currentTMDB?.backdrop_path
+    ? getTMDBImageUrl(currentTMDB.backdrop_path, "w1280")
+    : currentBanner || "https://picsum.photos/1200/1600";
+
+  const movieTitle = currentTMDB?.title || currentQuote.movie;
+  const overviewText = currentTMDB?.overview
+    ? currentTMDB.overview.length > 140
+      ? currentTMDB.overview.substring(0, 140) + "..."
+      : currentTMDB.overview
+    : currentQuote.quote;
+  const ratingValue = currentTMDB?.vote_average
+    ? currentTMDB.vote_average.toFixed(1)
+    : "9.8";
+
+  return (
+    <div className="relative hidden lg:flex flex-col justify-between p-12 overflow-hidden bg-black text-white min-h-[680px] rounded-3xl my-4 ml-4 shadow-2xl border border-white/10">
+      {/* Background Poster Image with Dynamic Blur & Fade */}
+      <div
+        className="absolute inset-0 bg-cover bg-center transition-all duration-1000 transform scale-105 filter brightness-75"
+        style={{ backgroundImage: `url(${backdropUrl})` }}
+      />
+
+      {/* Glassmorphic Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-90" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-black/30" />
+
+      {/* Top Header Badge */}
+      <div className="relative z-10 flex items-center justify-between">
+        <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 px-4 py-2 rounded-full shadow-lg">
+          <PlaySquareOutlined className="text-primary text-lg" />
+          <span className="text-xs font-bold uppercase tracking-wider text-white">
+            TMDB Trending Movie
+          </span>
+        </div>
+
+        <div className="flex items-center gap-1.5 bg-yellow-500/20 backdrop-blur-md border border-yellow-500/30 px-3 py-1.5 rounded-full">
+          <StarFilled className="text-yellow-400 text-xs" />
+          <span className="text-xs font-extrabold text-yellow-300">
+            {ratingValue} / 10 IMDb
+          </span>
+        </div>
+      </div>
+
+      {/* Center Showcase Content */}
+      <div className="relative z-10 my-auto max-w-lg space-y-6">
+        <div className="inline-block px-3 py-1 rounded-md bg-primary/20 border border-primary/30 text-primary text-xs font-bold uppercase tracking-widest">
+          Phim Hot Trong Tuần
+        </div>
+        <h1 className="text-4xl xl:text-5xl font-black tracking-tight text-white leading-tight drop-shadow-lg line-clamp-2">
+          {movieTitle}
+        </h1>
+
+        {/* Dynamic Quote Box */}
+        <div className="p-6 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/15 shadow-2xl transition-all duration-700">
+          <p className="text-sm italic text-gray-200 leading-relaxed mb-3">
+            "{overviewText}"
+          </p>
+          <div className="flex items-center justify-between text-xs text-gray-400 font-semibold border-t border-white/10 pt-3">
+            <span className="text-primary font-bold">{movieTitle}</span>
+            <span>TMDB 2026</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Features Footer */}
+      <div className="relative z-10 pt-6 border-t border-white/10 flex items-center justify-between text-xs text-gray-300">
+        <div className="flex items-center gap-2">
+          <SafetyCertificateOutlined className="text-primary text-base" />
+          <span>Bảo mật tài khoản 100%</span>
+        </div>
+        <div className="flex gap-1.5">
+          {[0, 1, 2, 3].map((idx) => (
+            <div
+              key={idx}
+              className={`h-1.5 rounded-full transition-all duration-500 ${
+                idx === activeIndex % 4 ? "w-6 bg-primary" : "w-2 bg-white/30"
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AuthShowcase;

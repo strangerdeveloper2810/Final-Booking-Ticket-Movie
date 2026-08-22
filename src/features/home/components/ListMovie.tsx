@@ -1,4 +1,4 @@
-import { type FC, memo } from "react";
+import { type FC } from "react";
 import { useNavigate } from "react-router-dom";
 import { Tag } from "antd";
 import { CalendarOutlined } from "@ant-design/icons";
@@ -83,4 +83,4 @@ const ListMovie: FC<ListMovieProps> = ({ cinema }) => {
   );
 };
 
-export default memo(ListMovie);
+export default ListMovie;

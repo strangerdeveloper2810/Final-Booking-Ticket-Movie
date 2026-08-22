@@ -1,4 +1,4 @@
-import { type FC, useState, useCallback } from "react";
+import { type FC, useState } from "react";
 import { useSelector } from "react-redux";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Button, Drawer, Avatar, Dropdown } from "antd";
@@ -25,11 +25,11 @@ const Header: FC = () => {
   const { themeMode, toggleTheme } = useTheme();
   const { t, i18n } = useTranslation(["header", "common"]);
 
-  const handleLogOut = useCallback(() => {
+  const handleLogOut = () => {
     settings.eraseCookie(ACCESS_TOKEN);
     settings.eraseCookie(USER_LOGIN);
     window.location.reload();
-  }, []);
+  };
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);

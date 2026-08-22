@@ -8,6 +8,7 @@ import UserSagaReducer from "features/auth/redux/UserSaga.reducer";
 import BookingTicketReducer from "features/booking/redux/BookingTicket.reducer";
 import LoadingReducer from "shared/redux/loading/Loading.reducer";
 import { movieApi } from "shared/services/movieApi";
+import { tmdbApi } from "shared/services/tmdbApi";
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -20,9 +21,14 @@ export const store = configureStore({
     UserSaga: UserSagaReducer,
     Booking: BookingTicketReducer,
     [movieApi.reducerPath]: movieApi.reducer,
+    [tmdbApi.reducerPath]: tmdbApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(sagaMiddleware, movieApi.middleware),
+    getDefaultMiddleware().concat(
+      sagaMiddleware,
+      movieApi.middleware,
+      tmdbApi.middleware
+    ),
 });
 
 sagaMiddleware.run(rootSaga);

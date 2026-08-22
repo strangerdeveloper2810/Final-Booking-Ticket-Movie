@@ -1,4 +1,4 @@
-import { type FC, useMemo } from "react";
+import { type FC } from "react";
 import { Tabs } from "antd";
 import { useTranslation } from "react-i18next";
 import ListMovie from "./ListMovie";
@@ -12,7 +12,7 @@ const ListCinema: FC = () => {
   const { data: listCinema = [] } = useGetCinemasQuery();
   const { t } = useTranslation(["home", "common"]);
 
-  const tabItems = useMemo(() => {
+  const getTabItems = () => {
     if (!listCinema || !Array.isArray(listCinema)) return [];
     return listCinema.map((cinemaSystem: ListCinemaType) => ({
       label: (
@@ -46,7 +46,7 @@ const ListCinema: FC = () => {
         />
       ),
     }));
-  }, [listCinema]);
+  };
 
   return (
     <section id="cinemas" className="py-10">
@@ -61,7 +61,7 @@ const ListCinema: FC = () => {
         <Tabs
           tabPosition="left"
           className="main-cinema-tabs"
-          items={tabItems}
+          items={getTabItems()}
         />
       </div>
     </section>

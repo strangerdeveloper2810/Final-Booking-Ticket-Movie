@@ -1,4 +1,4 @@
-import { type FC, memo } from "react";
+import { type FC } from "react";
 import Header from "shared/components/Header/Header";
 import Footer from "shared/components/Footer/Footer";
 import { ITemplate } from "shared/types/ITemplate";
@@ -13,4 +13,4 @@ const HomeTemplate: FC<ITemplate> = ({ children }) => {
   );
 };
 
-export default memo(HomeTemplate);
+export default HomeTemplate;

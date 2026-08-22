@@ -1,4 +1,4 @@
-import { type FC, useCallback, memo } from "react";
+import { type FC } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, Button, Tag } from "antd";
 import { useTranslation } from "react-i18next";
@@ -10,9 +10,9 @@ const FilmItem: FC<FilmItemProps> = ({ filmItem }) => {
   const navigate = useNavigate();
   const { t } = useTranslation(["home", "common"]);
 
-  const handleBooking = useCallback(() => {
+  const handleBooking = () => {
     navigate(APP_ROUTES.DETAIL(filmItem.maPhim));
-  }, [navigate, filmItem.maPhim]);
+  };
 
   return (
     <Card
@@ -65,4 +65,4 @@ const FilmItem: FC<FilmItemProps> = ({ filmItem }) => {
   );
 };
 
-export default memo(FilmItem);
+export default FilmItem;
