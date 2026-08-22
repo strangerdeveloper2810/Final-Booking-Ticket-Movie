@@ -21,7 +21,7 @@ const CarouselHome: FC = (): JSX.Element => {
     if (isEmpty(arrBanner)) {
       getBannerSaga();
     }
-  }, [isEmpty(arrBanner), getBannerSaga]);
+  }, [arrBanner, getBannerSaga]);
 
   const renderCarousel = useMemo(() => {
     if (isLoading) {

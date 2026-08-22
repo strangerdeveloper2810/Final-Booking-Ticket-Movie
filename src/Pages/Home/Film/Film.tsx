@@ -38,7 +38,7 @@ const Film: FC = (): JSX.Element => {
     if (isEmpty(filmList)) {
       getFilmSaga();
     }
-  }, [filmList.length, getFilmSaga]);
+  }, [filmList, getFilmSaga]);
 
   const renderFilmItem = useCallback(() => {
     if (isLoading) {
