@@ -1,8 +1,10 @@
 const fs = require("fs");
 const path = require("path");
 const https = require("https");
+require("dotenv").config();
 
 const buildIndexPath = path.resolve(__dirname, "../build/index.html");
+const publicIndexPath = path.resolve(__dirname, "../public/index.html");
 
 const CYBERSOFT_TOKEN =
   process.env.REACT_APP_TOKEN_CYBERSOFT ||
@@ -32,11 +34,6 @@ function fetchData(url, headers = {}) {
 }
 
 async function prerender() {
-  if (!fs.existsSync(buildIndexPath)) {
-    console.log("⚠️ build/index.html not found, skipping SSG prerender step.");
-    return;
-  }
-
   console.log("🌐 Fetching live movie data for SSG static pre-rendering...");
 
   const [cybersoftMovies, tmdbMovies] = await Promise.all([
@@ -89,8 +86,6 @@ async function prerender() {
     )
     .join("");
 
-  let html = fs.readFileSync(buildIndexPath, "utf8");
-
   const fullPrerenderedMarkup = `<div id="root">
     <header style="background: rgba(23, 27, 38, 0.9); border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between;">
       <div style="font-weight: 800; font-size: 1.25rem; color: #F2545B; display: flex; align-items: center; gap: 0.5rem;">
@@ -131,14 +126,29 @@ async function prerender() {
     </main>
   </div>`;
 
-  if (html.includes('<div id="root">')) {
-    const rootStart = html.indexOf('<div id="root">');
-    const rootEnd = html.indexOf("</div>", rootStart) + 6;
-    html = html.substring(0, rootStart) + fullPrerenderedMarkup + html.substring(rootEnd);
-    fs.writeFileSync(buildIndexPath, html, "utf8");
-    console.log(
-      "🚀 SSG Static Pre-rendering with LIVE MOVIE CARDS completed successfully on build/index.html!"
-    );
+  // Inject into public/index.html as well for dev server
+  if (fs.existsSync(publicIndexPath)) {
+    let publicHtml = fs.readFileSync(publicIndexPath, "utf8");
+    if (publicHtml.includes('<div id="root">')) {
+      const rootStart = publicHtml.indexOf('<div id="root">');
+      const rootEnd = publicHtml.indexOf("</div>", rootStart) + 6;
+      publicHtml = publicHtml.substring(0, rootStart) + fullPrerenderedMarkup + publicHtml.substring(rootEnd);
+      fs.writeFileSync(publicIndexPath, publicHtml, "utf8");
+    }
+  }
+
+  // Inject into build/index.html if exists
+  if (fs.existsSync(buildIndexPath)) {
+    let buildHtml = fs.readFileSync(buildIndexPath, "utf8");
+    if (buildHtml.includes('<div id="root">')) {
+      const rootStart = buildHtml.indexOf('<div id="root">');
+      const rootEnd = buildHtml.indexOf("</div>", rootStart) + 6;
+      buildHtml = buildHtml.substring(0, rootStart) + fullPrerenderedMarkup + buildHtml.substring(rootEnd);
+      fs.writeFileSync(buildIndexPath, buildHtml, "utf8");
+      console.log(
+        "🚀 SSG Static Pre-rendering with LIVE MOVIE CARDS completed successfully on build/index.html & public/index.html!"
+      );
+    }
   }
 }
 
