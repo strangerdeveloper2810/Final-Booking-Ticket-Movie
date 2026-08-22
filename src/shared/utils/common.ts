@@ -1,8 +1,9 @@
-import moment from "moment";
+import dayjs from "dayjs";
+
 export const formatScheduleMovie = (dateString: string) => {
   if (dateString) {
-    const date = moment(dateString).format("DD-MM-YYYY");
-    const time = moment(dateString).format("HH:MM");
+    const date = dayjs(dateString).format("DD-MM-YYYY");
+    const time = dayjs(dateString).format("HH:mm");
     return [date, time].join(" ~ ");
   }
   return "";
