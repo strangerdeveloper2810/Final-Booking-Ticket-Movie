@@ -58,7 +58,7 @@ const BookingTicket: React.FC = () => {
     return selectedSeats.reduce((sum: number, seat: DanhSachGhe) => sum + (seat.giaVe || 0), 0);
   }, [selectedSeats]);
 
-  const handleSeatClick = useCallback(
+  const handleSelectSeat = useCallback(
     (seat: DanhSachGhe) => {
       if (seat.daDat) return;
       dispatch(BookingTicketAction.toggleSelectSeat(seat));
@@ -66,19 +66,24 @@ const BookingTicket: React.FC = () => {
     [dispatch]
   );
 
-  const handleConfirmBooking = useCallback(() => {
-    if (!userLogin) {
+  const handleBookTicket = useCallback(() => {
+    if (isEmpty(userLogin)) {
       Modal.confirm({
         title: t("booking:loginRequired"),
         content: t("booking:loginRequiredMessage"),
-        okText: t("common:login"),
-        cancelText: "Hủy",
+        okText: t("auth:login"),
+        cancelText: t("common:backToHome"),
         onOk: () => navigate(APP_ROUTES.LOGIN),
       });
       return;
     }
 
-    if (isEmpty(selectedSeats) || !maLichChieu) return;
+    if (isEmpty(selectedSeats)) {
+      Modal.warning({
+        title: t("booking:selectSeatsFirst"),
+      });
+      return;
+    }
 
     const payload = {
       maLichChieu: Number(maLichChieu),
@@ -94,15 +99,19 @@ const BookingTicket: React.FC = () => {
     });
   }, [userLogin, selectedSeats, maLichChieu, dispatch, navigate, t]);
 
-  if (isEmpty(bookingDetail) || !thongTinPhim) {
+  if (isEmpty(thongTinPhim)) {
     return <LoadingNew />;
   }
 
   return (
     <div className="max-w-screen-xl mx-auto px-4 md:px-6 py-8">
       <SEO
-        title={`Đặt Vé Phim ${thongTinPhim.tenPhim}`}
-        description={`Đặt vé phim ${thongTinPhim.tenPhim} tại ${thongTinPhim.tenCumRap} - ${thongTinPhim.tenRap}.`}
+        title={t("booking:bookTicketFor", { movie: thongTinPhim.tenPhim })}
+        description={t("booking:bookTicketDesc", {
+          movie: thongTinPhim.tenPhim,
+          cinema: thongTinPhim.tenCumRap,
+          theater: thongTinPhim.tenRap,
+        })}
       />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column: Screen & Seat Map Grid */}
@@ -143,132 +152,142 @@ const BookingTicket: React.FC = () => {
                 const isSelected = selectedSeats.some(
                   (s) => s.maGhe === seat.maGhe
                 );
-                const isVip = seat.loaiGhe === SeatType.VIP;
                 const isOccupied = seat.daDat;
+                const isVip = seat.loaiGhe === SeatType.VIP;
 
-                let seatStyle = "bg-background border-border text-text-primary hover:border-primary";
+                let seatClasses =
+                  "w-7 h-7 sm:w-8 sm:h-8 rounded-lg font-semibold text-xs flex items-center justify-center transition-all duration-200 shadow-sm ";
+
                 if (isOccupied) {
-                  seatStyle = "bg-border border-transparent text-text-secondary cursor-not-allowed opacity-60";
+                  seatClasses += "bg-gray-500 text-white cursor-not-allowed opacity-60";
                 } else if (isSelected) {
-                  seatStyle = "bg-primary border-primary text-white shadow-md shadow-primary/40 font-bold scale-105";
+                  seatClasses +=
+                    "bg-[#52c41a] text-white scale-110 shadow-lg shadow-green-500/40 font-bold ring-2 ring-white";
                 } else if (isVip) {
-                  seatStyle = "bg-background border-secondary text-secondary hover:bg-secondary/10";
+                  seatClasses +=
+                    "bg-[#FFC857] text-black hover:bg-[#ffd67a] hover:scale-105 cursor-pointer font-bold";
+                } else {
+                  seatClasses +=
+                    "bg-border text-text-primary hover:bg-primary hover:text-white hover:scale-105 cursor-pointer";
                 }
 
                 return (
                   <button
                     key={seat.maGhe}
                     disabled={isOccupied}
-                    onClick={() => handleSeatClick(seat)}
-                    className={`h-8 sm:h-9 w-full rounded-md border text-xs font-mono transition-all flex items-center justify-center ${seatStyle}`}
-                    title={`Ghế ${seat.tenGhe} (${isVip ? "VIP" : "Thường"}) - ${seat.giaVe.toLocaleString()}đ`}
+                    onClick={() => handleSelectSeat(seat)}
+                    className={seatClasses}
+                    title={`${seat.tenGhe} (${seat.loaiGhe}) - ${seat.giaVe?.toLocaleString()} VNĐ`}
                   >
                     {seat.tenGhe}
                   </button>
                 );
               })}
             </div>
+          </div>
 
-            {/* Seat Map Legend */}
-            <Divider className="border-border my-6" />
-            <div className="flex flex-wrap items-center justify-center gap-6 text-xs text-text-secondary">
-              <div className="flex items-center gap-2">
-                <span className="w-5 h-5 rounded border border-border bg-background" />
-                <span>{t("booking:standardSeat")}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-5 h-5 rounded border border-secondary bg-background" />
-                <span className="text-secondary">{t("booking:vipSeat")}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-5 h-5 rounded border border-primary bg-primary" />
-                <span className="text-primary">{t("booking:selectedSeat")}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-5 h-5 rounded bg-border" />
-                <span>{t("booking:occupiedSeat")}</span>
-              </div>
+          {/* Seat Legend */}
+          <div className="flex flex-wrap items-center justify-center gap-6 bg-surface border border-border rounded-xl p-4 transition-colors">
+            <div className="flex items-center gap-2">
+              <div className="w-5 h-5 rounded-md bg-border border border-border" />
+              <span className="text-xs text-text-secondary">{t("booking:standardSeat")}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-5 h-5 rounded-md bg-[#FFC857]" />
+              <span className="text-xs text-text-secondary">{t("booking:vipSeat")}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-5 h-5 rounded-md bg-[#52c41a]" />
+              <span className="text-xs text-text-secondary">{t("booking:selectedSeat")}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-5 h-5 rounded-md bg-gray-500" />
+              <span className="text-xs text-text-secondary">{t("booking:occupiedSeat")}</span>
             </div>
           </div>
         </div>
 
-        {/* Right Column: Checkout Summary Panel */}
-        <div className="space-y-6">
-          <Card className="bg-surface border-border text-text-primary sticky top-24 transition-colors">
-            <h2 className="text-xl font-bold text-text-primary mb-4 pb-3 border-b border-border">
+        {/* Right Column: Booking Summary Card */}
+        <div className="lg:col-span-1">
+          <Card className="bg-surface border-border text-text-primary sticky top-24 shadow-xl transition-colors">
+            <h2 className="text-lg font-bold text-text-primary mb-4 pb-3 border-b border-border">
               {t("booking:bookingInfo")}
             </h2>
 
             <div className="space-y-4 text-sm">
-              <div className="flex justify-between py-2 border-b border-border">
+              <div className="flex justify-between items-center">
                 <span className="text-text-secondary">{t("booking:movie")}</span>
-                <span className="font-semibold text-text-primary text-right max-w-[180px]">
+                <span className="font-semibold text-text-primary text-right">
                   {thongTinPhim.tenPhim}
                 </span>
               </div>
 
-              <div className="flex justify-between py-2 border-b border-border">
+              <div className="flex justify-between items-center">
                 <span className="text-text-secondary">{t("booking:cinemaComplex")}</span>
-                <span className="font-medium text-text-primary text-right max-w-[180px]">
+                <span className="font-semibold text-text-primary text-right">
                   {thongTinPhim.tenCumRap}
                 </span>
               </div>
 
-              <div className="flex justify-between py-2 border-b border-border">
+              <div className="flex justify-between items-center">
                 <span className="text-text-secondary">{t("booking:theater")}</span>
-                <span className="font-medium text-text-primary">
-                  {thongTinPhim.tenRap}
-                </span>
+                <span className="font-semibold text-text-primary">{thongTinPhim.tenRap}</span>
               </div>
 
-              <div className="flex justify-between py-2 border-b border-border">
+              <div className="flex justify-between items-center">
                 <span className="text-text-secondary">{t("booking:showtime")}</span>
-                <span className="font-medium text-secondary">
-                  {thongTinPhim.gioChieu} - {thongTinPhim.ngayChieu}
+                <span className="font-semibold text-secondary">
+                  {thongTinPhim.ngayChieu} - {thongTinPhim.gioChieu}
                 </span>
               </div>
 
-              <div className="py-2 border-b border-border">
+              <Divider className="my-3 border-border" />
+
+              <div>
                 <span className="text-text-secondary block mb-2">{t("booking:selectedSeats")}</span>
-                <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto">
-                  {isEmpty(selectedSeats) ? (
-                    <span className="text-xs italic text-text-secondary">{t("booking:noSeatsSelected")}</span>
-                  ) : (
-                    selectedSeats.map((seat) => (
-                      <Tag key={seat.maGhe} color="#F2545B" className="font-mono text-xs">
-                        Ghế {seat.tenGhe}
+                {!isEmpty(selectedSeats) ? (
+                  <div className="flex flex-wrap gap-1.5">
+                    {selectedSeats.map((seat) => (
+                      <Tag key={seat.maGhe} color="red" className="font-semibold">
+                        {seat.tenGhe}
                       </Tag>
-                    ))
-                  )}
-                </div>
+                    ))}
+                  </div>
+                ) : (
+                  <span className="text-xs text-text-secondary italic">
+                    {t("booking:noSeatsSelected")}
+                  </span>
+                )}
               </div>
 
-              <div className="flex justify-between py-3 items-center">
-                <span className="text-text-secondary font-semibold">{t("booking:totalPrice")}</span>
-                <span className="text-2xl font-extrabold text-primary">
-                  {totalPrice.toLocaleString()} đ
-                </span>
-              </div>
+              <Divider className="my-3 border-border" />
 
               {userLogin && (
-                <div className="p-3 bg-background rounded-lg border border-border text-xs text-text-secondary">
-                  <p className="flex items-center gap-1">
+                <div className="flex justify-between items-center text-xs text-text-secondary">
+                  <span>{t("booking:userAccount")}</span>
+                  <span className="font-semibold text-text-primary flex items-center gap-1">
                     <UserOutlined className="text-primary" />
-                    {t("booking:userAccount")} <span className="text-text-primary font-medium">{userLogin.hoTen}</span>
-                  </p>
+                    {userLogin.taiKhoan}
+                  </span>
                 </div>
               )}
 
+              <div className="pt-2 flex justify-between items-baseline">
+                <span className="text-base font-bold text-text-primary">{t("booking:totalPrice")}</span>
+                <span className="text-2xl font-extrabold text-primary">
+                  {totalPrice.toLocaleString()} <span className="text-xs font-normal">VNĐ</span>
+                </span>
+              </div>
+
               <Button
                 type="primary"
-                size="large"
                 block
+                size="large"
                 loading={isBooking}
-                disabled={isEmpty(selectedSeats)}
-                onClick={handleConfirmBooking}
-                className="bg-primary hover:bg-primary-hover font-bold h-12 text-base mt-4 shadow-lg shadow-primary/20 border-none"
+                onClick={handleBookTicket}
+                className="bg-primary hover:bg-primary-hover font-bold h-12 mt-4 text-base shadow-lg shadow-primary/30 border-none"
               >
-                {isEmpty(selectedSeats) ? t("booking:selectSeatsFirst") : t("booking:confirmBooking")}
+                {t("booking:confirmBooking")}
               </Button>
             </div>
           </Card>

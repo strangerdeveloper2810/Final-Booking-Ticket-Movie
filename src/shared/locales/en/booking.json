@@ -18,5 +18,7 @@
   "loginRequired": "Login Required",
   "loginRequiredMessage": "You need to log in to complete your movie booking.",
   "bookingSuccess": "Ticket booking successful!",
-  "bookingError": "Ticket booking failed. Please try again!"
+  "bookingError": "Ticket booking failed. Please try again!",
+  "bookTicketFor": "Book Tickets for {{movie}}",
+  "bookTicketDesc": "Book tickets for {{movie}} at {{cinema}} - {{theater}}."
 }

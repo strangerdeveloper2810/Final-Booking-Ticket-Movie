@@ -42,8 +42,8 @@ const Login: FC = () => {
       subtitle={t("auth:loginSubtitle")}
     >
       <SEO
-        title="Đăng Nhập - Cinefix"
-        description="Đăng nhập tài khoản Cinefix để thực hiện đặt vé phim chiếu rạp nhanh chóng."
+        title={t("auth:loginSeoTitle")}
+        description={t("auth:loginSeoDesc")}
       />
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>

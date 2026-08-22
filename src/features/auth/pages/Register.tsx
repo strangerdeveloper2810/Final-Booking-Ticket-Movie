@@ -57,8 +57,8 @@ const Register: FC = () => {
       subtitle={t("auth:registerSubtitle")}
     >
       <SEO
-        title="Đăng Ký Tài Khoản - Cinefix"
-        description="Đăng ký tài khoản Cinefix để đặt vé xem phim chiếu rạp với nhiều ưu đãi hấp dẫn."
+        title={t("auth:registerSeoTitle")}
+        description={t("auth:registerSeoDesc")}
       />
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>

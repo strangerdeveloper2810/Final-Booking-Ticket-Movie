@@ -1,4 +1,5 @@
 import React, { Suspense, lazy, FC } from "react";
+import { useTranslation } from "react-i18next";
 import LoadingNew from "shared/components/LoadingNew/LoadingNew";
 import SEO from "shared/components/SEO/SEO";
 
@@ -7,12 +8,14 @@ const Film = lazy(() => import("../components/Film"));
 const ListCinema = lazy(() => import("../components/ListCinema"));
 
 const Home: FC = () => {
+  const { t } = useTranslation(["home", "common"]);
+
   return (
     <div className="w-full min-h-screen">
       <SEO
-        title="Cinefix - Đặt Vé Xem Phim Rạp Trực Tuyến Hàng Đầu"
-        description="Trải nghiệm điện ảnh đỉnh cao. Đặt vé xem phim chiếu rạp nhanh chóng, chọn vị trí ngồi đẹp nhất tại Cinefix."
-        keywords="đặt vé xem phim, lịch chiếu phim, rạp chiếu phim, cinefix, rạp chiếu phim tphcm"
+        title={t("home:seoTitle")}
+        description={t("home:seoDescription")}
+        keywords={t("home:seoKeywords")}
       />
       <Suspense fallback={<LoadingNew />}>
         {/* Full bleed Hero Banner */}

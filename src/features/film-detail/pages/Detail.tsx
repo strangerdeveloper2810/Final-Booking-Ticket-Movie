@@ -21,7 +21,7 @@ import SEO from "shared/components/SEO/SEO";
 const Detail: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { t } = useTranslation(["detail", "common"]);
+  const { t, i18n } = useTranslation(["detail", "common"]);
 
   const [detailFilm, setDetailFilm] = useState<FilmDetail>();
   const [calendarMovieTheaterFilm, setCalendarMovieTheaterFilm] = useState<CalendarMovieTheaterFilm>();
@@ -43,7 +43,7 @@ const Detail: React.FC = () => {
         }
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching film detail:", error);
     }
   }, [id]);
 
@@ -51,74 +51,12 @@ const Detail: React.FC = () => {
     fetchData();
   }, [fetchData]);
 
-  const getEmbedYoutubeUrl = (url?: string) => {
-    if (!url) return "";
-    if (url.includes("watch?v=")) {
-      return url.replace("watch?v=", "embed/");
-    }
-    if (url.includes("youtu.be/")) {
-      return url.replace("youtu.be/", "youtube.com/embed/");
-    }
-    return url;
-  };
-
-  const calendarSystem = get(calendarMovieTheaterFilm, "heThongRapChieu", []);
-
-  const tabItems = map(calendarSystem, (calendar: HeThongRapChieu) => ({
-    label: (
-      <div className="p-1">
-        <img
-          src={get(calendar, "logo", "")}
-          alt={get(calendar, "maHeThongRap", "")}
-          className="w-12 h-12 object-contain rounded-full bg-white/10 p-1"
-        />
-      </div>
-    ),
-    key: calendar.maHeThongRap,
-    children: (
-      <Tabs
-        tabPosition="left"
-        items={map(get(calendar, "cumRapChieu", []), (theaterComplex, index) => ({
-          label: (
-            <div className="text-left py-1 pr-2 max-w-[220px]">
-              <p className="font-bold text-text-primary text-sm line-clamp-1">
-                {get(theaterComplex, "tenCumRap", "")}
-              </p>
-              <p className="text-xs text-text-secondary line-clamp-1">
-                {get(theaterComplex, "diaChi", "")}
-              </p>
-            </div>
-          ),
-          key: `${index + 1}`,
-          children: (
-            <div className="flex flex-wrap gap-3 py-4 max-h-[400px] overflow-y-auto">
-              {map(get(theaterComplex, "lichChieuPhim", []), (theater: any, idx: number) => {
-                const { date, time } = parseScheduleMovie(get(theater, "ngayChieuGioChieu", ""));
-                return (
-                  <button
-                    key={idx}
-                    onClick={() => navigate(APP_ROUTES.BOOKING(get(theater, "maLichChieu", "")))}
-                    className="group flex items-center gap-2 bg-surface hover:bg-primary border border-border hover:border-primary px-3 py-2 rounded-lg shadow-sm hover:shadow-md transition-all text-xs cursor-pointer"
-                  >
-                    <span className="font-bold text-primary group-hover:text-white mr-1">
-                      {get(theater, "tenRap", "")}:
-                    </span>
-                    <span className="text-text-secondary group-hover:text-white font-medium flex items-center gap-1">
-                      <CalendarOutlined className="text-primary group-hover:text-white text-[11px]" />
-                      {date}
-                    </span>
-                    <span className="bg-primary/10 group-hover:bg-white/20 text-primary group-hover:text-white font-mono font-bold px-1.5 py-0.5 rounded text-[11px]">
-                      {time}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          ),
-        }))}
-      />
-    ),
-  }));
+  const handleBookingTicket = useCallback(
+    (maLichChieu: number | string) => {
+      navigate(APP_ROUTES.BOOKING(maLichChieu));
+    },
+    [navigate]
+  );
 
   const movieJsonLd = detailFilm
     ? {
@@ -127,16 +65,87 @@ const Detail: React.FC = () => {
         name: detailFilm.tenPhim,
         image: detailFilm.hinhAnh,
         description: detailFilm.moTa,
-        aggregateRating: detailFilm.danhGia
-          ? {
-              "@type": "AggregateRating",
-              ratingValue: detailFilm.danhGia,
-              bestRating: "10",
-              ratingCount: "100",
-            }
-          : undefined,
+        datePublished: detailFilm.ngayKhoiChieu,
+        aggregateRating: {
+          "@type": "AggregateRating",
+          ratingValue: detailFilm.danhGia,
+          bestRating: "10",
+          ratingCount: "100",
+        },
       }
     : undefined;
+
+  const renderScheduleTabItems = useCallback(() => {
+    const listCinemas = get(calendarMovieTheaterFilm, "heThongRapChieu", []);
+    if (isEmpty(listCinemas)) return [];
+
+    return map(listCinemas, (cinemaSystem: HeThongRapChieu) => ({
+      label: (
+        <div className="flex items-center gap-2 p-1">
+          <img
+            src={cinemaSystem.logo}
+            alt={cinemaSystem.tenHeThongRap}
+            className="w-8 h-8 object-contain rounded-full bg-white/10 p-1"
+          />
+          <span className="font-semibold text-text-primary text-sm">
+            {cinemaSystem.tenHeThongRap}
+          </span>
+        </div>
+      ),
+      key: cinemaSystem.maHeThongRap,
+      children: (
+        <div className="space-y-6 max-h-[450px] overflow-y-auto pr-2">
+          {map(cinemaSystem.cumRapChieu, (cluster) => (
+            <div
+              key={cluster.maCumRap}
+              className="bg-surface border border-border rounded-xl p-4 space-y-4"
+            >
+              <div className="flex items-start gap-3 border-b border-border pb-3">
+                <img
+                  src={cluster.hinhAnh || cinemaSystem.logo}
+                  alt={cluster.tenCumRap}
+                  className="w-12 h-12 object-cover rounded-lg border border-border"
+                />
+                <div>
+                  <h3 className="font-bold text-text-primary text-base">
+                    {cluster.tenCumRap}
+                  </h3>
+                  <p className="text-xs text-text-secondary line-clamp-1">
+                    {cluster.diaChi}
+                  </p>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-xs font-semibold text-text-secondary mb-2 uppercase tracking-wider">
+                  {t("detail:availableShowtimes")}
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  {map(cluster.lichChieuPhim, (schedule) => {
+                    const parsed = parseScheduleMovie(schedule.ngayChieuGioChieu);
+                    return (
+                      <button
+                        key={schedule.maLichChieu}
+                        onClick={() => handleBookingTicket(schedule.maLichChieu)}
+                        className="group flex flex-col items-center bg-background hover:bg-primary border border-border hover:border-primary px-3.5 py-2 rounded-lg transition-all duration-200 shadow-sm hover:scale-105"
+                      >
+                        <span className="text-[11px] font-medium text-text-secondary group-hover:text-white/80">
+                          📅 {parsed.date}
+                        </span>
+                        <span className="text-sm font-bold text-primary group-hover:text-white mt-0.5">
+                          {parsed.time}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ),
+    }));
+  }, [calendarMovieTheaterFilm, handleBookingTicket, t]);
 
   return (
     <div className="min-h-screen bg-background pb-16 transition-colors">
@@ -183,7 +192,9 @@ const Detail: React.FC = () => {
                 <div className="flex items-center gap-1">
                   <CalendarOutlined className="text-primary" />
                   <span>
-                    {new Date(detailFilm.ngayKhoiChieu).toLocaleDateString("vi-VN")}
+                    {new Date(detailFilm.ngayKhoiChieu).toLocaleDateString(
+                      i18n.language === "vi" ? "vi-VN" : "en-US"
+                    )}
                   </span>
                 </div>
               )}
@@ -216,41 +227,50 @@ const Detail: React.FC = () => {
         </div>
       </div>
 
-      {/* Showtimes Section */}
-      <div className="max-w-screen-xl mx-auto px-4 md:px-6 mt-10">
-        <div className="mb-6">
-          <h2 className="text-2xl font-extrabold text-text-primary">{t("detail:showtimesTitle")}</h2>
-          <div className="h-1 w-16 bg-primary rounded-full mt-2" />
-        </div>
+      {/* Showtimes & Cinemas Section */}
+      <div className="max-w-screen-xl mx-auto px-4 md:px-6 mt-12">
+        <h2 className="text-2xl font-extrabold text-text-primary mb-6">
+          {t("detail:showtimesTitle")}
+        </h2>
 
-        <div className="bg-surface border border-border rounded-xl p-4 md:p-6 shadow-xl transition-colors">
-          {isEmpty(calendarSystem) ? (
-            <Empty description={<span className="text-text-secondary">{t("detail:noShowtimes")}</span>} />
-          ) : (
-            <Tabs tabPosition="left" items={tabItems} />
-          )}
-        </div>
+        {!isEmpty(calendarMovieTheaterFilm?.heThongRapChieu) ? (
+          <div className="bg-surface border border-border rounded-xl p-4 md:p-6 shadow-xl transition-colors">
+            <Tabs
+              tabPosition="top"
+              className="detail-cinema-tabs"
+              items={renderScheduleTabItems()}
+            />
+          </div>
+        ) : (
+          <div className="bg-surface border border-border rounded-xl p-12 text-center">
+            <Empty description={t("detail:noShowtimes")} />
+          </div>
+        )}
       </div>
 
-      {/* Trailer Modal */}
+      {/* Trailer Video Modal */}
       <Modal
-        title={detailFilm?.tenPhim || "Trailer"}
+        title={detailFilm?.tenPhim}
         open={isTrailerOpen}
         onCancel={() => setIsTrailerOpen(false)}
         footer={null}
         width={800}
-        destroyOnClose
         centered
+        destroyOnClose
       >
-        <div className="aspect-video w-full">
-          <iframe
-            className="w-full h-full rounded-lg"
-            src={getEmbedYoutubeUrl(detailFilm?.trailer)}
-            title="Trailer"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-          />
-        </div>
+        {detailFilm?.trailer ? (
+          <div className="relative pt-[56.25%] w-full rounded-lg overflow-hidden bg-black">
+            <iframe
+              className="absolute top-0 left-0 w-full h-full"
+              src={detailFilm.trailer.replace("watch?v=", "embed/")}
+              title={detailFilm.tenPhim}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        ) : (
+          <Empty description={t("detail:noTrailer")} />
+        )}
       </Modal>
     </div>
   );

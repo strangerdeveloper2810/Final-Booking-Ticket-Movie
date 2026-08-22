@@ -18,5 +18,7 @@
   "loginRequired": "Yêu Cầu Đăng Nhập",
   "loginRequiredMessage": "Bạn cần đăng nhập để thực hiện đặt vé xem phim.",
   "bookingSuccess": "Đặt vé thành công!",
-  "bookingError": "Đặt vé không thành công. Vui lòng thử lại!"
+  "bookingError": "Đặt vé không thành công. Vui lòng thử lại!",
+  "bookTicketFor": "Đặt Vé Phim {{movie}}",
+  "bookTicketDesc": "Đặt vé phim {{movie}} tại {{cinema}} - {{theater}}."
 }

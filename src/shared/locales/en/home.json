@@ -1,9 +1,10 @@
 {
-  "nowShowingTitle": "Now Showing",
-  "comingSoonTitle": "Coming Soon",
-  "cinemaTitle": "Cinemas & Theaters",
-  "searchPlaceholder": "Search movie by name...",
-  "bookNow": "Book Now",
-  "availableSchedules": "Available showtimes:",
-  "noDescription": "Exciting movie currently showing at cinemas nationwide."
+  "nowShowingTitle": "Now Showing Movies",
+  "cinemaTitle": "Cinema Complex Systems",
+  "bookNow": "BOOK NOW",
+  "noDescription": "No description currently available for this movie.",
+  "availableShowtimes": "Available showtimes:",
+  "seoTitle": "Cinefix — Premier Online Movie Ticket Booking",
+  "seoDescription": "Premier movie experience. Fast cinema ticket booking and best seat selection at Cinefix.",
+  "seoKeywords": "movie ticket booking, movie showtimes, cinema theaters, cinefix"
 }

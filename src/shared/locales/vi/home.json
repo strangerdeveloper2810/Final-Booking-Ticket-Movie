@@ -1,9 +1,10 @@
 {
   "nowShowingTitle": "Phim Đang Chiếu",
-  "comingSoonTitle": "Phim Sắp Chiếu",
-  "cinemaTitle": "Hệ Thống Rạp Chiếu",
-  "searchPlaceholder": "Nhập tên phim cần tìm...",
-  "bookNow": "Đặt Vé Ngay",
-  "availableSchedules": "Lịch chiếu khả dụng:",
-  "noDescription": "Phim chiếu rạp đặc sắc đang được công chiếu tại các cụm rạp trên toàn quốc."
+  "cinemaTitle": "Hệ Thống Cụm Rạp Chiếu Phim",
+  "bookNow": "ĐẶT VÉ NGAY",
+  "noDescription": "Hiện chưa có mô tả cho bộ phim này.",
+  "availableShowtimes": "Suất chiếu có sẵn:",
+  "seoTitle": "Cinefix — Đặt Vé Xem Phim Rạp Trực Tuyến Hàng Đầu",
+  "seoDescription": "Trải nghiệm điện ảnh đỉnh cao. Đặt vé xem phim chiếu rạp nhanh chóng, chọn vị trí ngồi đẹp nhất tại Cinefix.",
+  "seoKeywords": "đặt vé xem phim, lịch chiếu phim, rạp chiếu phim, cinefix, rạp chiếu phim tphcm"
 }
