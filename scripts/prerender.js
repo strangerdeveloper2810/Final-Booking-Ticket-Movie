@@ -18,7 +18,9 @@ function fetchData(url, headers = {}) {
         res.on("end", () => {
           try {
             const parsed = JSON.parse(data);
-            resolve(parsed.content || parsed.results || []);
+            // Always resolve with an array — guard against nested objects or null
+            const raw = parsed.content ?? parsed.results ?? parsed ?? [];
+            resolve(Array.isArray(raw) ? raw : []);
           } catch (e) {
             resolve([]);
           }
@@ -41,11 +43,15 @@ async function prerender() {
     }),
   ]);
 
+  // Ensure we always work with arrays regardless of API response shape
+  const csMovies = Array.isArray(cybersoftMovies) ? cybersoftMovies : [];
+  const tmMovies = Array.isArray(tmdbMovies) ? tmdbMovies : [];
+
   console.log(
-    `✅ Fetched ${cybersoftMovies.length} Cybersoft movies & ${tmdbMovies.length} TMDB movies.`
+    `✅ Fetched ${csMovies.length} Cybersoft movies & ${tmMovies.length} TMDB movies.`
   );
 
-  const cybersoftHtmlList = (cybersoftMovies || [])
+  const cybersoftHtmlList = csMovies
     .slice(0, 8)
     .map(
       (m) => `
@@ -62,7 +68,7 @@ async function prerender() {
     )
     .join("");
 
-  const tmdbHtmlList = (tmdbMovies || [])
+  const tmdbHtmlList = tmMovies
     .slice(0, 8)
     .map(
       (m) => `
