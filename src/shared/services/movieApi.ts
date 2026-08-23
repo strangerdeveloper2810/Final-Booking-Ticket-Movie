@@ -154,6 +154,65 @@ export const movieApi = createApi({
       }),
       invalidatesTags: ["UserList"],
     }),
+    addUser: builder.mutation<any, any>({
+      query: (userPayload) => ({
+        url: "/QuanLyNguoiDung/ThemNguoiDung",
+        method: "POST",
+        data: userPayload,
+      }),
+      invalidatesTags: ["UserList"],
+    }),
+
+    // Admin Film Management APIs
+    addFilmUpload: builder.mutation<any, FormData>({
+      query: (formData: FormData) => ({
+        url: "/QuanLyPhim/ThemPhimUploadHinh",
+        method: "POST",
+        data: formData,
+        headers: { "Content-Type": "multipart/form-data" },
+      }),
+      invalidatesTags: ["Films"],
+    }),
+    updateFilmUpload: builder.mutation<any, FormData>({
+      query: (formData: FormData) => ({
+        url: "/QuanLyPhim/CapNhatPhimUpload",
+        method: "POST",
+        data: formData,
+        headers: { "Content-Type": "multipart/form-data" },
+      }),
+      invalidatesTags: ["Films", "FilmDetail"],
+    }),
+    deleteFilm: builder.mutation<any, number | string>({
+      query: (maPhim: number | string) => ({
+        url: "/QuanLyPhim/XoaPhim",
+        method: "DELETE",
+        params: { MaPhim: maPhim },
+      }),
+      invalidatesTags: ["Films"],
+    }),
+
+    // Admin Showtime Creation APIs
+    createShowtime: builder.mutation<any, { maPhim: number; ngayChieuGioChieu: string; maRap: string; giaVe: number }>({
+      query: (payload) => ({
+        url: "/QuanLyDatVe/TaoLichChieu",
+        method: "POST",
+        data: payload,
+      }),
+      invalidatesTags: ["Cinemas", "Showtimes"],
+    }),
+    getCinemaSystems: builder.query<any[], void>({
+      query: () => ({
+        url: "/QuanLyRap/LayThongTinHeThongRap",
+        method: "GET",
+      }),
+    }),
+    getCinemaClusters: builder.query<any[], string>({
+      query: (maHeThongRap: string) => ({
+        url: "/QuanLyRap/LayThongTinCumRapTheoHeThong",
+        method: "GET",
+        params: { maHeThongRap },
+      }),
+    }),
   }),
 });
 
@@ -174,4 +233,12 @@ export const {
   useGetUserTypesQuery,
   useGetUserListQuery,
   useDeleteUserMutation,
+  useAddUserMutation,
+  useAddFilmUploadMutation,
+  useUpdateFilmUploadMutation,
+  useDeleteFilmMutation,
+  useCreateShowtimeMutation,
+  useGetCinemaSystemsQuery,
+  useGetCinemaClustersQuery,
 } = movieApi;
+

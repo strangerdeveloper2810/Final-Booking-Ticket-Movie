@@ -13,6 +13,10 @@ export const PATHS = {
   BOOKING: "/booking/:maLichChieu",
   LOGIN: "/login",
   REGISTER: "/register",
+  ADMIN: "/admin",
+  ADMIN_FILMS: "/admin/films",
+  ADMIN_USERS: "/admin/users",
+  ADMIN_SHOWTIMES: "/admin/showtimes",
   NOT_FOUND: "*",
 } as const;
 
@@ -32,6 +36,10 @@ export const APP_ROUTES = {
   HOME_ALIAS: PATHS.HOME_ALIAS,
   LOGIN: PATHS.LOGIN,
   REGISTER: PATHS.REGISTER,
+  ADMIN: PATHS.ADMIN,
+  ADMIN_FILMS: PATHS.ADMIN_FILMS,
+  ADMIN_USERS: PATHS.ADMIN_USERS,
+  ADMIN_SHOWTIMES: PATHS.ADMIN_SHOWTIMES,
   NOT_FOUND: PATHS.NOT_FOUND,
   DETAIL: (id: string | number) => `/detail/${id}`,
   BOOKING: (maLichChieu: string | number) => `/booking/${maLichChieu}`,

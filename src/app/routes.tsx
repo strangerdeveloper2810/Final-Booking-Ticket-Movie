@@ -27,6 +27,12 @@ const Detail = lazy(() => import("features/film-detail/pages/Detail"));
 const BookingTicket = lazy(() => import("features/booking/pages/BookingTicket"));
 const Login = lazy(() => import("features/auth/pages/Login"));
 const Register = lazy(() => import("features/auth/pages/Register"));
+const AdminDashboard = lazy(() => import("features/admin/pages/AdminDashboard"));
+const AdminFilms = lazy(() => import("features/admin/pages/AdminFilms"));
+const AdminUsers = lazy(() => import("features/admin/pages/AdminUsers"));
+const AdminShowtimes = lazy(() => import("features/admin/pages/AdminShowtimes"));
+import AdminTemplate from "shared/templates/AdminTemplate";
+import AdminGuard from "shared/guards/AdminGuard";
 
 /**
  * EN: Declarative route table consumed by `useRoutes()` below. Each entry
@@ -90,6 +96,46 @@ export const routesConfig: RouteObject[] = [
       <HomeTemplate>
         <Register />
       </HomeTemplate>
+    ),
+  },
+  {
+    path: PATHS.ADMIN,
+    element: (
+      <AdminGuard>
+        <AdminTemplate>
+          <AdminDashboard />
+        </AdminTemplate>
+      </AdminGuard>
+    ),
+  },
+  {
+    path: PATHS.ADMIN_FILMS,
+    element: (
+      <AdminGuard>
+        <AdminTemplate>
+          <AdminFilms />
+        </AdminTemplate>
+      </AdminGuard>
+    ),
+  },
+  {
+    path: PATHS.ADMIN_USERS,
+    element: (
+      <AdminGuard>
+        <AdminTemplate>
+          <AdminUsers />
+        </AdminTemplate>
+      </AdminGuard>
+    ),
+  },
+  {
+    path: PATHS.ADMIN_SHOWTIMES,
+    element: (
+      <AdminGuard>
+        <AdminTemplate>
+          <AdminShowtimes />
+        </AdminTemplate>
+      </AdminGuard>
     ),
   },
   {

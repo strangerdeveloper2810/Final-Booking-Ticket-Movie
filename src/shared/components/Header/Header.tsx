@@ -171,6 +171,17 @@ const Header: FC = () => {
           {/* User Auth Info */}
           {userLogin ? (
             <div className="flex items-center gap-3 bg-background px-3 py-1.5 rounded-lg border border-border">
+              {userLogin.maLoaiNguoiDung === "QuanTri" && (
+                <Button
+                  type="primary"
+                  danger
+                  size="small"
+                  onClick={() => navigate(APP_ROUTES.ADMIN)}
+                  className="font-bold border-none"
+                >
+                  Admin Panel
+                </Button>
+              )}
               <Avatar
                 size="small"
                 icon={<UserOutlined />}
