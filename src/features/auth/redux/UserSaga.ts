@@ -2,9 +2,9 @@ import { PayloadAction } from "@reduxjs/toolkit";
 import { SagaIterator } from "redux-saga";
 import { takeLatest, put, call } from "redux-saga/effects";
 import isEmpty from "lodash/isEmpty";
-import { navigateTo } from "shared/utils/navigation";
+import { navigateTo, APP_ROUTES } from "@cinefix/utils";
+import i18n from "@cinefix/locales";
 import { toast } from "react-toastify";
-import i18n from "shared/i18n";
 import { UserRegister, UserLogin } from "./UserType";
 import {
   USER_REGISTER_API,
@@ -12,7 +12,6 @@ import {
 } from "./UserConstants";
 import { UserSagaAction } from "./UserSaga.reducer";
 import AuthServices from "../services/Auth.services";
-import { APP_ROUTES } from "shared/constants/routes";
 
 /**
  * EN: Saga that performs registration and reports the outcome via toast.

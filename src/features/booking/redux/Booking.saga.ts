@@ -3,11 +3,11 @@ import { PayloadAction } from "@reduxjs/toolkit";
 import { SagaIterator } from "redux-saga";
 import { put, call, select, takeLatest } from "redux-saga/effects";
 import { toast } from "react-toastify";
-import i18n from "shared/i18n";
+import i18n from "@cinefix/locales";
 import { BookingTicketAction } from "./BookingTicket.reducer";
 import { GET_TICKET_API, BOOK_TICKET_API } from "./BookingTicketActionTypes";
 import BookingTicketService, { TicketBookingPayload } from "../services/BookingTicketService";
-import BookingHubService from "../services/BookingHubService";
+import { BookingHubService } from "@cinefix/realtime";
 
 /**
  * EN: Saga that fetches the seat map + showtime info for a showtime via REST

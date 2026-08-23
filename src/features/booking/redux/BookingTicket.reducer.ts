@@ -2,7 +2,7 @@ import get from "lodash/get";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { BookingTicket, DanhSachGhe } from "./BookingTicketType";
 import { initialBookingTicket } from "./BookingTicketConstants";
-import { SEAT_HOLD_DURATION_MS } from "shared/constants/appConstants";
+import { SEAT_HOLD_DURATION_MS } from "@cinefix/utils";
 
 /**
  * EN: Redux state shape for the booking feature — the currently loaded

@@ -16,10 +16,9 @@ import { AppDispatch } from "app/store";
 import { USER_REGISTER_API } from "../redux/UserConstants";
 import { UserRegister } from "../redux/UserType";
 import AuthLayout from "../components/AuthLayout";
-import { GROUP_ID } from "shared/utils/setting";
-import { APP_ROUTES } from "shared/constants/routes";
+import { GROUP_ID, APP_ROUTES } from "@cinefix/utils";
 import { registerSchema, RegisterFormData } from "../schemas/auth.schema";
-import SEO from "shared/components/SEO/SEO";
+import { SEO } from "@cinefix/ui";
 
 /**
  * EN: Registration page. Same `Controller`-per-field pattern as Login.tsx

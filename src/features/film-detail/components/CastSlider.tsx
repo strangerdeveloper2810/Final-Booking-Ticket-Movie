@@ -1,7 +1,7 @@
 import { type FC } from "react";
 import { Avatar, Skeleton, Empty } from "antd";
 import { UserOutlined } from "@ant-design/icons";
-import { useGetMovieCreditsQuery, getTMDBImageUrl } from "shared/services/tmdbApi";
+import { useGetMovieCreditsQuery, getTMDBImageUrl } from "@cinefix/api-client";
 
 interface CastSliderProps {
   tmdbId?: number | string;

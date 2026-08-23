@@ -2,8 +2,8 @@ import { type FC } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, Tag, Skeleton } from "antd";
 import { StarFilled } from "@ant-design/icons";
-import { useGetSimilarMoviesQuery, getTMDBImageUrl } from "shared/services/tmdbApi";
-import { APP_ROUTES } from "shared/constants/routes";
+import { useGetSimilarMoviesQuery, getTMDBImageUrl } from "@cinefix/api-client";
+import { APP_ROUTES } from "@cinefix/utils";
 
 interface SimilarMoviesProps {
   tmdbId?: number | string;

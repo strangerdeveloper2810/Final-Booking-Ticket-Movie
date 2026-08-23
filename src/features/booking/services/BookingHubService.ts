@@ -1,5 +1,5 @@
 import * as signalR from "@microsoft/signalr";
-import { API_CONFIG } from "shared/constants/appConstants";
+import { API_CONFIG } from "@cinefix/utils";
 
 // EN: The seat-booking SignalR hub lives at the API host root, NOT under the
 // EN: `/api` prefix that every REST call in this app goes through (that prefix

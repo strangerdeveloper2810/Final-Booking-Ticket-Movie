@@ -6,9 +6,7 @@ import FilmListSagaReducer from "features/home/redux/filmList/FilmListSaga.reduc
 import ListCinemaSagaReducer from "features/home/redux/cinema/ListCinemaSaga.reducer";
 import UserSagaReducer from "features/auth/redux/UserSaga.reducer";
 import BookingTicketReducer from "features/booking/redux/BookingTicket.reducer";
-import LoadingReducer from "shared/redux/loading/Loading.reducer";
-import { movieApi } from "shared/services/movieApi";
-import { tmdbApi } from "shared/services/tmdbApi";
+import { movieApi, tmdbApi } from "@cinefix/api-client";
 
 // EN: `app/store.ts` is a "composition root", like `app/routes.tsx` and
 // `app/rootSaga.ts`: it is the one place allowed to import reducers from
@@ -54,7 +52,6 @@ export const store = configureStore({
   reducer: {
     Banner: BannerReducerSaga,
     FlimList: FilmListSagaReducer,
-    Loading: LoadingReducer,
     ListCinema: ListCinemaSagaReducer,
     UserSaga: UserSagaReducer,
     Booking: BookingTicketReducer,

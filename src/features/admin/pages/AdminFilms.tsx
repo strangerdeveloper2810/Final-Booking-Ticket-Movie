@@ -8,10 +8,10 @@ import {
   CalendarOutlined,
 } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
-import { useGetFilmListQuery, useDeleteFilmMutation } from "shared/services/movieApi";
+import { useGetFilmListQuery, useDeleteFilmMutation } from "@cinefix/api-client";
 import FilmModal from "../components/FilmModal";
 import CreateShowtimeModal from "../components/CreateShowtimeModal";
-import SEO from "shared/components/SEO/SEO";
+import { SEO } from "@cinefix/ui";
 
 /**
  * EN: Admin Film Management page — search, add, edit, delete movies, and create showtimes.

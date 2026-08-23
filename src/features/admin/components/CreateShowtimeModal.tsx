@@ -6,7 +6,7 @@ import {
   useGetCinemaSystemsQuery,
   useGetCinemaClustersQuery,
   useCreateShowtimeMutation,
-} from "shared/services/movieApi";
+} from "@cinefix/api-client";
 
 interface CreateShowtimeModalProps {
   open: boolean;

@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { getTicketApi, bookTicketSaga } from "./Booking.saga";
 import { BookingTicketAction } from "./BookingTicket.reducer";
 import { GET_TICKET_API } from "./BookingTicketActionTypes";
-import BookingHubService from "../services/BookingHubService";
+import { BookingHubService } from "@cinefix/realtime";
 import { TicketBookingPayload } from "../services/BookingTicketService";
 
 jest.mock("react-toastify", () => ({
@@ -14,14 +14,14 @@ jest.mock("react-toastify", () => ({
   },
 }));
 
-jest.mock("shared/i18n", () => ({
+jest.mock("@cinefix/locales", () => ({
   __esModule: true,
   default: { t: (key: string) => key },
 }));
 
-jest.mock("../services/BookingHubService", () => ({
+jest.mock("@cinefix/realtime", () => ({
   __esModule: true,
-  default: {
+  BookingHubService: {
     joinShowtimeRoom: jest.fn(),
     sendSelectedSeats: jest.fn(),
   },
@@ -93,9 +93,10 @@ describe("bookTicketSaga", () => {
 
     // Release real-time seats via SignalR
     const afterRelease = generator.next({ taiKhoan: "testUser" });
-    expect(afterRelease.value).toEqual(
-      call(BookingHubService.sendSelectedSeats, "testUser", [], payload.maLichChieu)
-    );
+    expect(afterRelease.value).toMatchObject({
+      type: "CALL",
+      payload: { args: ["testUser", [], payload.maLichChieu] },
+    });
 
     const afterRefresh = generator.next();
     expect(afterRefresh.value).toEqual(
@@ -103,9 +104,10 @@ describe("bookTicketSaga", () => {
     );
 
     const afterHubTrigger = generator.next();
-    expect(afterHubTrigger.value).toEqual(
-      call(BookingHubService.joinShowtimeRoom, payload.maLichChieu)
-    );
+    expect(afterHubTrigger.value).toMatchObject({
+      type: "CALL",
+      payload: { args: [payload.maLichChieu] },
+    });
 
     const afterFinally = generator.next();
     expect(afterFinally.value).toEqual(

@@ -6,8 +6,8 @@ import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import FilmItem from "./FilmItem";
 import GenreFilterBar from "./GenreFilterBar";
-import SkeletonCard from "shared/components/SkeletonCard/SkeletonCard";
-import { useGetFilmListQuery } from "shared/services/movieApi";
+import { SkeletonCard } from "@cinefix/ui";
+import { useGetFilmListQuery } from "@cinefix/api-client";
 
 // EN: react-slick injects `onClick` (and other nav props) into the component passed as
 // `nextArrow`; we only need to forward that click handler to a custom-styled button.

@@ -14,11 +14,10 @@ import {
 } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { RootState } from "app/store";
-import { useGetProfileQuery, useUpdateProfileMutation } from "shared/services/movieApi";
-import { APP_ROUTES } from "shared/constants/routes";
-import { GROUP_ID } from "shared/utils/setting";
+import { useGetProfileQuery, useUpdateProfileMutation } from "@cinefix/api-client";
+import { APP_ROUTES, GROUP_ID } from "@cinefix/utils";
 import TicketQRModal from "../components/TicketQRModal";
-import SEO from "shared/components/SEO/SEO";
+import { SEO } from "@cinefix/ui";
 
 /**
  * EN: User Profile & Booking History page — displays personal account details (Tab 1)

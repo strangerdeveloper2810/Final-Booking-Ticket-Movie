@@ -22,12 +22,10 @@ import {
   LEAVE_SEAT_ROOM,
 } from "../redux/BookingTicketActionTypes";
 import { BookingTicketAction } from "../redux/BookingTicket.reducer";
-import { DanhSachGhe, ThongTinPhim } from "../redux/BookingTicketType";
-import BookingHubService from "../services/BookingHubService";
-import LoadingNew from "shared/components/LoadingNew/LoadingNew";
-import { APP_ROUTES } from "shared/constants/routes";
-import { SeatType } from "shared/constants/appConstants";
-import SEO from "shared/components/SEO/SEO";
+import { DanhSachGhe, ThongTinPhim } from "@cinefix/types";
+import { BookingHubService } from "@cinefix/realtime";
+import { LoadingNew, SEO } from "@cinefix/ui";
+import { APP_ROUTES, SeatType } from "@cinefix/utils";
 
 /**
  * EN: Formats a millisecond duration as an "M:SS" countdown string (e.g.

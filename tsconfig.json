@@ -15,7 +15,16 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "baseUrl": "src"
+    "baseUrl": ".",
+    "paths": {
+      "@cinefix/types": ["packages/types/src"],
+      "@cinefix/utils": ["packages/utils/src"],
+      "@cinefix/locales": ["packages/locales/src"],
+      "@cinefix/api-client": ["packages/api-client/src"],
+      "@cinefix/realtime": ["packages/realtime/src"],
+      "@cinefix/ui": ["packages/ui/src"],
+      "*": ["src/*"]
+    }
   },
-  "include": ["src"]
+  "include": ["src", "packages"]
 }

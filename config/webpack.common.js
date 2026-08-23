@@ -18,6 +18,12 @@ module.exports = {
     modules: [path.resolve(__dirname, "../src"), "node_modules"],
     alias: {
       src: path.resolve(__dirname, "../src"),
+      "@cinefix/types": path.resolve(__dirname, "../packages/types/src"),
+      "@cinefix/utils": path.resolve(__dirname, "../packages/utils/src"),
+      "@cinefix/locales": path.resolve(__dirname, "../packages/locales/src"),
+      "@cinefix/api-client": path.resolve(__dirname, "../packages/api-client/src"),
+      "@cinefix/realtime": path.resolve(__dirname, "../packages/realtime/src"),
+      "@cinefix/ui": path.resolve(__dirname, "../packages/ui/src"),
     },
   },
   module: {

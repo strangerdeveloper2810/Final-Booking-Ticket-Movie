@@ -3,8 +3,8 @@ import { Modal, Form, Input, InputNumber, DatePicker, Switch, Rate, Upload, Butt
 import { UploadOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
-import { GROUP_ID } from "shared/utils/setting";
-import { useAddFilmUploadMutation, useUpdateFilmUploadMutation } from "shared/services/movieApi";
+import { GROUP_ID } from "@cinefix/utils";
+import { useAddFilmUploadMutation, useUpdateFilmUploadMutation } from "@cinefix/api-client";
 
 interface FilmModalProps {
   open: boolean;

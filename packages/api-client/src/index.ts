@@ -1,2 +1,2 @@
-export * from "../../../src/shared/services/tmdbApi";
-export * from "../../../src/shared/services/movieApi";
+export * from "./movieApi";
+export * from "./tmdbApi";

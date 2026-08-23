@@ -2,7 +2,7 @@ import { put } from "redux-saga/effects";
 import { registerSaga, loginSaga } from "./UserSaga";
 import { UserSagaAction } from "./UserSaga.reducer";
 import { toast } from "react-toastify";
-import { navigateTo } from "shared/utils/navigation";
+import { navigateTo } from "@cinefix/utils";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { UserLogin, UserRegister } from "./UserType";
 
@@ -19,7 +19,8 @@ jest.mock("react-toastify", () => ({
 // VI: UserSaga.ts điều hướng qua helper `navigateTo` dùng chung (xem
 // shared/utils/navigation.ts) thay vì instance package `history` cũ vốn đã
 // âm thầm bị ngắt kết nối — mock module đó thay thế.
-jest.mock("shared/utils/navigation", () => ({
+jest.mock("@cinefix/utils", () => ({
+  ...jest.requireActual("@cinefix/utils"),
   navigateTo: jest.fn(),
 }));
 

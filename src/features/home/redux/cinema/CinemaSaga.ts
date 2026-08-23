@@ -1,8 +1,7 @@
 import { SagaIterator } from "redux-saga";
 import { call, delay, put, takeLatest } from "redux-saga/effects";
 import { GET_ALL_CINEMA } from "./CinemaActionTypes";
-import { LoadingSagaAction } from "shared/redux/loading/Loading.reducer";
-import { GROUP_ID, http } from "shared/utils/setting";
+import { GROUP_ID, http } from "@cinefix/utils";
 import { ListCinemaAction } from "./ListCinemaSaga.reducer";
 
 /**
@@ -14,11 +13,6 @@ import { ListCinemaAction } from "./ListCinemaSaga.reducer";
  */
 export function* getAllCinemaSaga(): SagaIterator {
   try {
-    yield put(LoadingSagaAction.setLoading(true));
-    // EN: Small artificial delay so the loading skeleton doesn't flash instantly on fast
-    // networks/cache hits, giving a smoother perceived-loading experience.
-    // VI: Trì hoãn nhỏ để khung xương loading không chớp nháy quá nhanh khi mạng nhanh/có
-    // cache, giúp trải nghiệm loading mượt hơn.
     yield delay(200);
     let { data } = yield call(() => {
       return http.get(
@@ -28,8 +22,6 @@ export function* getAllCinemaSaga(): SagaIterator {
     yield put(ListCinemaAction.getAllListCinema(data.content));
   } catch (error) {
     console.log(error);
-  } finally {
-    yield put(LoadingSagaAction.setLoading(false));
   }
 }
 

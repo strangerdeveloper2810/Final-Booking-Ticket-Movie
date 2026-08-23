@@ -1,4 +1,4 @@
-import { http } from "shared/utils/setting";
+import { http } from "@cinefix/utils";
 
 /**
  * EN: Request body shape for the `DatVe` (book ticket) REST endpoint — the

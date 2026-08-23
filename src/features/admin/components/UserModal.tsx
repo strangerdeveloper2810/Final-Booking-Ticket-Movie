@@ -1,8 +1,8 @@
 import { type FC, useEffect } from "react";
 import { Modal, Form, Input, Select, App } from "antd";
 import { useTranslation } from "react-i18next";
-import { GROUP_ID } from "shared/utils/setting";
-import { useAddUserMutation, useUpdateProfileMutation, useGetUserTypesQuery } from "shared/services/movieApi";
+import { GROUP_ID } from "@cinefix/utils";
+import { useAddUserMutation, useUpdateProfileMutation, useGetUserTypesQuery } from "@cinefix/api-client";
 
 interface UserModalProps {
   open: boolean;

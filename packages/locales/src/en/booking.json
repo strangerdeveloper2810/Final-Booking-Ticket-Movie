@@ -1,0 +1,12 @@
+{
+  "screen": "CINEMA SCREEN",
+  "selectedSeats": "Selected Seats",
+  "totalAmount": "Total Price",
+  "confirmBooking": "CONFIRM BOOKING",
+  "holdingTimer": "Hold Time Remaining",
+  "comboSection": "Concession Combos & Snacks",
+  "regularSeat": "Standard Seat",
+  "vipSeat": "VIP Seat",
+  "occupiedSeat": "Occupied Seat",
+  "holdingSeat": "Seat On Hold"
+}

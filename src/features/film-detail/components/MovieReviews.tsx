@@ -2,7 +2,7 @@ import { type FC } from "react";
 import { Card, Avatar, Rate, Skeleton } from "antd";
 import { MessageOutlined, UserOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
-import { useGetMovieReviewsQuery, getTMDBImageUrl } from "shared/services/tmdbApi";
+import { useGetMovieReviewsQuery, getTMDBImageUrl } from "@cinefix/api-client";
 
 interface MovieReviewsProps {
   tmdbId?: number | string;

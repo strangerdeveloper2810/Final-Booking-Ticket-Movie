@@ -1,0 +1,11 @@
+{
+  "profileInfo": "Account Profile",
+  "bookingHistory": "Booking History",
+  "fullName": "Full Name",
+  "email": "Email Address",
+  "phone": "Phone Number",
+  "account": "Username",
+  "userType": "Account Type",
+  "updateProfile": "Save Changes",
+  "ticketPass": "E-Ticket QR Pass"
+}

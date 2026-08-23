@@ -7,7 +7,7 @@ import {
   ListCinema as ListCinemaType,
   LstCumRap,
 } from "../redux/cinema/ListCinemaType";
-import { useGetCinemasQuery } from "shared/services/movieApi";
+import { useGetCinemasQuery } from "@cinefix/api-client";
 
 /**
  * EN: Home page section that renders a two-level tab structure: outer tabs for each cinema

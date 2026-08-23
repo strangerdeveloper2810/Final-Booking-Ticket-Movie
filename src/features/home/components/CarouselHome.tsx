@@ -5,10 +5,8 @@ import map from "lodash/map";
 import { Carousel, Button, Tag, Rate, Modal } from "antd";
 import { PlayCircleOutlined, StarFilled, VideoCameraOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
-import SkeletonCarousel from "shared/components/SkeletonCarousel/SkeletonCarousel";
-import { useGetTrendingMoviesQuery, useGetMovieVideosQuery, getTMDBImageUrl } from "shared/services/tmdbApi";
-import { useGetBannersQuery } from "shared/services/movieApi";
-import { APP_ROUTES } from "shared/constants/routes";
+import { useGetTrendingMoviesQuery, useGetMovieVideosQuery, getTMDBImageUrl, useGetBannersQuery } from "@cinefix/api-client";
+import { APP_ROUTES } from "@cinefix/utils";
 
 /**
  * EN: Ultra-rich Hero Carousel powered by TMDB Trending movies API — renders full-bleed
@@ -27,7 +25,7 @@ const CarouselHome: FC = () => {
   const isLoading = loadingTMDB && loadingCybersoft;
 
   if (isLoading) {
-    return <SkeletonCarousel />;
+    return <div className="w-full h-[450px] bg-surface animate-pulse rounded-2xl border border-border" />;
   }
 
   // Use TMDB movies if available, else fall back to Cybersoft banner objects

@@ -1,0 +1,11 @@
+{
+  "dashboard": "Tổng Quan Hệ Thống",
+  "films": "Quản Lý Phim",
+  "users": "Quản Lý Người Dùng",
+  "showtimes": "Tạo Lịch Chiếu",
+  "totalFilms": "Tổng Số Phim",
+  "totalUsers": "Tổng Số Người Dùng",
+  "totalCinemas": "Cụm Rạp Chiếu",
+  "addFilm": "Thêm Phim Mới",
+  "addUser": "Thêm Người Dùng Mới"
+}

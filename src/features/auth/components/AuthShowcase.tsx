@@ -1,8 +1,7 @@
 import { type FC, useState, useEffect } from "react";
 import { StarFilled, SafetyCertificateOutlined, PlaySquareOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
-import { useGetTrendingMoviesQuery, getTMDBImageUrl } from "shared/services/tmdbApi";
-import { useGetBannersQuery } from "shared/services/movieApi";
+import { useGetTrendingMoviesQuery, getTMDBImageUrl, useGetBannersQuery } from "@cinefix/api-client";
 
 /**
  * EN: Left-column visual for the auth screens — an auto-rotating carousel

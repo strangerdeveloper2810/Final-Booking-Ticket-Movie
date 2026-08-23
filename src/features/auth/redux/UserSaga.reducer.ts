@@ -4,9 +4,9 @@ import {
   settings,
   USER_LOGIN,
   ACCESS_TOKEN,
-} from "shared/utils/setting";
-import { navigateTo } from "shared/utils/navigation";
-import { APP_ROUTES } from "shared/constants/routes";
+  navigateTo,
+  APP_ROUTES,
+} from "@cinefix/utils";
 import { UserLoginResult, UserState } from "../types/auth.types";
 
 // EN: Hydrate the logged-in user from the `USER_LOGIN` cookie on app start

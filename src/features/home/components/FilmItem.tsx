@@ -2,8 +2,8 @@ import { type FC } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, Button, Tag } from "antd";
 import { useTranslation } from "react-i18next";
-import Star from "shared/components/Star/Star";
-import { APP_ROUTES } from "shared/constants/routes";
+import { Star } from "@cinefix/ui";
+import { APP_ROUTES } from "@cinefix/utils";
 import { FilmItemProps } from "../types/home.types";
 
 /**

@@ -6,8 +6,7 @@ import { Tag } from "antd";
 import { CalendarOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { DanhSachPhim, LstLichChieuTheoPhim } from "../redux/cinema/ListCinemaType";
-import { parseScheduleMovie } from "shared/utils/common";
-import { APP_ROUTES } from "shared/constants/routes";
+import { parseScheduleMovie, APP_ROUTES } from "@cinefix/utils";
 import { ListMovieProps } from "../types/home.types";
 
 /**

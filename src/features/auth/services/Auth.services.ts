@@ -1,6 +1,6 @@
 import get from "lodash/get";
 import { UserLogin, UserRegister } from "../redux/UserType";
-import { http } from "shared/utils/setting";
+import { http } from "@cinefix/utils";
 
 /**
  * EN: Thin wrapper around the Cybersoft `QuanLyNguoiDung` (user management)

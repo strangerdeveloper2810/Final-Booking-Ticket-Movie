@@ -3,9 +3,8 @@ import { App as AntdApp } from "antd";
 import { HelmetProvider } from "react-helmet-async";
 import { ToastContainer } from "react-toastify";
 import AppRoutes from "./app/routes";
-import { CustomThemeProvider } from "shared/theme/ThemeContext";
-import ErrorBoundary from "shared/components/ErrorBoundary";
-import "shared/i18n";
+import { CustomThemeProvider } from "@cinefix/ui";
+import "@cinefix/locales";
 
 /**
  * EN: Top-level application shell. Sets up the provider stack every screen
@@ -49,10 +48,7 @@ const App: FC = (): JSX.Element => {
             trước đây đăng nhập/đăng ký không hiển thị phản hồi nào.
           */}
           <ToastContainer position="top-right" autoClose={4000} theme="colored" />
-          {/* Route-level boundary: isolate page crashes from theme/helmet context */}
-          <ErrorBoundary>
-            <AppRoutes />
-          </ErrorBoundary>
+          <AppRoutes />
         </AntdApp>
       </CustomThemeProvider>
     </HelmetProvider>

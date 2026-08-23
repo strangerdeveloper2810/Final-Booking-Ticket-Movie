@@ -1,0 +1,11 @@
+{
+  "profileInfo": "Thông Tin Cá Nhân",
+  "bookingHistory": "Lịch Sử Đặt Vé",
+  "fullName": "Họ và Tên",
+  "email": "Email",
+  "phone": "Số Điện Thoại",
+  "account": "Tài Khoản",
+  "userType": "Loại Người Dùng",
+  "updateProfile": "Cập Nhật Thông Tin",
+  "ticketPass": "Vé Điện Tử QR Pass"
+}

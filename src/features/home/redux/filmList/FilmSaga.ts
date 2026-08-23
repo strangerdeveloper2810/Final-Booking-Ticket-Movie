@@ -1,9 +1,8 @@
 import { SagaIterator } from "redux-saga";
 import { call, delay, put, takeLatest } from "redux-saga/effects";
 import { GET_ALL_FILM } from "./FilmActionTypes";
-import { http, GROUP_ID } from "shared/utils/setting";
+import { http, GROUP_ID } from "@cinefix/utils";
 import { FilmListAction } from "./FilmListSaga.reducer";
-import { LoadingSagaAction } from "shared/redux/loading/Loading.reducer";
 
 /**
  * EN: Saga worker that fetches the full film list for the configured group from the
@@ -13,11 +12,6 @@ import { LoadingSagaAction } from "shared/redux/loading/Loading.reducer";
  */
 export function* getAllFilmSaga(): SagaIterator {
   try {
-    yield put(LoadingSagaAction.setLoading(true));
-    // EN: Small artificial delay so the loading skeleton doesn't flash instantly on fast
-    // networks/cache hits, giving a smoother perceived-loading experience.
-    // VI: Trì hoãn nhỏ để khung xương loading không chớp nháy quá nhanh khi mạng nhanh/có
-    // cache, giúp trải nghiệm loading mượt hơn.
     yield delay(200);
     let { data } = yield call(() => {
       return http.get(`/QuanLyPhim/LayDanhSachPhim?maNhom=${GROUP_ID}`);
@@ -25,8 +19,6 @@ export function* getAllFilmSaga(): SagaIterator {
     yield put(FilmListAction.getAllFlim(data.content));
   } catch (error) {
     console.log(error);
-  } finally {
-    yield put(LoadingSagaAction.setLoading(false));
   }
 }
 

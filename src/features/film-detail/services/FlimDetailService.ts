@@ -1,4 +1,4 @@
-import { http } from "shared/utils/setting";
+import { http } from "@cinefix/utils";
 
 // EN: Thin wrapper around the Cybersoft "QuanLyPhim" (film management) API. This is a plain
 // class instantiated as a singleton below, not a Redux slice/thunk — Detail.tsx calls this

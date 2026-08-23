@@ -9,9 +9,9 @@ import {
   ArrowRightOutlined,
 } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
-import { APP_ROUTES } from "shared/constants/routes";
-import { useGetFilmListQuery, useGetUserListQuery, useGetCinemasQuery } from "shared/services/movieApi";
-import SEO from "shared/components/SEO/SEO";
+import { APP_ROUTES } from "@cinefix/utils";
+import { useGetFilmListQuery, useGetUserListQuery, useGetCinemasQuery } from "@cinefix/api-client";
+import { SEO } from "@cinefix/ui";
 
 /**
  * EN: Admin Dashboard home page — displays stats overview and quick actions.

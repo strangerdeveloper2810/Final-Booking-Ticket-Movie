@@ -8,8 +8,8 @@ import {
   useGetCinemaSystemsQuery,
   useGetCinemaClustersQuery,
   useCreateShowtimeMutation,
-} from "shared/services/movieApi";
-import SEO from "shared/components/SEO/SEO";
+} from "@cinefix/api-client";
+import { SEO } from "@cinefix/ui";
 
 /**
  * EN: Admin Showtime Management page — dedicated form for creating new showtime schedules (`TaoLichChieu`).

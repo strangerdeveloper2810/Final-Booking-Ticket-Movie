@@ -6,23 +6,21 @@ import { useParams, useNavigate } from "react-router-dom";
 import { PlayCircleOutlined, CalendarOutlined } from "@ant-design/icons";
 import { Image, Button, Modal, Tabs, Tag, Rate, Empty } from "antd";
 import { useTranslation } from "react-i18next";
-import { FilmDetail } from "../redux/types/FilmDetail";
+import { FilmDetail } from "@cinefix/types";
 import {
   CalendarMovieTheaterFilm,
   HeThongRapChieu,
 } from "../redux/types/CalendarFilmType";
 import filmDetailServiceInstance from "../services/FlimDetailService";
 import managementServiceInstance from "../services/ManagementMovieService";
-import { parseScheduleMovie, formatLocalizedDate } from "shared/utils/common";
-import { APP_ROUTES } from "shared/constants/routes";
-import { HTTP_STATUS } from "shared/constants/appConstants";
+import { parseScheduleMovie, formatLocalizedDate, APP_ROUTES, HTTP_STATUS } from "@cinefix/utils";
 import {
   fetchTMDBMovieDetails,
   fetchTMDBMovieSearch,
   getTMDBImageUrl,
   TMDBMovieDetail,
-} from "shared/services/tmdbApi";
-import SEO from "shared/components/SEO/SEO";
+} from "@cinefix/api-client";
+import { SEO } from "@cinefix/ui";
 import CastSlider from "../components/CastSlider";
 import MovieGallery from "../components/MovieGallery";
 import MovieReviews from "../components/MovieReviews";
@@ -83,7 +81,7 @@ const Detail: FC = () => {
         // 3. Construct or Merge Detail Data
         if (cybDetail) {
           const youtubeVideo = tmdbData?.videos?.results?.find(
-            (v) => v.site === "YouTube" && (v.type === "Trailer" || v.type === "Teaser")
+            (v: any) => v.site === "YouTube" && (v.type === "Trailer" || v.type === "Teaser")
           ) || tmdbData?.videos?.results?.[0];
           const tmdbTrailerUrl = youtubeVideo ? `https://www.youtube.com/watch?v=${youtubeVideo.key}` : "";
 
@@ -100,7 +98,7 @@ const Detail: FC = () => {
         } else if (tmdbData) {
           // TMDB-only movie (e.g., ID = 969681)
           const youtubeVideo = tmdbData.videos?.results?.find(
-            (v) => v.site === "YouTube" && (v.type === "Trailer" || v.type === "Teaser")
+            (v: any) => v.site === "YouTube" && (v.type === "Trailer" || v.type === "Teaser")
           ) || tmdbData.videos?.results?.[0];
           const trailerUrl = youtubeVideo ? `https://www.youtube.com/watch?v=${youtubeVideo.key}` : "";
 

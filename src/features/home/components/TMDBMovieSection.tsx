@@ -6,10 +6,9 @@ import SliderComponent from "react-slick";
 import { LeftOutlined, RightOutlined, StarFilled, EyeOutlined } from "@ant-design/icons";
 import { Modal, Tag, Button } from "antd";
 import { useTranslation } from "react-i18next";
-import SkeletonCard from "shared/components/SkeletonCard/SkeletonCard";
-import { TMDBMovie, getTMDBImageUrl } from "shared/services/tmdbApi";
-import { formatLocalizedDate } from "shared/utils/common";
-import { APP_ROUTES } from "shared/constants/routes";
+import { SkeletonCard } from "@cinefix/ui";
+import { TMDBMovie, getTMDBImageUrl } from "@cinefix/api-client";
+import { formatLocalizedDate, APP_ROUTES } from "@cinefix/utils";
 
 interface TMDBMovieSectionProps {
   title: string;

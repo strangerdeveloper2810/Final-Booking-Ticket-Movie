@@ -9,9 +9,9 @@ import { useTranslation } from "react-i18next";
 import { AppDispatch } from "app/store";
 import { USER_LOGIN_API } from "../redux/UserConstants";
 import AuthLayout from "../components/AuthLayout";
-import { APP_ROUTES } from "shared/constants/routes";
+import { APP_ROUTES } from "@cinefix/utils";
 import { loginSchema, LoginFormData } from "../schemas/auth.schema";
-import SEO from "shared/components/SEO/SEO";
+import { SEO } from "@cinefix/ui";
 
 /**
  * EN: Login page. Uses `react-hook-form` + zod (`loginSchema`) for

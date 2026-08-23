@@ -1,14 +1,13 @@
 import { type FC, Suspense, lazy } from "react";
 import map from "lodash/map";
 import { useTranslation } from "react-i18next";
-import LoadingNew from "shared/components/LoadingNew/LoadingNew";
-import SEO from "shared/components/SEO/SEO";
+import { LoadingNew, SEO } from "@cinefix/ui";
 import {
   useGetTrendingMoviesQuery,
   useGetPopularMoviesQuery,
   useGetTopRatedMoviesQuery,
   useGetUpcomingMoviesQuery,
-} from "shared/services/tmdbApi";
+} from "@cinefix/api-client";
 import TMDBMovieSection from "../components/TMDBMovieSection";
 
 const CarouselHome = lazy(() => import("../components/CarouselHome"));

@@ -1,7 +1,7 @@
 import { type FC, useState } from "react";
 import { Modal, Skeleton } from "antd";
 import { PictureOutlined } from "@ant-design/icons";
-import { useGetMovieImagesQuery, getTMDBImageUrl } from "shared/services/tmdbApi";
+import { useGetMovieImagesQuery, getTMDBImageUrl } from "@cinefix/api-client";
 
 interface MovieGalleryProps {
   tmdbId?: number | string;

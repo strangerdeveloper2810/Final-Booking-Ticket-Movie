@@ -1,7 +1,7 @@
 import { type FC } from "react";
 import { AuthLayoutProps } from "../types/auth.types";
 import AuthShowcase from "./AuthShowcase";
-import Logo from "shared/components/Logo/Logo";
+import { Logo } from "@cinefix/ui";
 
 /**
  * EN: Shared shell for the Login/Register screens: a movie showcase on the

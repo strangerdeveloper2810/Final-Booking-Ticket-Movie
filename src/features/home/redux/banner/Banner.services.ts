@@ -1,4 +1,4 @@
-import { http } from "shared/utils/setting";
+import { http } from "@cinefix/utils";
 import get from "lodash/get";
 
 const BannerServices = {

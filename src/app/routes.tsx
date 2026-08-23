@@ -1,27 +1,8 @@
 import { type FC, lazy, Suspense, useEffect } from "react";
 import { useRoutes, useNavigate, RouteObject } from "react-router-dom";
-import HomeTemplate from "shared/templates/HomeTemplate";
-import ErrorTemplate from "shared/templates/ErrorTemplate";
-import LoadingNew from "shared/components/LoadingNew/LoadingNew";
-import { PATHS } from "shared/constants/routes";
-import { setNavigate } from "shared/utils/navigation";
+import { HomeTemplate, AdminTemplate, AdminGuard, LoadingNew, ErrorTemplate } from "@cinefix/ui";
+import { PATHS, setNavigate } from "@cinefix/utils";
 
-// EN: This file is a "composition root": its sole purpose is to wire every
-// feature's page component into one route table. That's why it's allowed to
-// import from every feature (`features/home`, `features/film-detail`,
-// `features/booking`, `features/auth`) in a single place — a privilege
-// feature files never get (feature code never imports from another feature,
-// or from `app/`, to keep features independently maintainable/removable).
-// Pages are lazy-loaded so each feature's bundle is only fetched when its
-// route is actually visited (code-splitting).
-// VI: File này là một "composition root" (gốc kết hợp): mục đích duy nhất là
-// gắn kết component trang của từng feature vào một bảng route. Vì vậy nó
-// được phép import từ mọi feature (`features/home`, `features/film-detail`,
-// `features/booking`, `features/auth`) tại một nơi duy nhất — một đặc quyền
-// mà file feature không bao giờ có (code feature không bao giờ import từ
-// feature khác, hay từ `app/`, để mỗi feature luôn độc lập, dễ bảo trì/gỡ
-// bỏ). Các trang được lazy-load để bundle của mỗi feature chỉ được tải khi
-// route tương ứng thực sự được truy cập (code-splitting).
 const Home = lazy(() => import("features/home/pages/Home"));
 const Detail = lazy(() => import("features/film-detail/pages/Detail"));
 const BookingTicket = lazy(() => import("features/booking/pages/BookingTicket"));
@@ -32,8 +13,6 @@ const AdminDashboard = lazy(() => import("features/admin/pages/AdminDashboard"))
 const AdminFilms = lazy(() => import("features/admin/pages/AdminFilms"));
 const AdminUsers = lazy(() => import("features/admin/pages/AdminUsers"));
 const AdminShowtimes = lazy(() => import("features/admin/pages/AdminShowtimes"));
-import AdminTemplate from "shared/templates/AdminTemplate";
-import AdminGuard from "shared/guards/AdminGuard";
 
 /**
  * EN: Declarative route table consumed by `useRoutes()` below. Each entry

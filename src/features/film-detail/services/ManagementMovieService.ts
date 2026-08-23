@@ -1,4 +1,4 @@
-import { http } from "shared/utils/setting";
+import { http } from "@cinefix/utils";
 
 // EN: Thin wrapper around the Cybersoft "QuanLyRap" (cinema management) API. Like
 // FlimDetailService, this is a plain class/singleton called directly from Detail.tsx's

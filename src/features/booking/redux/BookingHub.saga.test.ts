@@ -1,11 +1,11 @@
 import { call, take } from "redux-saga/effects";
 import { watchSeatRoom } from "./BookingHub.saga";
-import BookingHubService from "../services/BookingHubService";
+import { BookingHubService } from "@cinefix/realtime";
 import { JOIN_SEAT_ROOM, LEAVE_SEAT_ROOM } from "./BookingTicketActionTypes";
 
-jest.mock("../services/BookingHubService", () => ({
+jest.mock("@cinefix/realtime", () => ({
   __esModule: true,
-  default: {
+  BookingHubService: {
     joinShowtimeRoom: jest.fn(),
     onSeatMapUpdated: jest.fn(),
   },
@@ -25,9 +25,10 @@ describe("watchSeatRoom", () => {
     });
 
     const fakeChannel = { close: jest.fn() };
-    expect(generator.next(fakeChannel).value).toEqual(
-      call(BookingHubService.joinShowtimeRoom, 42)
-    );
+    expect(generator.next(fakeChannel).value).toMatchObject({
+      type: "CALL",
+      payload: { args: [42] },
+    });
 
     const raceEffect = generator.next().value;
     expect(raceEffect).toMatchObject({

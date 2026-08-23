@@ -1,0 +1,11 @@
+{
+  "dashboard": "System Overview",
+  "films": "Movie Management",
+  "users": "User Management",
+  "showtimes": "Create Showtime",
+  "totalFilms": "Total Movies",
+  "totalUsers": "Total Users",
+  "totalCinemas": "Cinema Clusters",
+  "addFilm": "Add New Movie",
+  "addUser": "Add New User"
+}

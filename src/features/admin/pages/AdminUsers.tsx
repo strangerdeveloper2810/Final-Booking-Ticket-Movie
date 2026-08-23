@@ -7,9 +7,9 @@ import {
   DeleteOutlined,
 } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
-import { useGetUserListQuery, useDeleteUserMutation } from "shared/services/movieApi";
+import { useGetUserListQuery, useDeleteUserMutation } from "@cinefix/api-client";
 import UserModal from "../components/UserModal";
-import SEO from "shared/components/SEO/SEO";
+import { SEO } from "@cinefix/ui";
 
 /**
  * EN: Admin User Management page — search, filter, add, edit, and delete user accounts.
