@@ -29,6 +29,8 @@ const FilmModal: FC<FilmModalProps> = ({ open, editingFilm, onCancel, onSuccess 
   const [updateFilm, { isLoading: isUpdating }] = useUpdateFilmUploadMutation();
 
   useEffect(() => {
+    if (!open) return;
+
     if (editingFilm) {
       form.setFieldsValue({
         tenPhim: editingFilm.tenPhim,
@@ -105,7 +107,7 @@ const FilmModal: FC<FilmModalProps> = ({ open, editingFilm, onCancel, onSuccess 
       width={700}
       destroyOnClose
     >
-      <Form form={form} layout="vertical" initialValues={{ dangChieu: true, danhGia: 10 }}>
+      <Form form={form} layout="vertical" initialValues={{ dangChieu: true, danhGia: 10 }} preserve={false}>
         <Form.Item
           name="tenPhim"
           label={t("admin:movieTitle")}

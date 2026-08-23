@@ -25,6 +25,8 @@ const UserModal: FC<UserModalProps> = ({ open, editingUser, onCancel, onSuccess 
   const [updateUser, { isLoading: isUpdating }] = useUpdateProfileMutation();
 
   useEffect(() => {
+    if (!open) return;
+
     if (editingUser) {
       form.setFieldsValue({
         taiKhoan: editingUser.taiKhoan,
@@ -74,7 +76,7 @@ const UserModal: FC<UserModalProps> = ({ open, editingUser, onCancel, onSuccess 
       width={600}
       destroyOnClose
     >
-      <Form form={form} layout="vertical">
+      <Form form={form} layout="vertical" preserve={false}>
         <Form.Item
           name="taiKhoan"
           label={t("admin:account")}

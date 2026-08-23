@@ -76,7 +76,7 @@ const CreateShowtimeModal: FC<CreateShowtimeModalProps> = ({ open, film, onCance
       width={600}
       destroyOnClose
     >
-      <Form form={form} layout="vertical" initialValues={{ giaVe: 75000 }}>
+      <Form form={form} layout="vertical" initialValues={{ giaVe: 75000 }} preserve={false}>
         <Form.Item label={t("admin:cinemaSystem")}>
           <Select
             placeholder={t("admin:cinemaSystem")}
