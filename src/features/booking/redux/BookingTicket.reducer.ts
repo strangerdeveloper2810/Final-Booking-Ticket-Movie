@@ -12,9 +12,16 @@ import { SEAT_HOLD_DURATION_MS } from "shared/constants/appConstants";
  * ghế đang được tải, lựa chọn ghế đang thực hiện của người dùng, trạng thái
  * gửi yêu cầu đặt vé, và thời hạn đếm ngược giữ ghế phía client.
  */
+export type DanhSachGheDangDatItem = {
+  taiKhoan: string;
+  danhSachGhe: DanhSachGhe[];
+  maLichChieu?: number | string;
+};
+
 export type BookingState = {
   bookingDetail: BookingTicket | Record<string, never>;
   selectedSeats: DanhSachGhe[];
+  danhSachGheDangDat: DanhSachGheDangDatItem[];
   isBooking: boolean;
   /**
    * EN: Epoch ms the current seat selection auto-releases at; null while nothing is held.
@@ -26,6 +33,7 @@ export type BookingState = {
 const initialState: BookingState = {
   bookingDetail: initialBookingTicket,
   selectedSeats: [],
+  danhSachGheDangDat: [],
   isBooking: false,
   selectionExpiresAt: null,
 };
@@ -60,6 +68,7 @@ const BookingTicketReducer = createSlice({
     removeDetailBookingTicket: (state: BookingState) => {
       state.bookingDetail = {};
       state.selectedSeats = [];
+      state.danhSachGheDangDat = [];
       state.isBooking = false;
       state.selectionExpiresAt = null;
     },
@@ -108,58 +117,66 @@ const BookingTicketReducer = createSlice({
     },
     /**
      * EN: Applied whenever DatVeHub pushes "loadDanhSachGheDaDat" for the room
-     * EN: the user is currently in (see BookingHub.saga.ts). Per the hub's own
-     * EN: naming ("load list of seats ALREADY BOOKED"), and confirmed by live
-     * EN: testing, this payload is a PARTIAL list — only the seats that are
-     * EN: currently booked, not the full seat map (it can legitimately be an
-     * EN: empty array if nobody has booked yet). It must be MERGED into the
-     * EN: existing seat list by maGhe, never used to replace state.bookingDetail
-     * EN: .danhSachGhe wholesale — doing that previously wiped the entire seat
-     * EN: grid blank the moment a room had zero booked seats to report.
+     * EN: the user is currently in (see BookingHub.saga.ts). Parses both the
+     * EN: raw SignalR user array (`Array<{ taiKhoan, danhSachGhe, maLichChieu }>`)
+     * EN: and standard seat object arrays, storing real-time held seats in
+     * EN: `danhSachGheDangDat` and updating booked seat statuses.
      * VI: Được áp dụng mỗi khi DatVeHub phát (push) "loadDanhSachGheDaDat" cho
-     * VI: phòng mà người dùng đang ở trong đó (xem BookingHub.saga.ts). Theo
-     * VI: đúng tên gọi của hub ("tải danh sách ghế ĐÃ ĐƯỢC ĐẶT"), và đã được
-     * VI: xác nhận qua kiểm thử thực tế, payload này là một danh sách KHÔNG
-     * VI: ĐẦY ĐỦ — chỉ gồm các ghế hiện đang được đặt, không phải toàn bộ sơ
-     * VI: đồ ghế (nó hoàn toàn có thể là một mảng rỗng nếu chưa ai đặt ghế
-     * VI: nào). Danh sách này phải được HỢP NHẤT (merge) vào danh sách ghế
-     * VI: hiện có theo maGhe, tuyệt đối không được dùng để thay thế toàn bộ
-     * VI: state.bookingDetail.danhSachGhe — việc làm đó trước đây từng khiến
-     * VI: toàn bộ sơ đồ ghế bị xóa trắng ngay khi phòng báo cáo có 0 ghế đã
-     * VI: đặt.
+     * VI: phòng mà người dùng đang ở trong đó (xem BookingHub.saga.ts). Phân
+     * VI: tích cả mảng người dùng SignalR thô (`Array<{ taiKhoan, danhSachGhe, maLichChieu }>`)
+     * VI: lẫn mảng đối tượng ghế chuẩn, lưu các ghế đang giữ theo thời gian thực
+     * VI: vào `danhSachGheDangDat` và cập nhật trạng thái ghế đã đặt.
      * @param state - EN: current booking state draft. VI: bản nháp (draft) state đặt vé hiện tại.
-     * @param action - EN: action carrying the partial list of newly-booked seats. VI: action mang theo danh sách (không đầy đủ) các ghế vừa được đặt.
+     * @param action - EN: action carrying the SignalR realtime update payload. VI: action mang theo dữ liệu cập nhật theo thời gian thực từ SignalR.
      */
     applyRealtimeSeatUpdate: (
       state: BookingState,
-      action: PayloadAction<DanhSachGhe[]>
+      action: PayloadAction<any>
     ) => {
-      if (!("thongTinPhim" in state.bookingDetail)) return;
-      // EN: Native `Set` (not a lodash equivalent) is used deliberately here:
-      // it gives true O(1) `.has()` membership checks below, which lodash has
-      // no direct equivalent for (`keyBy` + `has` would build a full keyed
-      // object copy of the array just to get similar lookup performance, with
-      // no real readability win). For a showtime's seat list (tens of seats)
-      // the perf difference is negligible either way, but `Set` best conveys
-      // "unique id membership test" intent, so it's kept as-is rather than
-      // swapped for a lodash helper.
-      // VI: Ở đây cố ý dùng `Set` gốc của JavaScript (không dùng hàm tương
-      // đương của lodash): nó cho phép kiểm tra thành viên `.has()` với độ
-      // phức tạp O(1) thực sự bên dưới, mà lodash không có hàm tương đương
-      // trực tiếp (`keyBy` + `has` sẽ phải tạo một bản sao object được đánh
-      // khóa (keyed) từ toàn bộ mảng chỉ để đạt hiệu năng tra cứu tương tự, mà
-      // không thực sự cải thiện độ dễ đọc). Với danh sách ghế của một lịch
-      // chiếu (vài chục ghế), khác biệt hiệu năng là không đáng kể dù dùng
-      // cách nào, nhưng `Set` thể hiện rõ nhất ý định "kiểm tra thành viên
-      // theo id duy nhất", nên được giữ nguyên thay vì thay bằng hàm lodash.
-      const bookedSeatIds = new Set(action.payload.map((s) => s.maGhe));
-      if (bookedSeatIds.size === 0) return;
+      const rawPayload = action.payload;
+      if (!Array.isArray(rawPayload)) return;
 
-      state.bookingDetail.danhSachGhe = state.bookingDetail.danhSachGhe.map(
-        (seat) => (bookedSeatIds.has(seat.maGhe) ? { ...seat, daDat: true } : seat)
-      );
+      const parsedItems: DanhSachGheDangDatItem[] = [];
+      const bookedSeatIds = new Set<number>();
 
-      if (state.selectedSeats.length) {
+      rawPayload.forEach((item) => {
+        if (!item) return;
+        // Direct seat object (e.g. from test or direct seat array payload)
+        if ("maGhe" in item && typeof item.maGhe === "number") {
+          bookedSeatIds.add(item.maGhe);
+          return;
+        }
+
+        // SignalR loadDanhSachGheDaDat user broadcast payload object
+        let seats: DanhSachGhe[] = [];
+        if (typeof item.danhSachGhe === "string") {
+          try {
+            seats = JSON.parse(item.danhSachGhe);
+          } catch {
+            seats = [];
+          }
+        } else if (Array.isArray(item.danhSachGhe)) {
+          seats = item.danhSachGhe;
+        }
+
+        if (Array.isArray(seats)) {
+          parsedItems.push({
+            taiKhoan: item.taiKhoan || "guest",
+            danhSachGhe: seats,
+            maLichChieu: item.maLichChieu,
+          });
+        }
+      });
+
+      state.danhSachGheDangDat = parsedItems;
+
+      if (bookedSeatIds.size > 0 && "thongTinPhim" in state.bookingDetail) {
+        state.bookingDetail.danhSachGhe = state.bookingDetail.danhSachGhe.map(
+          (seat) => (bookedSeatIds.has(seat.maGhe) ? { ...seat, daDat: true } : seat)
+        );
+      }
+
+      if (state.selectedSeats.length > 0 && bookedSeatIds.size > 0) {
         state.selectedSeats = state.selectedSeats.filter(
           (selected) => !bookedSeatIds.has(selected.maGhe)
         );

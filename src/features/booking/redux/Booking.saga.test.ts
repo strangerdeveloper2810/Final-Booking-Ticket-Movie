@@ -23,6 +23,7 @@ jest.mock("../services/BookingHubService", () => ({
   __esModule: true,
   default: {
     joinShowtimeRoom: jest.fn(),
+    sendSelectedSeats: jest.fn(),
   },
 }));
 
@@ -87,15 +88,20 @@ describe("bookTicketSaga", () => {
     const afterBook = generator.next({ status: 200 });
     expect(afterBook.value).toEqual(put(BookingTicketAction.clearSelectedSeats()));
 
+    // Select userLogin state
+    generator.next();
+
+    // Release real-time seats via SignalR
+    const afterRelease = generator.next({ taiKhoan: "testUser" });
+    expect(afterRelease.value).toEqual(
+      call(BookingHubService.sendSelectedSeats, "testUser", [], payload.maLichChieu)
+    );
+
     const afterRefresh = generator.next();
     expect(afterRefresh.value).toEqual(
       put({ type: GET_TICKET_API, payload: payload.maLichChieu })
     );
 
-    // DatVe (REST) does not itself trigger the hub broadcast on this
-    // server — the client that just booked must re-invoke loadDanhSachGhe
-    // itself so DatVeHub recomputes and pushes loadDanhSachGheDaDat to
-    // every other client watching this showtime.
     const afterHubTrigger = generator.next();
     expect(afterHubTrigger.value).toEqual(
       call(BookingHubService.joinShowtimeRoom, payload.maLichChieu)
@@ -115,6 +121,8 @@ describe("bookTicketSaga", () => {
     generator.next();
     generator.next();
     generator.next({ status: 200 });
+    generator.next();
+    generator.next("testUser");
     generator.next();
     generator.next();
 

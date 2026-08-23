@@ -12,24 +12,24 @@ jest.mock("../services/BookingHubService", () => ({
 }));
 
 describe("watchSeatRoom", () => {
-  it("joins the DatVeHub room on JOIN_SEAT_ROOM, then races the update listener against LEAVE_SEAT_ROOM", () => {
+  it("creates update listener channel, joins the DatVeHub room on JOIN_SEAT_ROOM, then races update listener against LEAVE_SEAT_ROOM", () => {
     const generator = watchSeatRoom();
 
     expect(generator.next().value).toEqual(take(JOIN_SEAT_ROOM));
 
     const joinAction = { type: JOIN_SEAT_ROOM, payload: 42 };
-    expect(generator.next(joinAction).value).toEqual(
-      call(BookingHubService.joinShowtimeRoom, 42)
-    );
-
-    const createChannelEffect = generator.next().value;
+    const createChannelEffect = generator.next(joinAction).value;
     expect(createChannelEffect).toMatchObject({
       type: "CALL",
       payload: { fn: expect.any(Function), args: [] },
     });
 
     const fakeChannel = { close: jest.fn() };
-    const raceEffect = generator.next(fakeChannel).value;
+    expect(generator.next(fakeChannel).value).toEqual(
+      call(BookingHubService.joinShowtimeRoom, 42)
+    );
+
+    const raceEffect = generator.next().value;
     expect(raceEffect).toMatchObject({
       type: "RACE",
       payload: {
@@ -45,6 +45,9 @@ describe("watchSeatRoom", () => {
 
     const joinAction = { type: JOIN_SEAT_ROOM, payload: 42 };
     generator.next(joinAction);
+
+    const fakeChannel = { close: jest.fn() };
+    generator.next(fakeChannel);
 
     const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {});
     const afterError = generator.throw!(new Error("hub unreachable"));

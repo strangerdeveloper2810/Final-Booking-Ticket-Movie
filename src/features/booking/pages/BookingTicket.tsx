@@ -23,6 +23,7 @@ import {
 } from "../redux/BookingTicketActionTypes";
 import { BookingTicketAction } from "../redux/BookingTicket.reducer";
 import { DanhSachGhe, ThongTinPhim } from "../redux/BookingTicketType";
+import BookingHubService from "../services/BookingHubService";
 import LoadingNew from "shared/components/LoadingNew/LoadingNew";
 import { APP_ROUTES } from "shared/constants/routes";
 import { SeatType } from "shared/constants/appConstants";
@@ -79,6 +80,9 @@ const BookingTicket: FC = () => {
   const selectedSeats: DanhSachGhe[] = useSelector(
     (state: RootState) => state.Booking.selectedSeats || []
   );
+  const danhSachGheDangDat = useSelector(
+    (state: RootState) => state.Booking.danhSachGheDangDat || []
+  );
   const isBooking = useSelector((state: RootState) =>
     get(state, "Booking.isBooking", false)
   );
@@ -86,6 +90,16 @@ const BookingTicket: FC = () => {
     (state: RootState) => state.Booking.selectionExpiresAt
   );
   const { userLogin } = useSelector((state: RootState) => state.UserSaga);
+
+  // Map of seat IDs being held in real-time by OTHER users (maGhe -> taiKhoan)
+  const otherUsersHoldingSeats = new Map<number, string>();
+  danhSachGheDangDat.forEach((item) => {
+    if (item.taiKhoan !== userLogin?.taiKhoan) {
+      (item.danhSachGhe || []).forEach((seat) => {
+        otherUsersHoldingSeats.set(seat.maGhe, item.taiKhoan);
+      });
+    }
+  });
 
   // EN: Seat-hold countdown: ticks every second while a selection is held, and
   // EN: auto-releases the seats (with a toast) once the deadline passes — there's
@@ -110,6 +124,13 @@ const BookingTicket: FC = () => {
       if (remaining <= 0) {
         setRemainingMs(0);
         dispatch(BookingTicketAction.clearSelectedSeats());
+        if (maLichChieu) {
+          BookingHubService.sendSelectedSeats(
+            userLogin?.taiKhoan || "guest",
+            [],
+            maLichChieu
+          );
+        }
         message.warning(t("booking:seatHoldExpired"));
         return;
       }
@@ -119,7 +140,7 @@ const BookingTicket: FC = () => {
     tick();
     const interval = setInterval(tick, 1000);
     return () => clearInterval(interval);
-  }, [selectionExpiresAt, dispatch, message, t]);
+  }, [selectionExpiresAt, dispatch, message, t, maLichChieu, userLogin]);
 
   useEffect(() => {
     if (maLichChieu) {
@@ -141,34 +162,45 @@ const BookingTicket: FC = () => {
     }
 
     return () => {
+      if (maLichChieu) {
+        BookingHubService.sendSelectedSeats(
+          userLogin?.taiKhoan || "guest",
+          [],
+          maLichChieu
+        );
+      }
       dispatch({ type: LEAVE_SEAT_ROOM });
       dispatch(BookingTicketAction.removeDetailBookingTicket());
     };
-  }, [maLichChieu, dispatch]);
+  }, [maLichChieu, dispatch, userLogin]);
 
   const thongTinPhim: ThongTinPhim | undefined = get(bookingDetail, "thongTinPhim");
   const danhSachGhe: DanhSachGhe[] = get(bookingDetail, "danhSachGhe", []);
 
-  // EN: `sumBy` with a callback (rather than the `'giaVe'` iteratee shorthand)
-  // keeps the exact same "treat missing/falsy price as 0" defensive fallback
-  // the previous `.reduce` had, in case the API ever sends a null/undefined
-  // `giaVe` despite the TS type declaring it as a required `number`.
-  // VI: Dùng `sumBy` với callback (thay vì dạng rút gọn iteratee `'giaVe'`)
-  // để giữ nguyên hành vi phòng thủ "coi giá vé bị thiếu/falsy là 0" mà
-  // `.reduce` trước đây đã có, phòng trường hợp API trả về `giaVe` là
-  // null/undefined dù kiểu TS khai báo là `number` bắt buộc.
   const totalPrice = sumBy(selectedSeats, (seat: DanhSachGhe) => seat.giaVe || 0);
 
   /**
-   * EN: Toggles a seat's selection state, unless it's already booked by
-   * someone else (occupied seats are not selectable).
-   * VI: Bật/tắt trạng thái chọn của một ghế, trừ khi ghế đó đã được người
-   * khác đặt (ghế đã có người đặt thì không thể chọn).
-   * @param seat - EN: the seat the user clicked. VI: ghế mà người dùng vừa bấm chọn.
+   * EN: Toggles a seat's selection state and emits the updated selection to SignalR DatVeHub.
+   * VI: Bật/tắt trạng thái chọn của một ghế và gửi danh sách chọn mới tới SignalR DatVeHub theo thời gian thực.
+   * @param seat - EN: the seat clicked. VI: ghế vừa bấm chọn.
    */
   const handleSelectSeat = (seat: DanhSachGhe) => {
-    if (seat.daDat) return;
+    if (seat.daDat || otherUsersHoldingSeats.has(seat.maGhe)) return;
+
+    const isCurrentlySelected = selectedSeats.some((s) => s.maGhe === seat.maGhe);
+    const updatedSelectedSeats = isCurrentlySelected
+      ? selectedSeats.filter((s) => s.maGhe !== seat.maGhe)
+      : [...selectedSeats, seat];
+
     dispatch(BookingTicketAction.toggleSelectSeat(seat));
+
+    if (maLichChieu) {
+      BookingHubService.sendSelectedSeats(
+        userLogin?.taiKhoan || "guest",
+        updatedSelectedSeats,
+        maLichChieu
+      );
+    }
   };
 
   /**
@@ -282,6 +314,8 @@ const BookingTicket: FC = () => {
                   (s) => s.maGhe === seat.maGhe
                 );
                 const isOccupied = seat.daDat;
+                const isHeldByOther = otherUsersHoldingSeats.has(seat.maGhe);
+                const otherUserAccount = otherUsersHoldingSeats.get(seat.maGhe);
                 const isVip = seat.loaiGhe === SeatType.VIP;
 
                 let seatClasses =
@@ -289,6 +323,9 @@ const BookingTicket: FC = () => {
 
                 if (isOccupied) {
                   seatClasses += "bg-gray-500 text-white cursor-not-allowed opacity-60";
+                } else if (isHeldByOther) {
+                  seatClasses +=
+                    "bg-orange-500 text-white cursor-not-allowed animate-pulse shadow-md shadow-orange-500/40 font-bold";
                 } else if (isSelected) {
                   seatClasses +=
                     "bg-[#52c41a] text-white scale-110 shadow-lg shadow-green-500/40 font-bold ring-2 ring-white";
@@ -300,13 +337,17 @@ const BookingTicket: FC = () => {
                     "bg-border text-text-primary hover:bg-primary hover:text-white hover:scale-105 cursor-pointer";
                 }
 
+                const seatTitle = isHeldByOther
+                  ? t("booking:beingSelectedBy", { user: otherUserAccount })
+                  : `${seat.tenGhe} (${seat.loaiGhe}) - ${seat.giaVe?.toLocaleString()} VNĐ`;
+
                 return (
                   <button
                     key={seat.maGhe}
-                    disabled={isOccupied}
+                    disabled={isOccupied || isHeldByOther}
                     onClick={() => handleSelectSeat(seat)}
                     className={seatClasses}
-                    title={`${seat.tenGhe} (${seat.loaiGhe}) - ${seat.giaVe?.toLocaleString()} VNĐ`}
+                    title={seatTitle}
                   >
                     {seat.tenGhe}
                   </button>
@@ -328,6 +369,10 @@ const BookingTicket: FC = () => {
             <div className="flex items-center gap-2">
               <div className="w-5 h-5 rounded-md bg-[#52c41a]" />
               <span className="text-xs text-text-secondary">{t("booking:selectedSeat")}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-5 h-5 rounded-md bg-orange-500 animate-pulse" />
+              <span className="text-xs text-text-secondary">{t("booking:beingSelectedSeat")}</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-5 h-5 rounded-md bg-gray-500" />

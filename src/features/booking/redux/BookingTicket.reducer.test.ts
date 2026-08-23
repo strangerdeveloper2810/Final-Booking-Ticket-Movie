@@ -28,6 +28,7 @@ const baseState = (overrides: Partial<BookingState> = {}): BookingState => ({
     danhSachGhe: [seat(1), seat(2), seat(3)],
   },
   selectedSeats: [],
+  danhSachGheDangDat: [],
   isBooking: false,
   selectionExpiresAt: null,
   ...overrides,
@@ -91,6 +92,7 @@ describe("BookingTicket.reducer — applyRealtimeSeatUpdate", () => {
     const state: BookingState = {
       bookingDetail: {},
       selectedSeats: [],
+      danhSachGheDangDat: [],
       isBooking: false,
       selectionExpiresAt: null,
     };

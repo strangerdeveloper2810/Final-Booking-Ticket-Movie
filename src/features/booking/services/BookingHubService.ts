@@ -27,6 +27,7 @@ const HUB_URL = `${API_CONFIG.DOMAIN.replace(/\/api\/?$/, "")}/DatVeHub`;
 export const HUB_METHOD = {
   LOAD_DANH_SACH_GHE: "loadDanhSachGhe",
   LOAD_DANH_SACH_GHE_DA_DAT: "loadDanhSachGheDaDat",
+  DAT_GHE: "datGhe",
 } as const;
 
 let connection: signalR.HubConnection | null = null;
@@ -95,6 +96,27 @@ const BookingHubService = {
   joinShowtimeRoom: async (maLichChieu: string | number): Promise<void> => {
     const conn = await ensureStarted();
     await conn.invoke(HUB_METHOD.LOAD_DANH_SACH_GHE, String(maLichChieu));
+  },
+
+  /**
+   * EN: Emits the current user's held/selected seats to the DatVeHub room in real time.
+   * VI: Gửi danh sách ghế đang chọn/giữ của người dùng hiện tại tới phòng DatVeHub theo thời gian thực.
+   * @param taiKhoan - EN: the user's account name. VI: tên tài khoản người dùng.
+   * @param selectedSeats - EN: array of seats currently selected. VI: mảng các ghế đang được chọn.
+   * @param maLichChieu - EN: the showtime id. VI: mã lịch chiếu.
+   */
+  sendSelectedSeats: async (
+    taiKhoan: string,
+    selectedSeats: any[],
+    maLichChieu: string | number
+  ): Promise<void> => {
+    try {
+      const conn = await ensureStarted();
+      const seatsPayload = JSON.stringify(selectedSeats);
+      await conn.invoke(HUB_METHOD.DAT_GHE, taiKhoan, seatsPayload, String(maLichChieu));
+    } catch (error) {
+      console.error("Failed to send selected seats via SignalR DatVeHub", error);
+    }
   },
 
   // EN: Registers a listener for realtime seat-map broadcasts. Returns an unsubscribe function.

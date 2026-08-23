@@ -83,31 +83,23 @@ export function* watchSeatRoom(): SagaIterator {
       JOIN_SEAT_ROOM
     );
 
-    try {
-      yield call(BookingHubService.joinShowtimeRoom, joinAction.payload);
-    } catch (error) {
-      // EN: A failed hub join shouldn't break the page — the REST-backed seat
-      // EN: map (GET_TICKET_API) already loaded the initial state; the user
-      // EN: just won't get live updates until the connection recovers on its
-      // EN: own (withAutomaticReconnect is configured in BookingHubService).
-      // VI: Một lượt tham gia hub thất bại không được phép làm hỏng trang —
-      // VI: sơ đồ ghế lấy qua REST (GET_TICKET_API) đã tải trạng thái ban đầu
-      // VI: rồi; người dùng chỉ đơn giản là sẽ không nhận được cập nhật theo
-      // VI: thời gian thực cho đến khi kết nối tự phục hồi
-      // VI: (withAutomaticReconnect đã được cấu hình trong BookingHubService).
-      console.error("Failed to join realtime seat room", error);
-      continue;
-    }
-
+    // EN: Create listener channel BEFORE joining the room so the initial
+    // EN: broadcast pushed by the server upon room join is never missed.
+    // VI: Tạo event channel lắng nghe TRƯỚC KHI tham gia phòng để không bao
+    // VI: giờ bỏ lỡ tin phát đầu tiên mà server đẩy về khi vừa vào phòng.
     const channel: EventChannel<DanhSachGhe[]> = yield call(
       createSeatUpdateChannel
     );
 
     try {
+      yield call(BookingHubService.joinShowtimeRoom, joinAction.payload);
+
       yield race({
         listen: call(listenForSeatUpdates, channel),
         leave: take(LEAVE_SEAT_ROOM),
       });
+    } catch (error) {
+      console.error("Failed to join or listen to realtime seat room", error);
     } finally {
       channel.close();
     }

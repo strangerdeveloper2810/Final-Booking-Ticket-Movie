@@ -1,7 +1,7 @@
 import get from "lodash/get";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { SagaIterator } from "redux-saga";
-import { put, call, takeLatest } from "redux-saga/effects";
+import { put, call, select, takeLatest } from "redux-saga/effects";
 import { toast } from "react-toastify";
 import i18n from "shared/i18n";
 import { BookingTicketAction } from "./BookingTicket.reducer";
@@ -62,32 +62,24 @@ export function* bookTicketSaga(action: PayloadAction<TicketBookingPayload>): Sa
     if (get(result, "status") === 200 || get(result, "data.statusCode") === 200) {
       toast.success(i18n.t("booking:bookingSuccess"));
       yield put(BookingTicketAction.clearSelectedSeats());
+
+      // EN: Clear this user's real-time held seats on the SignalR server
+      // VI: Xóa danh sách giữ ghế theo thời gian thực của người dùng này trên server SignalR
+      try {
+        const userState = yield select((state: any) => state.UserSaga?.userLogin);
+        const taiKhoan = userState?.taiKhoan || "guest";
+        yield call(BookingHubService.sendSelectedSeats, taiKhoan, [], payload.maLichChieu);
+      } catch (err) {
+        console.error("Failed to release SignalR held seats after booking", err);
+      }
+
       // EN: Refresh this client's own seat map via REST.
       // VI: Làm mới sơ đồ ghế của chính client này thông qua REST.
       yield put({ type: GET_TICKET_API, payload: payload.maLichChieu });
 
-      // EN: DatVeHub only broadcasts loadDanhSachGheDaDat to a room when
-      // EN: someone invokes loadDanhSachGhe — the REST DatVe endpoint does NOT
-      // EN: trigger that broadcast on its own (the REST API and the hub are
-      // EN: separate on this server). So the client that just booked has to
-      // EN: re-invoke loadDanhSachGhe itself to make the server recompute and
-      // EN: push the fresh seat map to every OTHER client in the room.
-      // VI: DatVeHub chỉ phát (broadcast) loadDanhSachGheDaDat tới một phòng
-      // VI: khi có ai đó gọi loadDanhSachGhe — endpoint REST DatVe KHÔNG tự
-      // VI: kích hoạt việc phát tin này (API REST và hub là hai thứ tách biệt
-      // VI: trên server này). Vì vậy client vừa đặt vé xong phải tự gọi lại
-      // VI: loadDanhSachGhe để server tính toán lại và đẩy sơ đồ ghế mới nhất
-      // VI: tới mọi client KHÁC đang ở trong phòng.
       try {
         yield call(BookingHubService.joinShowtimeRoom, payload.maLichChieu);
       } catch (hubError) {
-        // EN: A failed rebroadcast trigger must never surface as a booking
-        // EN: failure — the REST booking already succeeded. Other clients will
-        // EN: simply stay stale until their own next hub interaction.
-        // VI: Một lỗi khi kích hoạt phát lại dữ liệu không được phép hiển thị
-        // VI: như một lỗi đặt vé — vì việc đặt vé qua REST đã thành công rồi.
-        // VI: Các client khác chỉ đơn giản là sẽ có dữ liệu cũ (stale) cho đến
-        // VI: lần tương tác tiếp theo với hub của chính chúng.
         console.error("Failed to trigger realtime seat rebroadcast", hubError);
       }
     } else {
