@@ -17,6 +17,10 @@ import { parseScheduleMovie, formatLocalizedDate } from "shared/utils/common";
 import { APP_ROUTES } from "shared/constants/routes";
 import { HTTP_STATUS } from "shared/constants/appConstants";
 import SEO from "shared/components/SEO/SEO";
+import CastSlider from "../components/CastSlider";
+import MovieGallery from "../components/MovieGallery";
+import MovieReviews from "../components/MovieReviews";
+import SimilarMovies from "../components/SimilarMovies";
 
 /**
  * EN: Film detail page. Shows a movie's hero banner (poster, rating, synopsis, trailer) and its
@@ -278,24 +282,32 @@ const Detail: FC = () => {
       </div>
 
       {/* Showtimes & Cinemas Section */}
-      <div className="max-w-screen-xl mx-auto px-4 md:px-6 mt-12">
-        <h2 className="text-2xl font-extrabold text-text-primary mb-6">
-          {t("detail:showtimesTitle")}
-        </h2>
+      <div className="max-w-screen-xl mx-auto px-4 md:px-6 mt-12 space-y-12">
+        <div>
+          <h2 className="text-2xl font-extrabold text-text-primary mb-6">
+            {t("detail:showtimesTitle")}
+          </h2>
 
-        {!isEmpty(calendarMovieTheaterFilm?.heThongRapChieu) ? (
-          <div className="bg-surface border border-border rounded-xl p-4 md:p-6 shadow-xl transition-colors">
-            <Tabs
-              tabPosition="top"
-              className="detail-cinema-tabs"
-              items={renderScheduleTabItems()}
-            />
-          </div>
-        ) : (
-          <div className="bg-surface border border-border rounded-xl p-12 text-center">
-            <Empty description={t("detail:noShowtimes")} />
-          </div>
-        )}
+          {!isEmpty(calendarMovieTheaterFilm?.heThongRapChieu) ? (
+            <div className="bg-surface border border-border rounded-xl p-4 md:p-6 shadow-xl transition-colors">
+              <Tabs
+                tabPosition="top"
+                className="detail-cinema-tabs"
+                items={renderScheduleTabItems()}
+              />
+            </div>
+          ) : (
+            <div className="bg-surface border border-border rounded-xl p-12 text-center">
+              <Empty description={t("detail:noShowtimes")} />
+            </div>
+          )}
+        </div>
+
+        {/* TMDB Enriched Sections */}
+        <CastSlider tmdbId={detailFilm?.maPhim} />
+        <MovieGallery tmdbId={detailFilm?.maPhim} />
+        <MovieReviews tmdbId={detailFilm?.maPhim} />
+        <SimilarMovies tmdbId={detailFilm?.maPhim} />
       </div>
 
       {/* Trailer Video Modal */}

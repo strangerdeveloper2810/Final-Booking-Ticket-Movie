@@ -128,11 +128,53 @@ export const tmdbApi = createApi({
           API_CONFIG.TMDB_API_KEY ? `&api_key=${API_CONFIG.TMDB_API_KEY}` : ""
         }`;
       },
-      // EN: `results` is only ever missing/undefined on a malformed/empty
-      // TMDB response — fall back to `[]` so consumers always get an array.
-      // VI: `results` chỉ thiếu/undefined khi response TMDB bị lỗi/rỗng —
-      // trả về `[]` mặc định để nơi dùng luôn nhận được một mảng.
       transformResponse: (response: TMDBResponse) => get(response, "results", []),
+    }),
+
+    // EN: Additional TMDB endpoints for enriched movie detail features
+    // VI: Các endpoint TMDB bổ sung cho các tính năng chi tiết phim phong phú
+    getMovieCredits: builder.query<any, number | string>({
+      query: (movieId) => ({
+        url: `movie/${movieId}/credits`,
+        params: API_CONFIG.TMDB_API_KEY ? { api_key: API_CONFIG.TMDB_API_KEY } : {},
+      }),
+    }),
+    getMovieVideos: builder.query<any[], number | string>({
+      query: (movieId) => ({
+        url: `movie/${movieId}/videos`,
+        params: API_CONFIG.TMDB_API_KEY ? { api_key: API_CONFIG.TMDB_API_KEY } : {},
+      }),
+      transformResponse: (response: any) => get(response, "results", []),
+    }),
+    getMovieImages: builder.query<any, number | string>({
+      query: (movieId) => ({
+        url: `movie/${movieId}/images`,
+        params: API_CONFIG.TMDB_API_KEY ? { api_key: API_CONFIG.TMDB_API_KEY } : {},
+      }),
+    }),
+    getMovieReviews: builder.query<any[], number | string>({
+      query: (movieId) => ({
+        url: `movie/${movieId}/reviews`,
+        params: API_CONFIG.TMDB_API_KEY ? { api_key: API_CONFIG.TMDB_API_KEY } : {},
+      }),
+      transformResponse: (response: any) => get(response, "results", []),
+    }),
+    getSimilarMovies: builder.query<TMDBMovie[], number | string>({
+      query: (movieId) => ({
+        url: `movie/${movieId}/similar`,
+        params: API_CONFIG.TMDB_API_KEY ? { api_key: API_CONFIG.TMDB_API_KEY } : {},
+      }),
+      transformResponse: (response: any) => get(response, "results", []),
+    }),
+    searchTMDBMovies: builder.query<TMDBMovie[], string>({
+      query: (query) => ({
+        url: `search/movie`,
+        params: {
+          query,
+          ...(API_CONFIG.TMDB_API_KEY ? { api_key: API_CONFIG.TMDB_API_KEY } : {}),
+        },
+      }),
+      transformResponse: (response: any) => get(response, "results", []),
     }),
   }),
 });
@@ -150,6 +192,12 @@ export const {
   useGetPopularMoviesQuery,
   useGetTopRatedMoviesQuery,
   useGetUpcomingMoviesQuery,
+  useGetMovieCreditsQuery,
+  useGetMovieVideosQuery,
+  useGetMovieImagesQuery,
+  useGetMovieReviewsQuery,
+  useGetSimilarMoviesQuery,
+  useSearchTMDBMoviesQuery,
 } = tmdbApi;
 
 /**

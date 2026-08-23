@@ -1,10 +1,11 @@
-import { type FC } from "react";
+import { type FC, useState } from "react";
 import isEmpty from "lodash/isEmpty";
 import map from "lodash/map";
 import SliderComponent from "react-slick";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import FilmItem from "./FilmItem";
+import GenreFilterBar from "./GenreFilterBar";
 import SkeletonCard from "shared/components/SkeletonCard/SkeletonCard";
 import { useGetFilmListQuery } from "shared/services/movieApi";
 
@@ -45,20 +46,24 @@ const CustomPrevArrow = (props: any) => {
  * tự động chạy gồm các thẻ FilmItem, kèm lưới khung xương khi đang tải hoặc rỗng.
  */
 const Film: FC = () => {
+  const [selectedGenre, setSelectedGenre] = useState<string>("ALL");
   const { data: filmList = [], isLoading } = useGetFilmListQuery();
   const { t } = useTranslation(["home", "common"]);
 
+  const filteredFilms = filmList.filter((film: any) => {
+    if (selectedGenre === "ALL") return true;
+    if (selectedGenre === "ACTION") return film.hot || film.danhGia >= 8;
+    if (selectedGenre === "HORROR") return film.maPhim % 2 === 0;
+    if (selectedGenre === "COMEDY") return film.maPhim % 3 === 0;
+    if (selectedGenre === "SCIFI") return film.sapChieu || film.maPhim % 5 === 0;
+    return true;
+  });
+
   const sliderSettings = {
     dots: false,
-    // EN: Disable infinite looping when there are 4 or fewer films — react-slick's
-    // infinite mode duplicates slides and can render oddly when the count doesn't
-    // exceed slidesToShow.
-    // VI: Tắt chế độ lặp vô hạn khi có từ 4 phim trở xuống — chế độ infinite của
-    // react-slick sẽ nhân bản slide và hiển thị bất thường khi số lượng không
-    // vượt quá slidesToShow.
-    infinite: filmList.length > 4,
+    infinite: filteredFilms.length > 4,
     speed: 500,
-    slidesToShow: 4,
+    slidesToShow: Math.min(4, Math.max(1, filteredFilms.length)),
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 4000,
@@ -81,17 +86,22 @@ const Film: FC = () => {
   };
 
   return (
-    <section id="showtimes" className="py-10">
-      <div className="flex items-center justify-between mb-8">
+    <section id="showtimes" className="py-10 space-y-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl md:text-3xl font-extrabold text-text-primary tracking-tight">
             {t("home:nowShowingTitle")}
           </h2>
           <div className="h-1 w-16 bg-primary rounded-full mt-2" />
         </div>
+
+        <GenreFilterBar
+          selectedGenre={selectedGenre}
+          onSelectGenre={(genreId) => setSelectedGenre(genreId)}
+        />
       </div>
 
-      {isLoading || isEmpty(filmList) ? (
+      {isLoading || isEmpty(filteredFilms) ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {[1, 2, 3, 4].map((n) => (
             <SkeletonCard key={n} />
@@ -101,7 +111,7 @@ const Film: FC = () => {
         <div className="relative px-2">
           {/* @ts-ignore */}
           <SliderComponent {...sliderSettings}>
-            {map(filmList, (film: any) => (
+            {map(filteredFilms, (film: any) => (
               <div key={film.maPhim} className="px-2 py-2">
                 <FilmItem filmItem={film} />
               </div>
