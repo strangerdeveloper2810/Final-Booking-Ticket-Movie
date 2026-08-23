@@ -51,10 +51,14 @@ root.render(
   </Provider>
 );
 
-// EN: Sends Core Web Vitals metrics (CLS/FID/LCP/etc.) to the callback
-// passed in — currently a no-op unless a reporting function is provided,
-// see `reportWebVitals.ts`.
-// VI: Gửi các chỉ số Core Web Vitals (CLS/FID/LCP/v.v.) tới callback được
-// truyền vào — hiện không làm gì nếu không truyền hàm báo cáo, xem
-// `reportWebVitals.ts`.
-reportWebVitals();
+// EN: Measures Core Web Vitals metrics (LCP, INP, CLS, FCP, TTFB).
+// Pass a callback (e.g., `console.log` or Analytics handler) to inspect performance.
+// VI: Đo lường chỉ số Core Web Vitals (LCP, INP, CLS, FCP, TTFB).
+// Truyền callback (vd: `console.log` hoặc Analytics handler) để theo dõi hiệu năng.
+if (process.env.NODE_ENV === "development") {
+  reportWebVitals((metric) => {
+    // console.debug(`[Web Vitals] ${metric.name}:`, Math.round(metric.value));
+  });
+} else {
+  reportWebVitals();
+}
