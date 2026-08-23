@@ -5,13 +5,18 @@
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
     "@ant-design/v5-patch-for-react-19": "^1.0.3",
+    "@cinefix/api-client": "workspace:*",
+    "@cinefix/locales": "workspace:*",
+    "@cinefix/realtime": "workspace:*",
+    "@cinefix/types": "workspace:*",
+    "@cinefix/ui": "workspace:*",
+    "@cinefix/utils": "workspace:*",
     "@hookform/resolvers": "^3.3.4",
     "@microsoft/signalr": "^10.0.11",
     "@reduxjs/toolkit": "^2.1.0",
     "antd": "^5.14.0",
     "axios": "^1.6.7",
     "dayjs": "^1.11.10",
-    "history": "^5.3.0",
     "i18next": "^23.8.2",
     "i18next-browser-languagedetector": "^7.2.0",
     "lodash": "^4.17.21",
@@ -73,12 +78,12 @@
     "build": "webpack --mode production && node scripts/prerender.js",
     "build:dev": "webpack --mode development",
     "analyze": "webpack --mode production --env ANALYZE=true",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && pnpm packages:typecheck",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "preview": "npx serve build",
-    "packages:typecheck": "pnpm --filter @cinefix/types typecheck && pnpm --filter @cinefix/utils typecheck && pnpm --filter @cinefix/locales typecheck && pnpm --filter @cinefix/api-client typecheck && pnpm --filter @cinefix/realtime typecheck && pnpm --filter @cinefix/ui typecheck"
+    "packages:typecheck": "pnpm -r --filter \"./packages/*\" typecheck"
   },
   "browserslist": {
     "production": [

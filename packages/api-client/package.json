@@ -9,6 +9,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@cinefix/types": "workspace:*",
+    "@cinefix/utils": "workspace:*",
     "@reduxjs/toolkit": "^2.1.0",
     "axios": "^1.6.7",
     "lodash": "^4.17.21"

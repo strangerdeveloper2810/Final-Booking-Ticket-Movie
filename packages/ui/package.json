@@ -11,12 +11,17 @@
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
     "@ant-design/v5-patch-for-react-19": "^1.0.3",
+    "@cinefix/api-client": "workspace:*",
+    "@cinefix/types": "workspace:*",
+    "@cinefix/utils": "workspace:*",
     "antd": "^5.14.0",
     "lodash": "^4.17.21",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
     "react-helmet-async": "^2.0.4",
     "react-i18next": "^14.0.5",
     "react-router-dom": "^7.1.5"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   }
 }
