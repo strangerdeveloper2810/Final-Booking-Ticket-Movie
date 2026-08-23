@@ -27,6 +27,7 @@
 // bên trong cây router này (xem `app/routes.tsx`). Các stylesheet toàn cục
 // của thư viện UI bên thứ ba (antd, react-toastify, slick-carousel) được
 // import một lần ở đây để mọi feature đều có thể dùng được.
+import "@ant-design/v5-patch-for-react-19";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
