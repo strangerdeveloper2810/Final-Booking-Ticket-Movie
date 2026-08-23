@@ -21,6 +21,17 @@ export interface TMDBMovie {
   release_date: string;
 }
 
+export interface TMDBMovieDetail extends TMDBMovie {
+  tagline?: string;
+  runtime?: number;
+  genres?: Array<{ id: number; name: string }>;
+  status?: string;
+  budget?: number;
+  revenue?: number;
+  production_companies?: Array<{ id: number; name: string; logo_path: string }>;
+  videos?: { results: Array<{ key: string; site: string; type: string; name: string }> };
+}
+
 export interface TMDBResponse {
   page: number;
   results: TMDBMovie[];
@@ -130,6 +141,16 @@ export const tmdbApi = createApi({
       },
       transformResponse: (response: TMDBResponse) => get(response, "results", []),
     }),
+    getMovieDetails: builder.query<TMDBMovieDetail, { movieId: number | string; lang?: string } | number | string>({
+      query: (arg) => {
+        const movieId = typeof arg === "object" ? arg.movieId : arg;
+        const lang = typeof arg === "object" ? arg.lang : undefined;
+        const tmdbLang = getTMDBLanguageCode(lang);
+        return `movie/${movieId}?language=${tmdbLang}&append_to_response=videos,credits,images${
+          API_CONFIG.TMDB_API_KEY ? `&api_key=${API_CONFIG.TMDB_API_KEY}` : ""
+        }`;
+      },
+    }),
 
     // EN: Additional TMDB endpoints for enriched movie detail features
     // VI: Các endpoint TMDB bổ sung cho các tính năng chi tiết phim phong phú
@@ -218,12 +239,64 @@ export const getTMDBImageUrl = (
   size: "original" | "w1280" | "w500" = "w500"
 ) => {
   if (isEmpty(path)) return "https://picsum.photos/300/450";
-  // EN: `isEmpty` (unlike a `!path` truthy check) isn't a TS type guard, so
-  // narrow explicitly here to keep the string-only branch type-safe below.
-  // VI: `isEmpty` (khác với kiểm tra truthy `!path`) không phải type guard
-  // của TS, nên thu hẹp kiểu rõ ràng ở đây để nhánh chỉ-string bên dưới an
-  // toàn về kiểu.
   const resolvedPath = path as string;
   if (resolvedPath.startsWith("http")) return resolvedPath;
   return `https://image.tmdb.org/t/p/${size}${resolvedPath}`;
+};
+
+/**
+ * EN: Helper function to fetch TMDB movie detail via raw fetch.
+ * VI: Hàm helper để lấy chi tiết phim TMDB qua fetch thuần.
+ */
+export const fetchTMDBMovieDetails = async (
+  movieId: number | string,
+  lang?: string
+): Promise<TMDBMovieDetail | null> => {
+  try {
+    const tmdbLang = getTMDBLanguageCode(lang);
+    const apiKeyParam = API_CONFIG.TMDB_API_KEY ? `&api_key=${API_CONFIG.TMDB_API_KEY}` : "";
+    const headers: Record<string, string> = { accept: "application/json" };
+    if (API_CONFIG.TMDB_TOKEN) {
+      headers["Authorization"] = `Bearer ${API_CONFIG.TMDB_TOKEN}`;
+    }
+    const res = await fetch(
+      `${tmdbBaseUrl}movie/${movieId}?language=${tmdbLang}&append_to_response=videos,credits,images${apiKeyParam}`,
+      { headers }
+    );
+    if (!res.ok) return null;
+    return await res.json();
+  } catch (err) {
+    return null;
+  }
+};
+
+/**
+ * EN: Helper function to search TMDB movie by title and get full detail.
+ * VI: Hàm helper để tìm kiếm phim TMDB theo tên và lấy chi tiết đầy đủ.
+ */
+export const fetchTMDBMovieSearch = async (
+  query: string,
+  lang?: string
+): Promise<TMDBMovieDetail | null> => {
+  try {
+    const tmdbLang = getTMDBLanguageCode(lang);
+    const apiKeyParam = API_CONFIG.TMDB_API_KEY ? `&api_key=${API_CONFIG.TMDB_API_KEY}` : "";
+    const headers: Record<string, string> = { accept: "application/json" };
+    if (API_CONFIG.TMDB_TOKEN) {
+      headers["Authorization"] = `Bearer ${API_CONFIG.TMDB_TOKEN}`;
+    }
+    const res = await fetch(
+      `${tmdbBaseUrl}search/movie?query=${encodeURIComponent(query)}&language=${tmdbLang}${apiKeyParam}`,
+      { headers }
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    const firstResult = get(data, "results[0]");
+    if (firstResult?.id) {
+      return fetchTMDBMovieDetails(firstResult.id, lang);
+    }
+    return null;
+  } catch (err) {
+    return null;
+  }
 };

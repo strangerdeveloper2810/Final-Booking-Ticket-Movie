@@ -16,6 +16,12 @@ import managementServiceInstance from "../services/ManagementMovieService";
 import { parseScheduleMovie, formatLocalizedDate } from "shared/utils/common";
 import { APP_ROUTES } from "shared/constants/routes";
 import { HTTP_STATUS } from "shared/constants/appConstants";
+import {
+  fetchTMDBMovieDetails,
+  fetchTMDBMovieSearch,
+  getTMDBImageUrl,
+  TMDBMovieDetail,
+} from "shared/services/tmdbApi";
 import SEO from "shared/components/SEO/SEO";
 import CastSlider from "../components/CastSlider";
 import MovieGallery from "../components/MovieGallery";
@@ -40,40 +46,85 @@ const Detail: FC = () => {
   const [calendarMovieTheaterFilm, setCalendarMovieTheaterFilm] = useState<CalendarMovieTheaterFilm>();
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
 
-  // EN: Data fetching here uses local component useState/useEffect + plain service class
-  // instances (filmDetailServiceInstance / managementServiceInstance) instead of Redux, even
-  // though this feature has a `redux/types` folder. This is a real, deliberate-looking but
-  // inconsistent architectural choice worth flagging for future maintainers: there is no shared/
-  // cached store for this data, each mount re-fetches, and other components can't subscribe to
-  // it without lifting state or introducing a proper Redux slice.
-  // VI: Việc lấy dữ liệu ở đây dùng useState/useEffect cục bộ của component cùng các instance
-  // service class thuần (filmDetailServiceInstance / managementServiceInstance) thay vì Redux,
-  // dù tính năng này có thư mục `redux/types`. Đây là một điểm không nhất quán thực sự về kiến
-  // trúc, cần lưu ý cho người bảo trì sau này: không có store dùng chung/cache cho dữ liệu này,
-  // mỗi lần mount đều gọi lại API, và các component khác không thể lấy dữ liệu này nếu không nâng
-  // state lên cấp cao hơn hoặc xây dựng một Redux slice thực sự.
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (id) {
-          const param = { maPhim: id };
+        if (!id) return;
+        const param = { maPhim: id };
 
+        let cybDetail: FilmDetail | undefined;
+
+        // 1. Try Cybersoft API
+        try {
           const detailRes = await filmDetailServiceInstance.getFilmDetail(param);
           if (get(detailRes, "status") === HTTP_STATUS.OK) {
-            setDetailFilm(get(detailRes, "data.content"));
+            cybDetail = get(detailRes, "data.content");
           }
+        } catch (e) {
+          // Cybersoft detail not found for this ID (e.g. TMDB movie ID)
+        }
 
+        try {
           const calendarRes = await managementServiceInstance.getInfoCanlendarFilm(param);
           if (get(calendarRes, "status") === HTTP_STATUS.OK) {
             setCalendarMovieTheaterFilm(get(calendarRes, "data.content"));
           }
+        } catch (e) {
+          // Cybersoft calendar not found
+        }
+
+        // 2. Fetch TMDB Movie Details
+        let tmdbData: TMDBMovieDetail | null = await fetchTMDBMovieDetails(id, i18n.language);
+
+        if (!tmdbData && cybDetail?.tenPhim) {
+          tmdbData = await fetchTMDBMovieSearch(cybDetail.tenPhim, i18n.language);
+        }
+
+        // 3. Construct or Merge Detail Data
+        if (cybDetail) {
+          const youtubeVideo = tmdbData?.videos?.results?.find(
+            (v) => v.site === "YouTube" && (v.type === "Trailer" || v.type === "Teaser")
+          ) || tmdbData?.videos?.results?.[0];
+          const tmdbTrailerUrl = youtubeVideo ? `https://www.youtube.com/watch?v=${youtubeVideo.key}` : "";
+
+          setDetailFilm({
+            ...cybDetail,
+            moTa:
+              cybDetail.moTa && cybDetail.moTa !== "Mô tả phim đang được cập nhật..."
+                ? cybDetail.moTa
+                : tmdbData?.overview || cybDetail.moTa,
+            hinhAnh: cybDetail.hinhAnh || getTMDBImageUrl(tmdbData?.poster_path),
+            trailer: cybDetail.trailer || tmdbTrailerUrl,
+            danhGia: cybDetail.danhGia || (tmdbData?.vote_average ? Math.round(tmdbData.vote_average) : 10),
+          });
+        } else if (tmdbData) {
+          // TMDB-only movie (e.g., ID = 969681)
+          const youtubeVideo = tmdbData.videos?.results?.find(
+            (v) => v.site === "YouTube" && (v.type === "Trailer" || v.type === "Teaser")
+          ) || tmdbData.videos?.results?.[0];
+          const trailerUrl = youtubeVideo ? `https://www.youtube.com/watch?v=${youtubeVideo.key}` : "";
+
+          setDetailFilm({
+            maPhim: tmdbData.id,
+            tenPhim: tmdbData.title,
+            biDanh: tmdbData.original_title || tmdbData.title,
+            trailer: trailerUrl,
+            hinhAnh: getTMDBImageUrl(tmdbData.poster_path, "w500"),
+            moTa: tmdbData.overview || "Mô tả phim đang được cập nhật...",
+            maNhom: "GP00",
+            ngayKhoiChieu: tmdbData.release_date || new Date().toISOString(),
+            danhGia: tmdbData.vote_average ? Math.round(tmdbData.vote_average) : 8,
+            hot: true,
+            dangChieu: true,
+            sapChieu: false,
+          });
         }
       } catch (error) {
         console.error("Error fetching film detail:", error);
       }
     };
     fetchData();
-  }, [id]);
+  }, [id, i18n.language]);
 
   /**
    * EN: Navigates to the booking flow for a specific showtime.

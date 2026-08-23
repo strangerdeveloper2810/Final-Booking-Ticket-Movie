@@ -1,6 +1,7 @@
 import { type FC, useState } from "react";
 import isEmpty from "lodash/isEmpty";
 import map from "lodash/map";
+import { useNavigate } from "react-router-dom";
 import SliderComponent from "react-slick";
 import { LeftOutlined, RightOutlined, StarFilled, EyeOutlined } from "@ant-design/icons";
 import { Modal, Tag, Button } from "antd";
@@ -8,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import SkeletonCard from "shared/components/SkeletonCard/SkeletonCard";
 import { TMDBMovie, getTMDBImageUrl } from "shared/services/tmdbApi";
 import { formatLocalizedDate } from "shared/utils/common";
+import { APP_ROUTES } from "shared/constants/routes";
 
 interface TMDBMovieSectionProps {
   title: string;
@@ -65,6 +67,7 @@ const TMDBMovieSection: FC<TMDBMovieSectionProps> = ({
   movies,
   isLoading,
 }) => {
+  const navigate = useNavigate();
   const { t, i18n } = useTranslation(["home", "common"]);
   const [selectedMovie, setSelectedMovie] = useState<TMDBMovie | null>(null);
 
@@ -127,7 +130,7 @@ const TMDBMovieSection: FC<TMDBMovieSectionProps> = ({
             {map(movies, (movie) => (
               <div key={movie.id} className="px-2 py-2">
                 <article
-                  onClick={() => setSelectedMovie(movie)}
+                  onClick={() => navigate(APP_ROUTES.DETAIL(movie.id))}
                   className="group relative bg-surface border border-border rounded-xl overflow-hidden shadow-lg transition-all duration-300 hover:scale-105 hover:border-primary/50 cursor-pointer h-full flex flex-col justify-between"
                 >
                   <div className="relative h-72 overflow-hidden">
