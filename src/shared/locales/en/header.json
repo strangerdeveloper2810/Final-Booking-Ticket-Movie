@@ -4,5 +4,7 @@
   "cinemas": "Cinemas",
   "login": "Login",
   "register": "Register",
-  "logout": "Logout"
+  "logout": "Logout",
+  "profile": "Profile & Booking History",
+  "admin": "Admin Dashboard"
 }

@@ -118,7 +118,7 @@ const Header: FC = () => {
     {
       key: "profile",
       icon: <UserOutlined />,
-      label: "Trang Cá Nhân & Lịch Sử Đặt Vé",
+      label: t("header:profile"),
       onClick: () => navigate(APP_ROUTES.PROFILE),
     },
     ...(userLogin?.maLoaiNguoiDung === "QuanTri"
@@ -126,7 +126,7 @@ const Header: FC = () => {
           {
             key: "admin",
             icon: <DashboardOutlined className="text-red-500" />,
-            label: "Trang Quản Trị Admin",
+            label: t("header:admin"),
             onClick: () => navigate(APP_ROUTES.ADMIN),
           },
         ]
@@ -303,7 +303,7 @@ const Header: FC = () => {
                     <p className="font-semibold text-text-primary text-sm">
                       {userLogin.hoTen || userLogin.taiKhoan}
                     </p>
-                    <p className="text-xs text-text-secondary">Trang cá nhân & Lịch sử vé</p>
+                    <p className="text-xs text-text-secondary">{t("header:profile")}</p>
                   </div>
                 </div>
 
@@ -318,7 +318,7 @@ const Header: FC = () => {
                       navigate(APP_ROUTES.ADMIN);
                     }}
                   >
-                    Trang Quản Trị Admin
+                    {t("header:admin")}
                   </Button>
                 )}
 

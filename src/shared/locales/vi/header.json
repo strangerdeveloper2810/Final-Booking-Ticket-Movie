@@ -4,5 +4,7 @@
   "cinemas": "Cụm rạp",
   "login": "Đăng nhập",
   "register": "Đăng ký",
-  "logout": "Đăng xuất"
+  "logout": "Đăng xuất",
+  "profile": "Trang Cá Nhân & Lịch Sử Đặt Vé",
+  "admin": "Trang Quản Trị Admin"
 }
