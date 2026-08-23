@@ -78,7 +78,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "preview": "npx serve build",
-    "packages:typecheck": "pnpm --filter @cinefix/shared typecheck && pnpm --filter @cinefix/ui typecheck"
+    "packages:typecheck": "pnpm --filter @cinefix/types typecheck && pnpm --filter @cinefix/utils typecheck && pnpm --filter @cinefix/locales typecheck && pnpm --filter @cinefix/api-client typecheck && pnpm --filter @cinefix/realtime typecheck && pnpm --filter @cinefix/ui typecheck"
   },
   "browserslist": {
     "production": [

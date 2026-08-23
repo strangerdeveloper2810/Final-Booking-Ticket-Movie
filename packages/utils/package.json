@@ -1,0 +1,16 @@
+{
+  "name": "@cinefix/utils",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "axios": "^1.6.7",
+    "dayjs": "^1.11.10",
+    "lodash": "^4.17.21"
+  }
+}
