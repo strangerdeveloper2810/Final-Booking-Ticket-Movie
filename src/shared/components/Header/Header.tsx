@@ -9,6 +9,7 @@ import {
   SunOutlined,
   MoonOutlined,
   GlobalOutlined,
+  DashboardOutlined,
 } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import map from "lodash/map";
@@ -113,6 +114,35 @@ const Header: FC = () => {
     find(SUPPORTED_LANGUAGES, (l) => l.code === (i18n.language || LanguageCode.VI)) ||
     SUPPORTED_LANGUAGES[0];
 
+  const userDropdownMenuItems = [
+    {
+      key: "profile",
+      icon: <UserOutlined />,
+      label: "Trang Cá Nhân & Lịch Sử Đặt Vé",
+      onClick: () => navigate(APP_ROUTES.PROFILE),
+    },
+    ...(userLogin?.maLoaiNguoiDung === "QuanTri"
+      ? [
+          {
+            key: "admin",
+            icon: <DashboardOutlined className="text-red-500" />,
+            label: "Trang Quản Trị Admin",
+            onClick: () => navigate(APP_ROUTES.ADMIN),
+          },
+        ]
+      : []),
+    {
+      type: "divider" as const,
+    },
+    {
+      key: "logout",
+      icon: <LogoutOutlined className="text-red-500" />,
+      label: t("header:logout"),
+      danger: true,
+      onClick: handleLogOut,
+    },
+  ];
+
   return (
     <header className="sticky top-0 z-50 bg-surface/90 backdrop-blur-md border-b border-border transition-colors">
       <div className="max-w-screen-xl mx-auto px-4 md:px-6 h-16 flex items-center justify-between">
@@ -170,37 +200,18 @@ const Header: FC = () => {
 
           {/* User Auth Info */}
           {userLogin ? (
-            <div className="flex items-center gap-3 bg-background px-3 py-1.5 rounded-lg border border-border">
-              {userLogin.maLoaiNguoiDung === "QuanTri" && (
-                <Button
-                  type="primary"
-                  danger
+            <Dropdown menu={{ items: userDropdownMenuItems }} placement="bottomRight">
+              <div className="flex items-center gap-2.5 bg-background px-3 py-1.5 rounded-lg border border-border cursor-pointer hover:border-primary transition-all shadow-sm">
+                <Avatar
                   size="small"
-                  onClick={() => navigate(APP_ROUTES.ADMIN)}
-                  className="font-bold border-none"
-                >
-                  Admin Panel
-                </Button>
-              )}
-              <Avatar
-                size="small"
-                icon={<UserOutlined />}
-                className="bg-primary"
-              />
-              <span className="text-sm font-medium text-text-primary">
-                {userLogin.hoTen}
-              </span>
-              <Button
-                type="text"
-                danger
-                icon={<LogoutOutlined />}
-                size="small"
-                onClick={handleLogOut}
-                className="hover:bg-red-500/10"
-              >
-                {t("header:logout")}
-              </Button>
-            </div>
+                  icon={<UserOutlined />}
+                  className="bg-primary"
+                />
+                <span className="text-sm font-semibold text-text-primary">
+                  {userLogin.hoTen || userLogin.taiKhoan}
+                </span>
+              </div>
+            </Dropdown>
           ) : (
             <>
               <Button
@@ -280,15 +291,37 @@ const Header: FC = () => {
           <div className="pt-4 border-t border-border">
             {userLogin ? (
               <div className="flex flex-col gap-3">
-                <div className="flex items-center gap-3">
+                <div
+                  className="flex items-center gap-3 cursor-pointer p-2 rounded-lg hover:bg-background border border-border"
+                  onClick={() => {
+                    setDrawerOpen(false);
+                    navigate(APP_ROUTES.PROFILE);
+                  }}
+                >
                   <Avatar icon={<UserOutlined />} className="bg-primary" />
                   <div>
-                    <p className="font-medium text-text-primary">
-                      {userLogin.hoTen}
+                    <p className="font-semibold text-text-primary text-sm">
+                      {userLogin.hoTen || userLogin.taiKhoan}
                     </p>
-                    <p className="text-xs text-text-secondary">{userLogin.email}</p>
+                    <p className="text-xs text-text-secondary">Trang cá nhân & Lịch sử vé</p>
                   </div>
                 </div>
+
+                {userLogin.maLoaiNguoiDung === "QuanTri" && (
+                  <Button
+                    type="primary"
+                    danger
+                    block
+                    icon={<DashboardOutlined />}
+                    onClick={() => {
+                      setDrawerOpen(false);
+                      navigate(APP_ROUTES.ADMIN);
+                    }}
+                  >
+                    Trang Quản Trị Admin
+                  </Button>
+                )}
+
                 <Button
                   danger
                   block
@@ -297,7 +330,6 @@ const Header: FC = () => {
                     setDrawerOpen(false);
                     handleLogOut();
                   }}
-                  className="mt-2"
                 >
                   {t("header:logout")}
                 </Button>

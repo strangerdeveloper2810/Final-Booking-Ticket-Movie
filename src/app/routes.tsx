@@ -27,6 +27,7 @@ const Detail = lazy(() => import("features/film-detail/pages/Detail"));
 const BookingTicket = lazy(() => import("features/booking/pages/BookingTicket"));
 const Login = lazy(() => import("features/auth/pages/Login"));
 const Register = lazy(() => import("features/auth/pages/Register"));
+const Profile = lazy(() => import("features/profile/pages/Profile"));
 const AdminDashboard = lazy(() => import("features/admin/pages/AdminDashboard"));
 const AdminFilms = lazy(() => import("features/admin/pages/AdminFilms"));
 const AdminUsers = lazy(() => import("features/admin/pages/AdminUsers"));
@@ -95,6 +96,14 @@ export const routesConfig: RouteObject[] = [
     element: (
       <HomeTemplate>
         <Register />
+      </HomeTemplate>
+    ),
+  },
+  {
+    path: PATHS.PROFILE,
+    element: (
+      <HomeTemplate>
+        <Profile />
       </HomeTemplate>
     ),
   },
