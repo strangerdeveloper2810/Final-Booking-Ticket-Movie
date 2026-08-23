@@ -1,5 +1,6 @@
 import { type FC, useEffect } from "react";
 import { Modal, Form, Input, Select, App } from "antd";
+import { useTranslation } from "react-i18next";
 import { GROUP_ID } from "shared/utils/setting";
 import { useAddUserMutation, useUpdateProfileMutation, useGetUserTypesQuery } from "shared/services/movieApi";
 
@@ -17,6 +18,7 @@ interface UserModalProps {
 const UserModal: FC<UserModalProps> = ({ open, editingUser, onCancel, onSuccess }) => {
   const [form] = Form.useForm();
   const { message } = App.useApp();
+  const { t } = useTranslation(["admin", "common", "auth"]);
 
   const { data: userTypes = [] } = useGetUserTypesQuery();
   const [addUser, { isLoading: isAdding }] = useAddUserMutation();
@@ -48,24 +50,24 @@ const UserModal: FC<UserModalProps> = ({ open, editingUser, onCancel, onSuccess 
 
       if (editingUser) {
         await updateUser(payload).unwrap();
-        message.success("Cập nhật tài khoản người dùng thành công!");
+        message.success(t("admin:updateSuccess"));
       } else {
         await addUser(payload).unwrap();
-        message.success("Thêm người dùng mới thành công!");
+        message.success(t("admin:addSuccess"));
       }
 
       onSuccess();
     } catch (error: any) {
-      message.error(error?.data?.content || error?.message || "Có lỗi xảy ra, vui lòng thử lại!");
+      message.error(error?.data?.content || error?.message || "Error submitting user");
     }
   };
 
   return (
     <Modal
       open={open}
-      title={editingUser ? `Chỉnh Sửa Người Dùng: ${editingUser.taiKhoan}` : "Thêm Người Dùng Mới"}
-      okText={editingUser ? "Lưu Thay Đổi" : "Thêm Người Dùng"}
-      cancelText="Hủy Bỏ"
+      title={editingUser ? `${t("admin:editUser")}: ${editingUser.taiKhoan}` : t("admin:addUser")}
+      okText={editingUser ? t("admin:save") : t("admin:addUser")}
+      cancelText={t("admin:cancel")}
       confirmLoading={isAdding || isUpdating}
       onCancel={onCancel}
       onOk={handleSubmit}
@@ -75,34 +77,34 @@ const UserModal: FC<UserModalProps> = ({ open, editingUser, onCancel, onSuccess 
       <Form form={form} layout="vertical">
         <Form.Item
           name="taiKhoan"
-          label="Tài Khoản"
-          rules={[{ required: true, message: "Vui lòng nhập tài khoản!" }]}
+          label={t("admin:account")}
+          rules={[{ required: true, message: t("admin:account") }]}
         >
-          <Input placeholder="Nhập tên tài khoản" disabled={!!editingUser} size="large" />
+          <Input placeholder={t("admin:account")} disabled={!!editingUser} size="large" />
         </Form.Item>
 
         <Form.Item
           name="matKhau"
-          label="Mật Khẩu"
-          rules={[{ required: !editingUser, message: "Vui lòng nhập mật khẩu!" }]}
+          label={t("auth:password")}
+          rules={[{ required: !editingUser, message: t("auth:password") }]}
         >
-          <Input.Password placeholder="Nhập mật khẩu" size="large" />
+          <Input.Password placeholder={t("auth:password")} size="large" />
         </Form.Item>
 
         <Form.Item
           name="hoTen"
-          label="Họ và Tên"
-          rules={[{ required: true, message: "Vui lòng nhập họ và tên!" }]}
+          label={t("admin:fullName")}
+          rules={[{ required: true, message: t("admin:fullName") }]}
         >
-          <Input placeholder="Nhập họ và tên đầy đủ" size="large" />
+          <Input placeholder={t("admin:fullName")} size="large" />
         </Form.Item>
 
         <Form.Item
           name="email"
-          label="Email"
+          label={t("admin:email")}
           rules={[
-            { required: true, message: "Vui lòng nhập email!" },
-            { type: "email", message: "Email không đúng định dạng!" },
+            { required: true, message: t("admin:email") },
+            { type: "email", message: "Email invalid" },
           ]}
         >
           <Input placeholder="example@gmail.com" size="large" />
@@ -110,16 +112,16 @@ const UserModal: FC<UserModalProps> = ({ open, editingUser, onCancel, onSuccess 
 
         <Form.Item
           name="soDt"
-          label="Số Điện Thoại"
-          rules={[{ required: true, message: "Vui lòng nhập số điện thoại!" }]}
+          label={t("admin:phone")}
+          rules={[{ required: true, message: t("admin:phone") }]}
         >
           <Input placeholder="0901234567" size="large" />
         </Form.Item>
 
         <Form.Item
           name="maLoaiNguoiDung"
-          label="Loại Người Dùng"
-          rules={[{ required: true, message: "Vui lòng chọn loại người dùng!" }]}
+          label={t("admin:userType")}
+          rules={[{ required: true, message: t("admin:userType") }]}
         >
           <Select size="large">
             {userTypes.length > 0 ? (
@@ -130,8 +132,8 @@ const UserModal: FC<UserModalProps> = ({ open, editingUser, onCancel, onSuccess 
               ))
             ) : (
               <>
-                <Select.Option value="KhachHang">Khách Hàng (KhachHang)</Select.Option>
-                <Select.Option value="QuanTri">Quản Trị (QuanTri)</Select.Option>
+                <Select.Option value="KhachHang">{t("admin:roleCustomer")}</Select.Option>
+                <Select.Option value="QuanTri">{t("admin:roleAdmin")}</Select.Option>
               </>
             )}
           </Select>

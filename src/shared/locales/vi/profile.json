@@ -1,0 +1,18 @@
+{
+  "profileTitle": "Trang Cá Nhân & Lịch Sử Đặt Vé",
+  "profileDesc": "Quản lý thông tin cá nhân và lịch sử đặt vé xem phim của bạn",
+  "accountTab": "Thông Tin Tài Khoản",
+  "historyTab": "Lịch Sử Đặt Vé",
+  "saveChanges": "Lưu Thay Đổi Thông Tin",
+  "newPasswordPlaceholder": "Để trống nếu không muốn đổi mật khẩu",
+  "noHistory": "Bạn chưa thực hiện giao dịch đặt vé nào",
+  "bookNow": "Đặt Vé Ngay",
+  "qrModalTitle": "Vé Xem Phim Điện Tử",
+  "qrModalSub": "Vui lòng xuất trình mã QR này tại quầy rạp chiếu",
+  "ticketCode": "MÃ VÉ",
+  "seats": "Ghế",
+  "totalPrice": "Tổng tiền",
+  "close": "Đóng",
+  "printTicket": "In / Lưu Vé",
+  "viewQR": "Mã Vé QR"
+}

@@ -2,6 +2,7 @@ import { type FC, useState } from "react";
 import { Form, Select, DatePicker, InputNumber, Button, Card, App } from "antd";
 import { CalendarOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
+import { useTranslation } from "react-i18next";
 import {
   useGetFilmListQuery,
   useGetCinemaSystemsQuery,
@@ -18,6 +19,7 @@ const AdminShowtimes: FC = () => {
   const [form] = Form.useForm();
   const [selectedSystem, setSelectedSystem] = useState<string>("");
   const { message } = App.useApp();
+  const { t } = useTranslation(["admin", "common"]);
 
   const { data: films = [], isLoading: loadingFilms } = useGetFilmListQuery();
   const { data: cinemaSystems = [], isLoading: loadingSystems } = useGetCinemaSystemsQuery();
@@ -51,17 +53,17 @@ const AdminShowtimes: FC = () => {
       };
 
       await createShowtime(payload).unwrap();
-      message.success("Tạo lịch chiếu thành công!");
+      message.success(t("admin:addSuccess"));
       form.resetFields();
       setSelectedSystem("");
     } catch (error: any) {
-      message.error(error?.data?.content || error?.message || "Có lỗi xảy ra khi tạo lịch chiếu!");
+      message.error(error?.data?.content || error?.message || "Error creating showtime");
     }
   };
 
   return (
     <div className="max-w-3xl mx-auto space-y-6">
-      <SEO title="Tạo Lịch Chiếu — Cinefix Admin" description="Tạo lịch chiếu phim mới" />
+      <SEO title={`${t("admin:createShowtimeTitle")} — Cinefix Admin`} description={t("admin:createShowtimeSub")} />
 
       <Card className="bg-surface border-border">
         <div className="flex items-center gap-3 mb-6 pb-4 border-b border-border">
@@ -69,9 +71,9 @@ const AdminShowtimes: FC = () => {
             <CalendarOutlined />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-text-primary">Tạo Lịch Chiếu Phim Mới</h1>
+            <h1 className="text-xl font-bold text-text-primary">{t("admin:createShowtimeTitle")}</h1>
             <p className="text-text-secondary text-sm">
-              Chọn phim, hệ thống rạp, cụm rạp và thiết lập thời gian chiếu + giá vé.
+              {t("admin:createShowtimeSub")}
             </p>
           </div>
         </div>
@@ -79,11 +81,11 @@ const AdminShowtimes: FC = () => {
         <Form form={form} layout="vertical" initialValues={{ giaVe: 75000 }}>
           <Form.Item
             name="maPhim"
-            label="Chọn Phim Chiếu"
-            rules={[{ required: true, message: "Vui lòng chọn phim!" }]}
+            label={t("admin:selectFilm")}
+            rules={[{ required: true, message: t("admin:selectFilm") }]}
           >
             <Select
-              placeholder="Chọn phim"
+              placeholder={t("admin:selectFilm")}
               size="large"
               loading={loadingFilms}
               showSearch
@@ -97,9 +99,9 @@ const AdminShowtimes: FC = () => {
             </Select>
           </Form.Item>
 
-          <Form.Item label="Hệ Thống Rạp">
+          <Form.Item label={t("admin:cinemaSystem")}>
             <Select
-              placeholder="Chọn hệ thống rạp"
+              placeholder={t("admin:cinemaSystem")}
               size="large"
               loading={loadingSystems}
               onChange={handleSystemChange}
@@ -115,11 +117,11 @@ const AdminShowtimes: FC = () => {
 
           <Form.Item
             name="maCumRap"
-            label="Cụm Rạp"
-            rules={[{ required: true, message: "Vui lòng chọn cụm rạp!" }]}
+            label={t("admin:cinemaCluster")}
+            rules={[{ required: true, message: t("admin:cinemaCluster") }]}
           >
             <Select
-              placeholder="Chọn cụm rạp"
+              placeholder={t("admin:cinemaCluster")}
               size="large"
               loading={loadingClusters}
               disabled={!selectedSystem}
@@ -135,17 +137,17 @@ const AdminShowtimes: FC = () => {
 
           <Form.Item
             name="maRap"
-            label="Mã Rạp Chiếu"
-            rules={[{ required: true, message: "Vui lòng chọn rạp chiếu!" }]}
+            label={t("admin:theaterId")}
+            rules={[{ required: true, message: t("admin:theaterId") }]}
           >
-            <InputNumber placeholder="Nhập mã rạp chiếu" className="w-full" size="large" />
+            <InputNumber placeholder={t("admin:theaterId")} className="w-full" size="large" />
           </Form.Item>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Form.Item
               name="ngayChieuGioChieu"
-              label="Ngày Giờ Chiếu"
-              rules={[{ required: true, message: "Vui lòng chọn ngày giờ chiếu!" }]}
+              label={t("admin:showtimeDateTime")}
+              rules={[{ required: true, message: t("admin:showtimeDateTime") }]}
             >
               <DatePicker
                 showTime
@@ -157,8 +159,8 @@ const AdminShowtimes: FC = () => {
 
             <Form.Item
               name="giaVe"
-              label="Giá Vé (VNĐ)"
-              rules={[{ required: true, message: "Vui lòng nhập giá vé!" }]}
+              label={t("admin:ticketPrice")}
+              rules={[{ required: true, message: t("admin:ticketPrice") }]}
             >
               <InputNumber
                 min={50000}
@@ -180,7 +182,7 @@ const AdminShowtimes: FC = () => {
               onClick={handleSubmit}
               className="bg-primary hover:bg-primary-hover font-bold h-12 text-base shadow-lg shadow-primary/30 border-none"
             >
-              Tạo Lịch Chiếu Mới
+              {t("admin:submitCreateShowtime")}
             </Button>
           </div>
         </Form>

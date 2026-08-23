@@ -39,28 +39,28 @@ const AdminTemplate: FC<AdminTemplateProps> = ({ children }) => {
   const { userLogin } = useSelector((state: RootState) => state.UserSaga);
   const { themeMode, toggleTheme } = useTheme();
   const isDark = themeMode === "dark";
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation(["admin", "common"]);
 
   const menuItems = [
     {
       key: APP_ROUTES.ADMIN,
       icon: <DashboardOutlined />,
-      label: "Tổng Quan",
+      label: t("admin:overview"),
     },
     {
       key: APP_ROUTES.ADMIN_FILMS,
       icon: <VideoCameraOutlined />,
-      label: "Quản Lý Phim",
+      label: t("admin:manageMovies"),
     },
     {
       key: APP_ROUTES.ADMIN_USERS,
       icon: <UserOutlined />,
-      label: "Quản Lý Người Dùng",
+      label: t("admin:manageUsers"),
     },
     {
       key: APP_ROUTES.ADMIN_SHOWTIMES,
       icon: <CalendarOutlined />,
-      label: "Tạo Lịch Chiếu",
+      label: t("admin:createShowtime"),
     },
   ];
 
@@ -77,7 +77,7 @@ const AdminTemplate: FC<AdminTemplateProps> = ({ children }) => {
     {
       key: "client",
       icon: <HomeOutlined />,
-      label: "Về Trang Chủ Client",
+      label: t("admin:backToSite"),
       onClick: () => navigate(APP_ROUTES.HOME),
     },
   ];
@@ -125,7 +125,7 @@ const AdminTemplate: FC<AdminTemplateProps> = ({ children }) => {
               className="text-text-primary hover:text-primary"
             />
             <span className="font-semibold text-text-primary hidden sm:inline">
-              Trang Quản Trị Hệ Thống
+              {t("admin:adminPanelTitle")}
             </span>
           </div>
 
@@ -151,7 +151,7 @@ const AdminTemplate: FC<AdminTemplateProps> = ({ children }) => {
               onClick={() => navigate(APP_ROUTES.HOME)}
               className="hidden md:flex items-center gap-1 text-sm font-medium"
             >
-              Về Website
+              {t("admin:backToSite")}
             </Button>
 
             {userLogin && (

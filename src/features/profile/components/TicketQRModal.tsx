@@ -1,6 +1,7 @@
 import { type FC } from "react";
 import { Modal, Tag, Divider, Button } from "antd";
 import { EnvironmentOutlined, ClockCircleOutlined, QrcodeOutlined, CheckCircleFilled } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 
 interface TicketQRModalProps {
   open: boolean;
@@ -15,6 +16,8 @@ interface TicketQRModalProps {
  * và mã QR Code sẵn sàng quét để vào phòng chiếu.
  */
 const TicketQRModal: FC<TicketQRModalProps> = ({ open, ticket, onClose }) => {
+  const { t } = useTranslation(["profile", "common"]);
+
   if (!ticket) return null;
 
   // Generate a mock QR Code URL using quickchart QR API based on booking code + seat numbers
@@ -36,8 +39,8 @@ const TicketQRModal: FC<TicketQRModalProps> = ({ open, ticket, onClose }) => {
         <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-green-500/10 text-green-500 text-2xl mb-2">
           <CheckCircleFilled />
         </div>
-        <h2 className="text-xl font-bold text-text-primary">Vé Xem Phim Điện Tử</h2>
-        <p className="text-text-secondary text-xs">Vui lòng xuất trình mã QR này tại quầy rạp chiếu</p>
+        <h2 className="text-xl font-bold text-text-primary">{t("profile:qrModalTitle")}</h2>
+        <p className="text-text-secondary text-xs">{t("profile:qrModalSub")}</p>
       </div>
 
       <div className="bg-background border border-border rounded-xl p-5 space-y-4">
@@ -58,11 +61,11 @@ const TicketQRModal: FC<TicketQRModalProps> = ({ open, ticket, onClose }) => {
             </h3>
             <p className="text-xs text-text-secondary flex items-center gap-1">
               <EnvironmentOutlined className="text-primary" />
-              {ticket.tenCumRap || ticket.danhSachGhe?.[0]?.tenHeThongRap || "Cụm Rạp Cinefix"}
+              {ticket.tenCumRap || ticket.danhSachGhe?.[0]?.tenHeThongRap || "Cinefix Cinema"}
             </p>
             <p className="text-xs text-secondary flex items-center gap-1 font-semibold">
               <ClockCircleOutlined />
-              {ticket.ngayDat || ticket.ngayChieu ? `${ticket.ngayDat || ticket.ngayChieu}` : "Hôm nay"}
+              {ticket.ngayDat || ticket.ngayChieu ? `${ticket.ngayDat || ticket.ngayChieu}` : ""}
             </p>
           </div>
         </div>
@@ -77,14 +80,14 @@ const TicketQRModal: FC<TicketQRModalProps> = ({ open, ticket, onClose }) => {
             className="w-40 h-40 bg-white p-2 rounded-lg shadow-sm"
           />
           <span className="text-[11px] text-text-secondary font-mono mt-2 tracking-wider">
-            MÃ VÉ: #{ticket.maVe || Math.floor(100000 + Math.random() * 900000)}
+            {t("profile:ticketCode")}: #{ticket.maVe || Math.floor(100000 + Math.random() * 900000)}
           </span>
         </div>
 
         {/* Seats & Price */}
         <div className="space-y-2 text-xs">
           <div className="flex justify-between items-start">
-            <span className="text-text-secondary">Danh sách ghế:</span>
+            <span className="text-text-secondary">{t("profile:seats")}:</span>
             <div className="flex flex-wrap gap-1 max-w-[200px] justify-end">
               {seats.map((seat: any, idx: number) => (
                 <Tag key={idx} color="red" className="font-bold text-xs m-0">
@@ -95,7 +98,7 @@ const TicketQRModal: FC<TicketQRModalProps> = ({ open, ticket, onClose }) => {
           </div>
 
           <div className="flex justify-between items-center pt-2 border-t border-border">
-            <span className="text-text-secondary font-medium">Tổng tiền:</span>
+            <span className="text-text-secondary font-medium">{t("profile:totalPrice")}:</span>
             <span className="text-base font-extrabold text-primary">
               {(ticket.giaVe || ticket.tongTien || seats.reduce((acc: number, s: any) => acc + (s.giaVe || 75000), 0)).toLocaleString()}{" "}
               <span className="text-xs font-normal">VNĐ</span>
@@ -106,7 +109,7 @@ const TicketQRModal: FC<TicketQRModalProps> = ({ open, ticket, onClose }) => {
 
       <div className="mt-4 flex gap-2">
         <Button block onClick={onClose} size="large">
-          Đóng
+          {t("profile:close")}
         </Button>
         <Button
           type="primary"
@@ -116,7 +119,7 @@ const TicketQRModal: FC<TicketQRModalProps> = ({ open, ticket, onClose }) => {
           onClick={() => window.print()}
           className="bg-primary hover:bg-primary-hover border-none font-bold"
         >
-          In / Lưu Vé
+          {t("profile:printTicket")}
         </Button>
       </div>
     </Modal>

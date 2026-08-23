@@ -1,0 +1,18 @@
+{
+  "profileTitle": "Profile & Booking History",
+  "profileDesc": "Manage your personal account details and movie ticket purchases",
+  "accountTab": "Account Details",
+  "historyTab": "Booking History",
+  "saveChanges": "Save Account Changes",
+  "newPasswordPlaceholder": "Leave empty to keep current password",
+  "noHistory": "You haven't purchased any movie tickets yet",
+  "bookNow": "Book Now",
+  "qrModalTitle": "E-Ticket Receipt",
+  "qrModalSub": "Please show this QR code at the cinema entry gate",
+  "ticketCode": "TICKET ID",
+  "seats": "Seats",
+  "totalPrice": "Total Price",
+  "close": "Close",
+  "printTicket": "Print / Save Ticket",
+  "viewQR": "QR Ticket"
+}

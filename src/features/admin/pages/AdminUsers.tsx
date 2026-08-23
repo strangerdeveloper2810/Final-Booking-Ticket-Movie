@@ -6,6 +6,7 @@ import {
   EditOutlined,
   DeleteOutlined,
 } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 import { useGetUserListQuery, useDeleteUserMutation } from "shared/services/movieApi";
 import UserModal from "../components/UserModal";
 import SEO from "shared/components/SEO/SEO";
@@ -21,6 +22,7 @@ const AdminUsers: FC = () => {
   const [editingUser, setEditingUser] = useState<any | null>(null);
 
   const { message } = App.useApp();
+  const { t } = useTranslation(["admin", "common"]);
   const { data: users = [], isLoading, refetch } = useGetUserListQuery({ tuKhoa: searchTerm });
   const [deleteUser, { isLoading: isDeleting }] = useDeleteUserMutation();
 
@@ -44,60 +46,60 @@ const AdminUsers: FC = () => {
   const handleDeleteUser = async (taiKhoan: string) => {
     try {
       await deleteUser(taiKhoan).unwrap();
-      message.success(`Xóa tài khoản "${taiKhoan}" thành công!`);
+      message.success(t("admin:deleteSuccess"));
       refetch();
     } catch (error: any) {
-      message.error(error?.data?.content || error?.message || "Không thể xóa tài khoản này!");
+      message.error(error?.data?.content || error?.message || "Error deleting user");
     }
   };
 
   const columns = [
     {
-      title: "STT",
+      title: t("admin:stt"),
       key: "stt",
       width: 60,
       render: (_: any, __: any, index: number) => index + 1,
     },
     {
-      title: "Tài Khoản",
+      title: t("admin:account"),
       dataIndex: "taiKhoan",
       key: "taiKhoan",
       render: (text: string) => <span className="font-bold text-text-primary">{text}</span>,
     },
     {
-      title: "Họ và Tên",
+      title: t("admin:fullName"),
       dataIndex: "hoTen",
       key: "hoTen",
       render: (text: string) => <span>{text || "—"}</span>,
     },
     {
-      title: "Email",
+      title: t("admin:email"),
       dataIndex: "email",
       key: "email",
     },
     {
-      title: "Số Điện Thoại",
+      title: t("admin:phone"),
       dataIndex: "soDt",
       key: "soDt",
       render: (text: string, record: any) => text || record.soDT || "—",
     },
     {
-      title: "Loại Nguời Dùng",
+      title: t("admin:userType"),
       dataIndex: "maLoaiNguoiDung",
       key: "maLoaiNguoiDung",
       render: (type: string) => (
         <Tag color={type === "QuanTri" ? "red" : "blue"} className="font-bold">
-          {type === "QuanTri" ? "Quản Trị (QuanTri)" : "Khách Hàng (KhachHang)"}
+          {type === "QuanTri" ? t("admin:roleAdmin") : t("admin:roleCustomer")}
         </Tag>
       ),
     },
     {
-      title: "Thao Tác",
+      title: t("admin:actions"),
       key: "actions",
       width: 120,
       render: (_: any, record: any) => (
         <Space size="small">
-          <Tooltip title="Sửa tài khoản">
+          <Tooltip title={t("admin:editUser")}>
             <Button
               type="default"
               size="small"
@@ -105,13 +107,13 @@ const AdminUsers: FC = () => {
               onClick={() => handleOpenEditModal(record)}
             />
           </Tooltip>
-          <Tooltip title="Xóa tài khoản">
+          <Tooltip title={t("admin:deleteUser")}>
             <Popconfirm
-              title="Xác nhận xóa"
-              description={`Bạn có chắc chắn muốn xóa tài khoản "${record.taiKhoan}"?`}
+              title={t("admin:deleteUser")}
+              description={t("admin:confirmDeleteUser", { account: record.taiKhoan })}
               onConfirm={() => handleDeleteUser(record.taiKhoan)}
-              okText="Xóa"
-              cancelText="Hủy"
+              okText={t("admin:deleteUser")}
+              cancelText={t("admin:cancel")}
               okButtonProps={{ danger: true, loading: isDeleting }}
             >
               <Button type="primary" danger size="small" icon={<DeleteOutlined />} />
@@ -124,14 +126,14 @@ const AdminUsers: FC = () => {
 
   return (
     <div className="space-y-6">
-      <SEO title="Quản Lý Người Dùng — Cinefix Admin" description="Quản lý danh sách người dùng" />
+      <SEO title={`${t("admin:userListTitle")} — Cinefix Admin`} description={t("admin:userListSubtitle")} />
 
       <Card className="bg-surface border-border">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
           <div>
-            <h1 className="text-xl font-bold text-text-primary">Quản Lý Người Dùng</h1>
+            <h1 className="text-xl font-bold text-text-primary">{t("admin:userListTitle")}</h1>
             <p className="text-text-secondary text-sm">
-              Tìm kiếm, thêm mới, sửa phân quyền và quản lý tài khoản thành viên.
+              {t("admin:userListSubtitle")}
             </p>
           </div>
           <Button
@@ -141,13 +143,13 @@ const AdminUsers: FC = () => {
             onClick={handleOpenAddModal}
             className="bg-primary hover:bg-primary-hover font-semibold border-none"
           >
-            Thêm Người Dùng
+            {t("admin:addUser")}
           </Button>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 mb-4">
           <Input
-            placeholder="Tìm kiếm theo từ khóa (tài khoản, họ tên)..."
+            placeholder={t("admin:searchUserPlaceholder")}
             prefix={<SearchOutlined className="text-text-secondary" />}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -159,11 +161,11 @@ const AdminUsers: FC = () => {
             value={roleFilter}
             onChange={(value) => setRoleFilter(value)}
             size="large"
-            className="w-48"
+            className="w-56"
           >
-            <Select.Option value="ALL">Tất cả loại người dùng</Select.Option>
-            <Select.Option value="QuanTri">Quản Trị (QuanTri)</Select.Option>
-            <Select.Option value="KhachHang">Khách Hàng (KhachHang)</Select.Option>
+            <Select.Option value="ALL">{t("admin:allRoles")}</Select.Option>
+            <Select.Option value="QuanTri">{t("admin:roleAdmin")}</Select.Option>
+            <Select.Option value="KhachHang">{t("admin:roleCustomer")}</Select.Option>
           </Select>
         </div>
 

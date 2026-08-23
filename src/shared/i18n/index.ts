@@ -9,6 +9,8 @@ import viBooking from "../locales/vi/booking.json";
 import viAuth from "../locales/vi/auth.json";
 import viDetail from "../locales/vi/detail.json";
 import viFooter from "../locales/vi/footer.json";
+import viAdmin from "../locales/vi/admin.json";
+import viProfile from "../locales/vi/profile.json";
 
 import enCommon from "../locales/en/common.json";
 import enHeader from "../locales/en/header.json";
@@ -17,6 +19,8 @@ import enBooking from "../locales/en/booking.json";
 import enAuth from "../locales/en/auth.json";
 import enDetail from "../locales/en/detail.json";
 import enFooter from "../locales/en/footer.json";
+import enAdmin from "../locales/en/admin.json";
+import enProfile from "../locales/en/profile.json";
 
 /**
  * EN: The i18next namespace used when a component calls `useTranslation()`
@@ -30,10 +34,10 @@ export const defaultNS = "common";
 
 /**
  * EN: Translation resource bundle for both supported locales, split into
- * per-feature namespaces (common/header/home/booking/auth/detail/footer) so
+ * per-feature namespaces (common/header/home/booking/auth/detail/footer/admin/profile) so
  * each feature only loads the JSON it needs instead of one giant file.
  * VI: Bộ tài nguyên dịch cho cả hai ngôn ngữ được hỗ trợ, chia theo namespace
- * từng feature (common/header/home/booking/auth/detail/footer) để mỗi
+ * từng feature (common/header/home/booking/auth/detail/footer/admin/profile) để mỗi
  * feature chỉ tải đúng phần JSON cần dùng thay vì một file khổng lồ duy nhất.
  */
 export const resources = {
@@ -45,6 +49,8 @@ export const resources = {
     auth: viAuth,
     detail: viDetail,
     footer: viFooter,
+    admin: viAdmin,
+    profile: viProfile,
   },
   en: {
     common: enCommon,
@@ -54,6 +60,8 @@ export const resources = {
     auth: enAuth,
     detail: enDetail,
     footer: enFooter,
+    admin: enAdmin,
+    profile: enProfile,
   },
 } as const;
 

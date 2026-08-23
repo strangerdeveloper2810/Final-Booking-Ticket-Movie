@@ -20,7 +20,7 @@ interface AdminGuardProps {
  */
 const AdminGuard: FC<AdminGuardProps> = ({ children }) => {
   const { userLogin } = useSelector((state: RootState) => state.UserSaga);
-  const { t } = useTranslation(["common", "auth"]);
+  const { t } = useTranslation(["admin", "common"]);
 
   if (!userLogin || !userLogin.taiKhoan) {
     return <Navigate to={APP_ROUTES.LOGIN} replace />;
@@ -31,11 +31,11 @@ const AdminGuard: FC<AdminGuardProps> = ({ children }) => {
       <div className="min-h-screen flex items-center justify-center p-4 bg-background text-text-primary">
         <Result
           status="403"
-          title="403 — Truy Cập Bị Từ Chối"
-          subTitle="Tài khoản của bạn không có quyền truy cập vào trang quản trị Admin."
+          title={t("admin:accessDeniedTitle")}
+          subTitle={t("admin:accessDeniedSub")}
           extra={
             <Button type="primary" href={APP_ROUTES.HOME}>
-              Trở Về Trang Chủ
+              {t("admin:backToHome")}
             </Button>
           }
         />

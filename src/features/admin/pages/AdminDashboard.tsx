@@ -8,6 +8,7 @@ import {
   PlusOutlined,
   ArrowRightOutlined,
 } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 import { APP_ROUTES } from "shared/constants/routes";
 import { useGetFilmListQuery, useGetUserListQuery, useGetCinemasQuery } from "shared/services/movieApi";
 import SEO from "shared/components/SEO/SEO";
@@ -18,6 +19,7 @@ import SEO from "shared/components/SEO/SEO";
  */
 const AdminDashboard: FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation(["admin", "common"]);
 
   const { data: films = [], isLoading: loadingFilms } = useGetFilmListQuery();
   const { data: users = [], isLoading: loadingUsers } = useGetUserListQuery();
@@ -27,13 +29,13 @@ const AdminDashboard: FC = () => {
 
   const filmColumns = [
     {
-      title: "Mã Phim",
+      title: t("admin:movieCode"),
       dataIndex: "maPhim",
       key: "maPhim",
       width: 100,
     },
     {
-      title: "Hình Ảnh",
+      title: t("admin:poster"),
       dataIndex: "hinhAnh",
       key: "hinhAnh",
       width: 80,
@@ -46,19 +48,19 @@ const AdminDashboard: FC = () => {
       ),
     },
     {
-      title: "Tên Phim",
+      title: t("admin:movieTitle"),
       dataIndex: "tenPhim",
       key: "tenPhim",
       render: (text: string) => <span className="font-semibold">{text}</span>,
     },
     {
-      title: "Trạng Thái",
+      title: t("admin:status"),
       key: "status",
       render: (_: any, record: any) => (
         <div className="flex gap-1">
-          {record.dangChieu && <Tag color="green">Đang chiếu</Tag>}
-          {record.sapChieu && <Tag color="blue">Sắp chiếu</Tag>}
-          {record.hot && <Tag color="red">HOT</Tag>}
+          {record.dangChieu && <Tag color="green">{t("admin:showing")}</Tag>}
+          {record.sapChieu && <Tag color="blue">{t("admin:comingSoon")}</Tag>}
+          {record.hot && <Tag color="red">{t("admin:hot")}</Tag>}
         </div>
       ),
     },
@@ -66,13 +68,13 @@ const AdminDashboard: FC = () => {
 
   return (
     <div className="space-y-6">
-      <SEO title="Admin Dashboard — Cinefix" description="Trang tổng quan quản trị Cinefix" />
+      <SEO title={`${t("admin:dashboardTitle")} — Cinefix Admin`} description={t("admin:dashboardSubtitle")} />
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface p-6 rounded-xl border border-border">
         <div>
-          <h1 className="text-2xl font-bold text-text-primary">Tổng Quan Hệ Thống</h1>
+          <h1 className="text-2xl font-bold text-text-primary">{t("admin:dashboardTitle")}</h1>
           <p className="text-text-secondary text-sm">
-            Chào mừng bạn trở lại trang quản trị Cinefix. Dưới đây là thống kê tình hình hoạt động.
+            {t("admin:dashboardSubtitle")}
           </p>
         </div>
         <div className="flex gap-2">
@@ -81,14 +83,14 @@ const AdminDashboard: FC = () => {
             icon={<PlusOutlined />}
             onClick={() => navigate(APP_ROUTES.ADMIN_FILMS)}
           >
-            Quản Lý Phim
+            {t("admin:manageMovies")}
           </Button>
           <Button
             type="default"
             icon={<CalendarOutlined />}
             onClick={() => navigate(APP_ROUTES.ADMIN_SHOWTIMES)}
           >
-            Tạo Lịch Chiếu
+            {t("admin:createShowtime")}
           </Button>
         </div>
       </div>
@@ -98,7 +100,7 @@ const AdminDashboard: FC = () => {
         <Col xs={24} sm={12} lg={8}>
           <Card className="bg-surface border-border">
             <Statistic
-              title="Tổng Số Phim"
+              title={t("admin:totalMovies")}
               value={films.length}
               loading={loadingFilms}
               prefix={<VideoCameraOutlined className="text-primary mr-2" />}
@@ -109,7 +111,7 @@ const AdminDashboard: FC = () => {
         <Col xs={24} sm={12} lg={8}>
           <Card className="bg-surface border-border">
             <Statistic
-              title="Tổng Số Người Dùng"
+              title={t("admin:totalUsers")}
               value={users.length}
               loading={loadingUsers}
               prefix={<UserOutlined className="text-blue-500 mr-2" />}
@@ -120,7 +122,7 @@ const AdminDashboard: FC = () => {
         <Col xs={24} sm={12} lg={8}>
           <Card className="bg-surface border-border">
             <Statistic
-              title="Hệ Thống Cụm Rạp"
+              title={t("admin:totalCinemas")}
               value={cinemas.length}
               loading={loadingCinemas}
               prefix={<CalendarOutlined className="text-green-500 mr-2" />}
@@ -132,14 +134,14 @@ const AdminDashboard: FC = () => {
 
       {/* Recent Movies Table */}
       <Card
-        title="Danh Sách Phim Mới Nhất"
+        title={t("admin:recentMovies")}
         extra={
           <Button
             type="link"
             onClick={() => navigate(APP_ROUTES.ADMIN_FILMS)}
             className="flex items-center gap-1"
           >
-            Xem Tất Cả <ArrowRightOutlined />
+            {t("admin:viewAll")} <ArrowRightOutlined />
           </Button>
         }
         className="bg-surface border-border"

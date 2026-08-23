@@ -33,7 +33,7 @@ const Profile: FC = () => {
 
   const navigate = useNavigate();
   const { message } = App.useApp();
-  const { t } = useTranslation(["auth", "common", "booking"]);
+  const { t } = useTranslation(["profile", "auth", "admin", "common"]);
   const { userLogin } = useSelector((state: RootState) => state.UserSaga);
 
   const { data: profile, isLoading, refetch } = useGetProfileQuery(undefined, {
@@ -69,10 +69,10 @@ const Profile: FC = () => {
       };
 
       await updateProfile(payload).unwrap();
-      message.success("Cập nhật thông tin cá nhân thành công!");
+      message.success(t("admin:updateSuccess"));
       refetch();
     } catch (error: any) {
-      message.error(error?.data?.content || error?.message || "Cập nhật không thành công!");
+      message.error(error?.data?.content || error?.message || "Error updating profile");
     }
   };
 
@@ -93,7 +93,7 @@ const Profile: FC = () => {
 
   return (
     <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-8 space-y-8">
-      <SEO title="Trang Cá Nhân & Lịch Sử Đặt Vé — Cinefix" description="Quản lý tài khoản và xem lịch sử đặt vé xem phim" />
+      <SEO title={`${t("profile:profileTitle")} — Cinefix`} description={t("profile:profileDesc")} />
 
       {/* Profile Header Banner */}
       <Card className="bg-surface border-border overflow-hidden shadow-lg">
@@ -106,17 +106,17 @@ const Profile: FC = () => {
           <div className="text-center sm:text-left space-y-1">
             <div className="flex items-center gap-3 justify-center sm:justify-start flex-wrap">
               <h1 className="text-2xl font-extrabold text-text-primary">
-                {profile?.hoTen || userLogin?.hoTen || "Người Dùng Cinefix"}
+                {profile?.hoTen || userLogin?.hoTen || "User"}
               </h1>
               <Tag color="red" className="font-bold uppercase text-xs">
                 {profile?.maLoaiNguoiDung || "KhachHang"}
               </Tag>
             </div>
             <p className="text-text-secondary text-sm flex items-center justify-center sm:justify-start gap-2">
-              <MailOutlined /> {profile?.email || "Chưa cập nhật email"}
+              <MailOutlined /> {profile?.email || "—"}
             </p>
             <p className="text-text-secondary text-xs flex items-center justify-center sm:justify-start gap-2">
-              <UserOutlined /> Tài khoản: <span className="font-semibold text-text-primary">{profile?.taiKhoan}</span>
+              <UserOutlined /> {t("admin:account")}: <span className="font-semibold text-text-primary">{profile?.taiKhoan}</span>
             </p>
           </div>
         </div>
@@ -132,46 +132,46 @@ const Profile: FC = () => {
             key: "profile",
             label: (
               <span className="flex items-center gap-2 font-bold px-2">
-                <UserOutlined /> Thông Tin Tài Khoản
+                <UserOutlined /> {t("profile:accountTab")}
               </span>
             ),
             children: (
               <div className="max-w-2xl py-4">
                 <Form form={form} layout="vertical">
-                  <Form.Item label="Tài Khoản" name="taiKhoan">
+                  <Form.Item label={t("admin:account")} name="taiKhoan">
                     <Input disabled size="large" prefix={<UserOutlined className="text-text-secondary" />} />
                   </Form.Item>
 
                   <Form.Item
-                    label="Họ và Tên"
+                    label={t("admin:fullName")}
                     name="hoTen"
-                    rules={[{ required: true, message: "Vui lòng nhập họ và tên!" }]}
+                    rules={[{ required: true, message: t("auth:fullNameRequired", { defaultValue: "Vui lòng nhập họ và tên!" }) }]}
                   >
                     <Input size="large" prefix={<UserOutlined className="text-text-secondary" />} />
                   </Form.Item>
 
                   <Form.Item
-                    label="Email"
+                    label={t("admin:email")}
                     name="email"
                     rules={[
-                      { required: true, message: "Vui lòng nhập email!" },
-                      { type: "email", message: "Email không hợp lệ!" },
+                      { required: true, message: t("auth:emailRequired", { defaultValue: "Vui lòng nhập email!" }) },
+                      { type: "email", message: t("auth:emailInvalid", { defaultValue: "Email không hợp lệ!" }) },
                     ]}
                   >
                     <Input size="large" prefix={<MailOutlined className="text-text-secondary" />} />
                   </Form.Item>
 
                   <Form.Item
-                    label="Số Điện Thoại"
+                    label={t("admin:phone")}
                     name="soDT"
-                    rules={[{ required: true, message: "Vui lòng nhập số điện thoại!" }]}
+                    rules={[{ required: true, message: t("auth:phoneRequired", { defaultValue: "Vui lòng nhập số điện thoại!" }) }]}
                   >
                     <Input size="large" prefix={<PhoneOutlined className="text-text-secondary" />} />
                   </Form.Item>
 
-                  <Form.Item label="Mật Khẩu Mới" name="matKhau">
+                  <Form.Item label={t("auth:password")} name="matKhau">
                     <Input.Password
-                      placeholder="Để trống nếu không muốn đổi mật khẩu"
+                      placeholder={t("profile:newPasswordPlaceholder")}
                       size="large"
                       prefix={<LockOutlined className="text-text-secondary" />}
                     />
@@ -185,7 +185,7 @@ const Profile: FC = () => {
                       onClick={handleUpdateProfile}
                       className="bg-primary hover:bg-primary-hover font-bold h-12 text-base shadow-lg shadow-primary/30 border-none"
                     >
-                      Lưu Thay Đổi Thông Tin
+                      {t("profile:saveChanges")}
                     </Button>
                   </div>
                 </Form>
@@ -196,7 +196,7 @@ const Profile: FC = () => {
             key: "history",
             label: (
               <span className="flex items-center gap-2 font-bold px-2">
-                <HistoryOutlined /> Lịch Sử Đặt Vé ({bookingHistory.length})
+                <HistoryOutlined /> {t("profile:historyTab")} ({bookingHistory.length})
               </span>
             ),
             children: (
@@ -205,8 +205,8 @@ const Profile: FC = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {bookingHistory.map((item: any, index: number) => {
                       const seats = item.danhSachGhe || [];
-                      const cinemaName = seats[0]?.tenHeThongRap || "Cụm Rạp Cinefix";
-                      const theaterName = seats[0]?.tenCumRap || "Phòng Chiếu Chi Tiết";
+                      const cinemaName = seats[0]?.tenHeThongRap || "Cinefix Cinema";
+                      const theaterName = seats[0]?.tenCumRap || "Theater";
 
                       return (
                         <Card
@@ -234,18 +234,18 @@ const Profile: FC = () => {
                               </p>
                               <p className="text-xs text-secondary font-semibold flex items-center gap-1">
                                 <ClockCircleOutlined />
-                                {item.ngayDat ? `Ngày đặt: ${item.ngayDat}` : "Vé gần đây"}
+                                {item.ngayDat ? `${item.ngayDat}` : ""}
                               </p>
 
                               <div className="flex flex-wrap gap-1 pt-1">
-                                <span className="text-xs text-text-secondary mr-1">Ghế:</span>
+                                <span className="text-xs text-text-secondary mr-1">{t("profile:seats")}:</span>
                                 {seats.slice(0, 5).map((seat: any, i: number) => (
                                   <Tag key={i} color="red" className="font-bold text-xs m-0">
                                     {seat.tenGhe}
                                   </Tag>
                                 ))}
                                 {seats.length > 5 && (
-                                  <Tag className="text-xs m-0">+{seats.length - 5} ghế</Tag>
+                                  <Tag className="text-xs m-0">+{seats.length - 5}</Tag>
                                 )}
                               </div>
 
@@ -260,7 +260,7 @@ const Profile: FC = () => {
                                   icon={<QrcodeOutlined />}
                                   onClick={() => handleOpenQRModal(item)}
                                 >
-                                  Mã Vé QR
+                                  {t("profile:viewQR")}
                                 </Button>
                               </div>
                             </div>
@@ -271,11 +271,11 @@ const Profile: FC = () => {
                   </div>
                 ) : (
                   <Empty
-                    description="Bạn chưa thực hiện giao dịch đặt vé nào"
+                    description={t("profile:noHistory")}
                     className="py-12"
                   >
                     <Button type="primary" onClick={() => navigate(APP_ROUTES.HOME)}>
-                      Đặt Vé Ngay
+                      {t("profile:bookNow")}
                     </Button>
                   </Empty>
                 )}

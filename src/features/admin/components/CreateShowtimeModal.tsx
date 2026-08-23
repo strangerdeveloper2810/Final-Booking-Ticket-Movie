@@ -1,6 +1,7 @@
 import { type FC, useState } from "react";
 import { Modal, Form, Select, DatePicker, InputNumber, App } from "antd";
 import dayjs from "dayjs";
+import { useTranslation } from "react-i18next";
 import {
   useGetCinemaSystemsQuery,
   useGetCinemaClustersQuery,
@@ -22,6 +23,7 @@ const CreateShowtimeModal: FC<CreateShowtimeModalProps> = ({ open, film, onCance
   const [form] = Form.useForm();
   const [selectedSystem, setSelectedSystem] = useState<string>("");
   const { message } = App.useApp();
+  const { t } = useTranslation(["admin", "common"]);
 
   const { data: cinemaSystems = [] } = useGetCinemaSystemsQuery();
   const { data: cinemaClusters = [] } = useGetCinemaClustersQuery(selectedSystem, {
@@ -55,19 +57,19 @@ const CreateShowtimeModal: FC<CreateShowtimeModalProps> = ({ open, film, onCance
       };
 
       await createShowtime(payload).unwrap();
-      message.success(`Tạo lịch chiếu cho phim "${film.tenPhim}" thành công!`);
+      message.success(t("admin:addSuccess"));
       onSuccess();
     } catch (error: any) {
-      message.error(error?.data?.content || error?.message || "Có lỗi xảy ra, vui lòng thử lại!");
+      message.error(error?.data?.content || error?.message || "Error creating showtime");
     }
   };
 
   return (
     <Modal
       open={open}
-      title={`Tạo Lịch Chiếu: ${film?.tenPhim || ""}`}
-      okText="Tạo Lịch Chiếu"
-      cancelText="Hủy Bỏ"
+      title={`${t("admin:createShowtime")}: ${film?.tenPhim || ""}`}
+      okText={t("admin:createShowtime")}
+      cancelText={t("admin:cancel")}
       confirmLoading={isLoading}
       onCancel={onCancel}
       onOk={handleSubmit}
@@ -75,9 +77,9 @@ const CreateShowtimeModal: FC<CreateShowtimeModalProps> = ({ open, film, onCance
       destroyOnClose
     >
       <Form form={form} layout="vertical" initialValues={{ giaVe: 75000 }}>
-        <Form.Item label="Hệ Thống Rạp">
+        <Form.Item label={t("admin:cinemaSystem")}>
           <Select
-            placeholder="Chọn hệ thống rạp"
+            placeholder={t("admin:cinemaSystem")}
             size="large"
             onChange={handleSystemChange}
             value={selectedSystem || undefined}
@@ -92,11 +94,11 @@ const CreateShowtimeModal: FC<CreateShowtimeModalProps> = ({ open, film, onCance
 
         <Form.Item
           name="maCumRap"
-          label="Cụm Rạp"
-          rules={[{ required: true, message: "Vui lòng chọn cụm rạp!" }]}
+          label={t("admin:cinemaCluster")}
+          rules={[{ required: true, message: t("admin:cinemaCluster") }]}
         >
           <Select
-            placeholder="Chọn cụm rạp"
+            placeholder={t("admin:cinemaCluster")}
             size="large"
             disabled={!selectedSystem}
             onChange={handleClusterChange}
@@ -111,16 +113,16 @@ const CreateShowtimeModal: FC<CreateShowtimeModalProps> = ({ open, film, onCance
 
         <Form.Item
           name="maRap"
-          label="Mã Rạp Chiếu"
-          rules={[{ required: true, message: "Vui lòng chọn rạp chiếu!" }]}
+          label={t("admin:theaterId")}
+          rules={[{ required: true, message: t("admin:theaterId") }]}
         >
-          <InputNumber placeholder="Nhập mã rạp chiếu" className="w-full" size="large" />
+          <InputNumber placeholder={t("admin:theaterId")} className="w-full" size="large" />
         </Form.Item>
 
         <Form.Item
           name="ngayChieuGioChieu"
-          label="Ngày Giờ Chiếu"
-          rules={[{ required: true, message: "Vui lòng chọn ngày giờ chiếu!" }]}
+          label={t("admin:showtimeDateTime")}
+          rules={[{ required: true, message: t("admin:showtimeDateTime") }]}
         >
           <DatePicker
             showTime
@@ -132,8 +134,8 @@ const CreateShowtimeModal: FC<CreateShowtimeModalProps> = ({ open, film, onCance
 
         <Form.Item
           name="giaVe"
-          label="Giá Vé (VNĐ)"
-          rules={[{ required: true, message: "Vui lòng nhập giá vé!" }]}
+          label={t("admin:ticketPrice")}
+          rules={[{ required: true, message: t("admin:ticketPrice") }]}
         >
           <InputNumber
             min={50000}
