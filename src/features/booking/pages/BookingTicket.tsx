@@ -113,6 +113,20 @@ const BookingTicket: FC = () => {
   // VI: ngược trên hầu hết các nền tảng đặt vé thực tế.
   const [remainingMs, setRemainingMs] = useState(0);
 
+  const [combos, setCombos] = useState([
+    { id: "c1", name: "Combo Solo", desc: "1 Bỏng Phô Mai Vừa + 1 Pepsi", price: 75000, quantity: 0, icon: "🍿" },
+    { id: "c2", name: "Combo Couple", desc: "1 Bỏng Lớn + 2 Pepsi 500ml", price: 120000, quantity: 0, icon: "🥤" },
+    { id: "c3", name: "Combo Party", desc: "2 Bỏng Lớn + 4 Pepsi + Snack", price: 190000, quantity: 0, icon: "🎉" },
+  ]);
+
+  const handleComboChange = (id: string, delta: number) => {
+    setCombos((prev) =>
+      prev.map((c) => (c.id === id ? { ...c, quantity: Math.max(0, c.quantity + delta) } : c))
+    );
+  };
+
+  const comboTotal = sumBy(combos, (c) => c.price * c.quantity);
+
   useEffect(() => {
     if (!selectionExpiresAt) {
       setRemainingMs(0);
@@ -447,6 +461,48 @@ const BookingTicket: FC = () => {
 
               <Divider className="my-3 border-border" />
 
+              {/* Popcorn & Beverages Concession Combos */}
+              <div>
+                <span className="text-text-secondary font-semibold text-xs block mb-2 uppercase tracking-wider">
+                  🍿 Combo Bắp Nước Rạp Phim
+                </span>
+                <div className="space-y-2">
+                  {combos.map((combo) => (
+                    <div
+                      key={combo.id}
+                      className="flex items-center justify-between p-2 rounded-lg bg-background border border-border text-xs"
+                    >
+                      <div className="flex-1 pr-2">
+                        <p className="font-bold text-text-primary">
+                          {combo.icon} {combo.name}
+                        </p>
+                        <p className="text-[10px] text-text-secondary line-clamp-1">{combo.desc}</p>
+                        <p className="text-[11px] font-semibold text-primary">{combo.price.toLocaleString()} VNĐ</p>
+                      </div>
+
+                      <div className="flex items-center gap-1.5 bg-surface border border-border rounded-md px-1.5 py-0.5">
+                        <button
+                          onClick={() => handleComboChange(combo.id, -1)}
+                          disabled={combo.quantity <= 0}
+                          className="w-5 h-5 rounded flex items-center justify-center bg-border text-text-primary hover:bg-primary hover:text-white disabled:opacity-30 disabled:hover:bg-border text-xs font-bold"
+                        >
+                          -
+                        </button>
+                        <span className="w-4 text-center font-bold text-text-primary">{combo.quantity}</span>
+                        <button
+                          onClick={() => handleComboChange(combo.id, 1)}
+                          className="w-5 h-5 rounded flex items-center justify-center bg-primary text-white hover:bg-primary-hover text-xs font-bold"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <Divider className="my-3 border-border" />
+
               {userLogin && (
                 <div className="flex justify-between items-center text-xs text-text-secondary">
                   <span>{t("booking:userAccount")}</span>
@@ -460,7 +516,7 @@ const BookingTicket: FC = () => {
               <div className="pt-2 flex justify-between items-baseline">
                 <span className="text-base font-bold text-text-primary">{t("booking:totalPrice")}</span>
                 <span className="text-2xl font-extrabold text-primary">
-                  {totalPrice.toLocaleString()} <span className="text-xs font-normal">VNĐ</span>
+                  {(totalPrice + comboTotal).toLocaleString()} <span className="text-xs font-normal">VNĐ</span>
                 </span>
               </div>
 

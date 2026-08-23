@@ -10,6 +10,7 @@ import {
   MoonOutlined,
   GlobalOutlined,
   DashboardOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import map from "lodash/map";
@@ -20,6 +21,7 @@ import { APP_ROUTES } from "shared/constants/routes";
 import { useTheme } from "shared/theme/ThemeContext";
 import { SUPPORTED_LANGUAGES, LanguageCode } from "shared/constants/languages";
 import Logo from "shared/components/Logo/Logo";
+import SearchModal from "shared/components/SearchModal/SearchModal";
 
 /**
  * EN: Global site header/navbar shown on every page via `HomeTemplate`. Handles desktop nav
@@ -34,11 +36,24 @@ import Logo from "shared/components/Logo/Logo";
  */
 const Header: FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [searchModalOpen, setSearchModalOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { userLogin } = useSelector((state: RootState) => state.UserSaga);
   const { themeMode, toggleTheme } = useTheme();
   const { t, i18n } = useTranslation(["header", "common"]);
+
+  // Cmd+K / Ctrl+K keyboard shortcut listener
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setSearchModalOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const scrollToHash = (hash: string) => {
     const target = document.querySelector(hash);
@@ -175,8 +190,21 @@ const Header: FC = () => {
           })}
         </nav>
 
-        {/* Desktop Controls (Theme + Language + Auth) */}
+        {/* Desktop Controls (Search + Theme + Language + Auth) */}
         <div className="hidden md:flex items-center gap-3">
+          {/* Quick Search Button */}
+          <Button
+            type="default"
+            icon={<SearchOutlined className="text-primary" />}
+            onClick={() => setSearchModalOpen(true)}
+            className="bg-background border-border text-text-secondary hover:text-primary hover:border-primary/50 text-xs rounded-xl flex items-center gap-2 py-1 px-3 shadow-sm"
+          >
+            <span>{t("common:search", { defaultValue: "Tìm Phim..." })}</span>
+            <span className="bg-surface px-1.5 py-0.5 rounded text-[10px] font-mono border border-border text-text-secondary">
+              ⌘K
+            </span>
+          </Button>
+
           {/* Theme Switcher */}
           <Button
             type="text"
@@ -361,6 +389,11 @@ const Header: FC = () => {
           </div>
         </div>
       </Drawer>
+
+      <SearchModal
+        open={searchModalOpen}
+        onClose={() => setSearchModalOpen(false)}
+      />
     </header>
   );
 };
